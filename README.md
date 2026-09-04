@@ -110,8 +110,8 @@ Pick the first channel your toolset supports:
    truncation cap). Each part's first line is a header `[PART k of n | path]`; the agent
    creates/appends the target file as it reads — write-as-you-read, no JSON, no decoding.
    If the agent's fetcher strips tag-like text (a known failure mode), the identical
-   [`parts-esc/`](parts-esc/) set stores `< > &` as `\u003c`-style sequences to be
-   replace-all'd back after each file.
+   [`parts-esc/`](parts-esc/) set stores angle brackets and ampersands as backslash-u
+   escape sequences to be replace-all'd back after each file.
 5. **Fetch-only, hardest fetchers** → JSON bundle: [`bundle/INDEX.json`](bundle/INDEX.json) +
    `bundle/shard-NN.json`. Single-line JSON ≤ 8 KB with zero raw `< > &`, for agents that
    strip tags even inside JSON and collapse newlines. Parts table, per-part and per-file

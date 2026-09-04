@@ -4,9 +4,9 @@ This single file contains **every source file** of **Peach & Goma: SkyHop** with
 exact repository path and byte-exact contents, so the complete directory tree can be
 recreated 1:1 from one URL — no shell, no zip tool, nothing but the ability to read text.
 
-- Source commit: `361c570557767b4a112c54b4830d26793015c602`
-- Generated (UTC): 2026-09-04 08:20:32
-- Files: 35 | Total: 335,107 bytes
+- Source commit: `cc2d2b091faad08e344a965ba676dfc50acd5b20`
+- Generated (UTC): 2026-09-04 08:26:04
+- Files: 35 | Total: 335,133 bytes
 - `gameproject.zip` (binary, byte-exact archive of these sources) is NOT inlined here;
   it sits in the repo root if you prefer `unzip` / `git clone`.
 
@@ -35,7 +35,7 @@ recreated 1:1 from one URL — no shell, no zip tool, nothing but the ability to
 | Path | Bytes | Lines | SHA-256 (first 12) |
 |---|---|---|---|
 | `.gitignore` | 334 | 36 | `5199f895d96b` |
-| `README.md` | 8,337 | 128 | `622410a0bef4` |
+| `README.md` | 8,363 | 128 | `825be844a3e5` |
 | `index.html` | 783 | 17 | `4e453943df7b` |
 | `package-lock.json` | 111,680 | 3,274 | `1817046d8b0e` |
 | `package.json` | 784 | 33 | `ba25f973eae6` |
@@ -112,7 +112,7 @@ Thumbs.db
 
 <<<<< END FILE: .gitignore >>>>>
 
-<<<<< BEGIN FILE: README.md (8337 bytes) >>>>>
+<<<<< BEGIN FILE: README.md (8363 bytes) >>>>>
 # 🍑 Peach & Goma: SkyHop 🐾
 
 A cozy **3D vertical hopping platformer** starring two procedurally-rigged cats — **Peach** (the pink one) and
@@ -225,8 +225,8 @@ Pick the first channel your toolset supports:
    truncation cap). Each part's first line is a header `[PART k of n | path]`; the agent
    creates/appends the target file as it reads — write-as-you-read, no JSON, no decoding.
    If the agent's fetcher strips tag-like text (a known failure mode), the identical
-   [`parts-esc/`](parts-esc/) set stores `< > &` as `\u003c`-style sequences to be
-   replace-all'd back after each file.
+   [`parts-esc/`](parts-esc/) set stores angle brackets and ampersands as backslash-u
+   escape sequences to be replace-all'd back after each file.
 5. **Fetch-only, hardest fetchers** → JSON bundle: [`bundle/INDEX.json`](bundle/INDEX.json) +
    `bundle/shard-NN.json`. Single-line JSON ≤ 8 KB with zero raw `< > &`, for agents that
    strip tags even inside JSON and collapse newlines. Parts table, per-part and per-file

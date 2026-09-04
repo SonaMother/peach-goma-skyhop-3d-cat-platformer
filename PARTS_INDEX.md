@@ -35,13 +35,13 @@ use npm (see AGENT_PROMPT.txt) or the JSON bundle bundle/INDEX.json.
    greater-than sign, \u0026 with the ampersand.
 7. After the last part: npm run dev. Done.
 
-## PART TABLE (34 files, 223,102 bytes of source)
+## PART TABLE (34 files, 223,453 bytes of source)
 raw = parts/, esc = parts-esc/. Byte sizes refer to the real files.
 
 | file | bytes | raw parts | esc parts |
 |---|---|---|---|
 | .gitignore | 334 | p001 (1) | p001 (1) |
-| README.md | 8,012 | p002-p004 (3) | p002-p004 (3) |
+| README.md | 8,363 | p002-p004 (3) | p002-p004 (3) |
 | index.html | 783 | p005 (1) | p005 (1) |
 | package.json | 784 | p006 (1) | p006 (1) |
 | src/App.tsx | 3,143 | p007 (1) | p007 (1) |
