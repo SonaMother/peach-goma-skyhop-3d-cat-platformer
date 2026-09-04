@@ -7,9 +7,9 @@ so the project builds and runs. No JSON, no decoding, no special tools.
 Probe 1 (tags): the next line contains a test tag:
 <tag-probe-12345>
 If you can see "<tag-probe-12345>" above, your fetcher keeps tags:
-use the parts/ folder. If the tag vanished or looks mangled, your
-fetcher strips tag-like text: use the parts-esc/ folder instead
-(same parts, but < > & are stored as \u003c \u003e \u0026).
+use parts/. If it vanished or looks mangled, your fetcher strips
+tag-like text: use parts-esc/ instead (same parts, but < > & are
+stored as backslash-u escape sequences).
 Probe 2 (newlines): PROBE-A and PROBE-B are on separate lines:
 PROBE-A
 PROBE-B
@@ -23,6 +23,8 @@ use npm (see AGENT_PROMPT.txt) or the JSON bundle bundle/INDEX.json.
 2. Open your set's folder and process parts strictly in order:
    p001, p002, p003, ... (one fetch per part). If a fetch fails or
    a part looks cut off, re-fetch that part once; never guess lines.
+   raw.githubusercontent.com blocked? Same files, no rate limit, at:
+   https://cdn.jsdelivr.net/gh/SonaMother/peach-goma-skyhop-3d-cat-platformer@main/parts/FILE.txt
 3. Line 1 of each part is a header [PART k of n | path].
    It is a label only - NEVER copy it into the target file.
 4. Write as you read: part k=1 -> create the file with the remaining
