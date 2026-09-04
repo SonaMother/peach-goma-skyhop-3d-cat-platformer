@@ -1,0 +1,101 @@
+[PART 2 of 7 | src/scenes/GameScene.tsx]
+      x: 0, y: 0.2, vx: 0, vy: C.jumpV, maxY: 0, hearts: 0, hugs: 0, stars: 0, fish: 0, bonus: 0, combo: 0, bestCombo: 0,
+      landTimer: 0, superTimer: 0, springTimer: 0, slipTimer: 0, stunTimer: 0, hurtTimer: 0, fishTimer: 0,
+      power: null, powerT: 0, powerTotal: 1, shield: false, shieldT: 0, dead: false, deadTimer: 0, lastScore: -1,
+      nextMilestone: 100, recordShown: false, wrapCd: 0, nearMissCd: 0, shieldWarned: false, t: 0,
+    });
+    camY.current = 5;
+    driver.current = createDriver({ state: "rise", fidgets: false });
+    driver.current.events.push("jump");
+    setVersion((v) => v + 1);
+  }, [runId, world, P, compMem]);
+
+  useFrame(({ size }, rawDt) => {
+    const dt = Math.min(rawDt, 1 / 30);
+    const d = driver.current;
+    const store = useGame.getState();
+    if (store.phase !== "playing" || store.paused) return;
+    P.t += dt;
+
+    const controllable = !P.dead && P.stunTimer <= 0;
+    const rocket = P.power === "rocket";
+    const balloon = P.power === "balloon";
+
+    /* ---------- horizontal control ---------- */
+    const axis = controllable ? input.current.axis : 0;
+    const accel = balloon ? C.moveAccel * 0.6 : C.moveAccel;
+    if (axis !== 0) P.vx += axis * accel * dt;
+    else P.vx *= Math.exp(-(P.slipTimer > 0 ? 1.2 : C.drag) * dt);
+    P.vx = clamp(P.vx, -C.maxVx, C.maxVx);
+    P.x += P.vx * dt;
+    P.wrapCd -= dt;
+    if (P.x > C.halfW + 0.6 || P.x < -C.halfW - 0.6) {
+      P.x = P.x > 0 ? -C.halfW - 0.6 : C.halfW + 0.6;
+      if (P.wrapCd <= 0) {
+        P.wrapCd = 0.5;
+        d.events.push("wrap");
+        sfx.wrap();
+      }
+    }
+
+    /* ---------- vertical physics ---------- */
+    const prevY = P.y;
+    if (rocket) {
+      P.vy = damp(P.vy, C.rocketV, 6, dt);
+      if (Math.random() < 0.9) fx.burst("flame", P.x + rand(-0.08, 0.08), P.y + 0.25, -0.35, 1, 0.6);
+      if (Math.random() < 0.15) fx.burst("sparkle", P.x, P.y + 0.2, -0.3, 1, 0.5);
+    } else if (balloon) {
+      P.vy = damp(P.vy, C.balloonV + Math.sin(P.t * 2) * 0.6, 3, dt);
+    } else {
+      P.vy -= C.gravity * dt;
+    }
+    P.y += P.vy * dt;
+
+    let landed: PlatformData | null = null;
+    if (P.vy < 0 && !P.dead && !rocket) {
+      for (const p of world.platforms) {
+        if (!p.alive) continue;
+        const top = p.y + topOffset(p);
+        const dx = Math.abs(P.x - p.x);
+        if (prevY >= top - 0.02 && P.y <= top) {
+          if (dx < p.w / 2 + C.catHalfW * 0.8) {
+            landed = p;
+            P.y = top;
+            break;
+          } else if (P.vy < -6 && dx < p.w / 2 + 1.1 && P.nearMissCd <= 0) {
+            P.nearMissCd = 1.5;
+            d.events.push("nearMiss");
+          }
+        }
+      }
+    }
+    P.nearMissCd -= dt;
+
+    if (landed) {
+      const p = landed;
+      p.landedCount++;
+      const center = Math.abs(P.x - p.x);
+      const onCactus = p.spiky !== 0 && (P.x - p.x) * p.spiky > p.w / 2 - 0.95;
+      if (onCactus) {
+        if (P.shield) {
+          P.shield = false;
+          d.events.push("shieldPop");
+          fx.burst("bubbles", P.x, P.y + 0.6, 0.4, 14);
+          sfx.pop();
+          P.vy = C.jumpV;
+          store.pushToast("SHIELD BROKE!", "#9FD8FF");
+        } else {
+          P.vy = C.hurtV;
+          P.hurtTimer = 0.7;
+          P.combo = 0;
+          d.events.push("hurt");
+          fx.burst("stars", P.x, P.y + 0.8, 0.4, 4);
+          sfx.hurt();
+          store.flashHurt();
+          store.pushToast("OUCH!", "#E9455D");
+        }
+        p.wobble.impulse(-4);
+      } else if (p.type === "pillow") {
+        P.vy = C.pillowV;
+        P.superTimer = 0.7;
+        p.wobble.impulse(-9);

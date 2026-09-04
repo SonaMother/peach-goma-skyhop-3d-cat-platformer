@@ -1,0 +1,101 @@
+[PART 1 of 2 | src/world/Backdrop.tsx]
+import * as THREE from "three";
+import { useFrame } from "@react-three/fiber";
+import { useMemo, useRef, type MutableRefObject } from "react";
+import { rand } from "../character/springs";
+import { toon, outline, flat } from "../character/materials";
+import { useGame } from "../game/store";
+
+const PUFF = new THREE.SphereGeometry(1, 18, 12);
+const cloudMat = toon("#F6FAFF");
+const cloudOutline = outline(0.08, "#D9E6F6");
+const SUN = new THREE.CircleGeometry(2.2, 40);
+const RING = new THREE.RingGeometry(2.4, 3.2, 48);
+const PLANET = new THREE.SphereGeometry(1, 24, 16);
+const PLANET_RING = new THREE.TorusGeometry(1.6, 0.12, 8, 40);
+const BIRD = new THREE.TorusGeometry(0.22, 0.035, 6, 12, Math.PI);
+
+interface CloudData {
+  x: number;
+  y: number;
+  z: number;
+  s: number;
+  speed: number;
+  parts: { x: number; y: number; r: number; sy: number }[];
+}
+
+function makeCloud(camY: number, spread: number): CloudData {
+  const n = 3 + Math.floor(Math.random() * 3);
+  const parts = [] as CloudData["parts"];
+  for (let i = 0; i \u003c n; i++) {
+    parts.push({ x: (i - (n - 1) / 2) * 0.75 + rand(-0.15, 0.15), y: rand(-0.1, 0.25) - Math.abs(i - (n - 1) / 2) * 0.15, r: rand(0.55, 0.9), sy: rand(0.6, 0.8) });
+  }
+  return { x: rand(-14, 14), y: camY + rand(-spread, spread), z: rand(-24, -9), s: rand(0.7, 1.6), speed: rand(0.15, 0.45) * (Math.random() \u003c 0.5 ? -1 : 1), parts };
+}
+
+function Cloud({ d }: { d: CloudData }) {
+  return (
+    \u003c\u003e
+      {d.parts.map((p, i) =\u003e (
+        \u003cgroup key={i} position={[p.x, p.y, 0]} scale={[p.r, p.r * p.sy, p.r * 0.7]}\u003e
+          \u003cmesh geometry={PUFF} material={cloudMat} /\u003e
+          \u003cmesh geometry={PUFF} material={cloudOutline} /\u003e
+        \u003c/group\u003e
+      ))}
+    \u003c/\u003e
+  );
+}
+
+function Birds({ camYRef }: { camYRef: MutableRefObject\u003cnumber\u003e }) {
+  const g = useRef\u003cTHREE.Group\u003e(null);
+  const mem = useMemo(() =\u003e ({ x: -20, y: 0, dir: 1, t: rand(0, 10), wait: rand(4, 10), active: false }), []);
+  useFrame(({ clock }, dt) =\u003e {
+    const o = g.current;
+    if (!o) return;
+    mem.t += dt;
+    if (!mem.active) {
+      mem.wait -= dt;
+      if (mem.wait \u003c= 0 \u0026\u0026 camYRef.current \u003c 95) {
+        mem.active = true;
+        mem.dir = Math.random() \u003c 0.5 ? 1 : -1;
+        mem.x = -mem.dir * 18;
+        mem.y = camYRef.current + rand(2, 7);
+      }
+      o.visible = false;
+      return;
+    }
+    o.visible = true;
+    mem.x += mem.dir * 3.2 * dt;
+    mem.y += Math.sin(mem.t * 2) * 0.01;
+    if (Math.abs(mem.x) \u003e 19) {
+      mem.active = false;
+      mem.wait = rand(8, 18);
+    }
+    o.position.set(mem.x, mem.y, -12);
+    o.scale.x = mem.dir;
+    const flap = Math.sin(clock.elapsedTime * 9) * 0.5;
+    o.children.forEach((c, i) =\u003e {
+      c.rotation.z = (i === 0 ? -1 : 1) * (0.4 + flap);
+    });
+  });
+  return (
+    \u003cgroup ref={g} visible={false}\u003e
+      \u003cmesh geometry={BIRD} material={flat("#6b5e5c")} position={[-0.2, 0, 0]} /\u003e
+      \u003cmesh geometry={BIRD} material={flat("#6b5e5c")} position={[0.2, 0, 0]} /\u003e
+    \u003c/group\u003e
+  );
+}
+
+export function Backdrop({ camYRef, count = 14, spread = 26 }: { camYRef: MutableRefObject\u003cnumber\u003e; count?: number; spread?: number }) {
+  const clouds = useMemo(() =\u003e Array.from({ length: count }, () =\u003e makeCloud(camYRef.current, spread)), [count, spread, camYRef]);
+  const refs = useRef\u003c(THREE.Group | null)[]\u003e([]);
+  const stars = useMemo(() =\u003e {
+    const N = 220;
+    const pos = new Float32Array(N * 3);
+    for (let i = 0; i \u003c N; i++) {
+      pos[i * 3] = rand(-16, 16);
+      pos[i * 3 + 1] = rand(-spread, spread);
+      pos[i * 3 + 2] = rand(-22, -10);
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.BufferAttribute(pos, 3));

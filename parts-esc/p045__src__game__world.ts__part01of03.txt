@@ -1,0 +1,101 @@
+[PART 1 of 3 | src/game/world.ts]
+import { Spring, rand, clamp } from "../character/springs";
+import { createDriver, type CatDriver } from "../character/Cat";
+
+export const C = {
+  halfW: 4.6,
+  gravity: 34,
+  jumpV: 15,
+  pillowV: 27,
+  springV: 21,
+  iceV: 12.5,
+  hurtV: 9,
+  rocketV: 26,
+  rocketTime: 2.0,
+  balloonV: 5.5,
+  balloonTime: 3.6,
+  shieldTime: 14,
+  magnetTime: 8,
+  moveAccel: 75,
+  maxVx: 8.5,
+  drag: 7,
+  catScale: 0.56,
+  catHalfW: 0.46,
+  platformH: 0.36,
+  platformD: 1.1,
+  fov: 42,
+};
+
+export type PlatformType = "ground" | "normal" | "moving" | "cloud" | "pillow" | "spring" | "ice" | "crumble";
+export type ItemKind = "heart" | "fish" | "star" | "rocket" | "balloon" | "shield" | "magnet";
+export type CompanionMood = "sit" | "sleep" | "wave" | "read";
+
+export interface PlatformData {
+  id: number;
+  type: PlatformType;
+  x: number;
+  y: number;
+  w: number;
+  baseX: number;
+  speed: number;
+  phase: number;
+  range: number;
+  alive: boolean;
+  fade: number; // cloud dissolve / crumble fall 0→1
+  crumbleTimer: number; // \u003e0 = shaking, counts down to break
+  spiky: number; // 0 = none, -1/1 = side of the cactus
+  companion: boolean;
+  companionMood: CompanionMood;
+  hugged: boolean;
+  companionDriver: CatDriver | null;
+  companionSide: number;
+  cheerTimer: number;
+  wobble: Spring;
+  landedCount: number;
+}
+
+export interface ItemData {
+  id: number;
+  kind: ItemKind;
+  x: number;
+  y: number;
+  baseX: number;
+  baseY: number;
+  phase: number;
+  taken: boolean;
+  takenT: number;
+  magnetPull: number;
+}
+
+export interface EnemyData {
+  id: number;
+  x: number;
+  y: number;
+  baseX: number;
+  range: number;
+  speed: number;
+  phase: number;
+  alive: boolean;
+  popT: number;
+  angry: number; // 0..1 rises when player is near
+}
+
+export interface World {
+  platforms: PlatformData[];
+  items: ItemData[];
+  enemies: EnemyData[];
+  nextId: number;
+  topY: number;
+  lastCompanionY: number;
+  lastPillowY: number;
+  lastPowerY: number;
+  lastEnemyY: number;
+  version: number;
+}
+
+export const createWorld = (): World =\u003e ({ platforms: [], items: [], enemies: [], nextId: 1, topY: 0, lastCompanionY: -40, lastPillowY: -20, lastPowerY: -10, lastEnemyY: 0, version: 0 });
+
+function makePlatform(w: World, type: PlatformType, x: number, y: number, width: number): PlatformData {
+  return {
+    id: w.nextId++,
+    type,

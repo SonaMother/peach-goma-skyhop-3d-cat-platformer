@@ -1,0 +1,92 @@
+[PART 2 of 3 | src/world/Items.tsx]
+            \u003cmesh geometry={EYE} material={flat("#ffffff", { opacity: 0.8 })} position={[-0.13, 0.15, 0.28]} scale={[1.4, 0.9, 1]} rotation={[0, -0.4, 0.5]} /\u003e
+          \u003c/Part\u003e
+        \u003c/group\u003e
+      );
+    case "shield":
+      return (
+        \u003cgroup\u003e
+          \u003cmesh geometry={SHIELD_ORB} material={bubble("#9FD8FF", 0.4)} /\u003e
+          \u003cPart geometry={SHIELD_CORE} color="#7FB8FF" outlineWidth={0.03} /\u003e
+          \u003cmesh geometry={EYE} material={flat("#ffffff", { opacity: 0.8 })} position={[-0.13, 0.17, 0.3]} scale={[1.3, 0.8, 1]} rotation={[0, -0.4, 0.6]} /\u003e
+        \u003c/group\u003e
+      );
+    case "magnet":
+      return (
+        \u003cgroup rotation={[0, 0, Math.PI]}\u003e
+          \u003cPart geometry={MAGNET_U} color="#E9455D" outlineWidth={0.04} /\u003e
+          \u003cPart geometry={MAGNET_LEG} color="#E9455D" position={[-0.22, -0.1, 0]} outlineWidth={0.04} /\u003e
+          \u003cPart geometry={MAGNET_LEG} color="#E9455D" position={[0.22, -0.1, 0]} outlineWidth={0.04} /\u003e
+          \u003cPart geometry={MAGNET_TIP} color="#F2F2F2" position={[-0.22, -0.24, 0]} outlineWidth={0.035} /\u003e
+          \u003cPart geometry={MAGNET_TIP} color="#F2F2F2" position={[0.22, -0.24, 0]} outlineWidth={0.035} /\u003e
+        \u003c/group\u003e
+      );
+  }
+}
+
+function ItemImpl({ it }: { it: ItemData }) {
+  const g = useRef\u003cTHREE.Group\u003e(null);
+  const inner = useRef\u003cTHREE.Group\u003e(null);
+  const isPower = it.kind === "rocket" || it.kind === "balloon" || it.kind === "shield" || it.kind === "magnet";
+  useFrame(({ clock }, dt) =\u003e {
+    const o = g.current;
+    const i = inner.current;
+    if (!o || !i) return;
+    const t = clock.elapsedTime + it.phase;
+    if (it.taken) {
+      it.takenT += dt;
+      const k = Math.min(1, it.takenT / 0.35);
+      o.scale.setScalar(Math.max(0.0001, (1 + k * 0.6) * (1 - k)));
+      o.position.y = it.y + k * 0.6;
+      return;
+    }
+    o.position.set(it.x, it.y, 0);
+    o.scale.setScalar(1);
+    i.position.y = Math.sin(t * 2.2) * 0.12;
+    i.rotation.y = it.kind === "heart" || it.kind === "star" || isPower ? t * 1.8 : Math.sin(t * 1.5) * 0.5;
+    if (it.kind === "fish") i.rotation.z = Math.sin(t * 5) * 0.15;
+    if (it.kind === "balloon") i.rotation.z = Math.sin(t * 1.3) * 0.15;
+    if (isPower) {
+      const s = 1 + Math.sin(t * 4) * 0.06;
+      i.scale.setScalar(s);
+    }
+  });
+  return (
+    \u003cgroup ref={g} position={[it.x, it.y, 0]}\u003e
+      {isPower \u0026\u0026 \u003cmesh geometry={GLOW} material={glowMat} position={[0, 0, -0.4]} /\u003e}
+      \u003cgroup ref={inner}\u003e
+        \u003cItemBody kind={it.kind} /\u003e
+      \u003c/group\u003e
+    \u003c/group\u003e
+  );
+}
+
+/** Grumpy storm cloud enemy. */
+function GrumpImpl({ e }: { e: EnemyData }) {
+  const g = useRef\u003cTHREE.Group\u003e(null);
+  const face = useRef\u003cTHREE.Group\u003e(null);
+  const bolt = useRef\u003cTHREE.Mesh\u003e(null);
+  const puffs = useRef\u003cTHREE.Group\u003e(null);
+  useFrame(({ clock }, dt) =\u003e {
+    const o = g.current;
+    if (!o) return;
+    const t = clock.elapsedTime + e.phase;
+    if (!e.alive) {
+      e.popT += dt;
+      const k = Math.min(1, e.popT / 0.4);
+      o.scale.setScalar(Math.max(0.0001, (1 + k * 0.8) * (1 - k)));
+      o.rotation.z = k * 2;
+      return;
+    }
+    e.x = e.baseX + Math.sin(t * e.speed) * e.range;
+    o.position.set(e.x, e.y + Math.sin(t * 1.7) * 0.1, 0);
+    const ang = e.angry;
+    o.scale.setScalar(1 + ang * 0.08 + Math.sin(t * 12) * ang * 0.03);
+    if (face.current) {
+      face.current.position.x = Math.cos(t * e.speed) * -0.1;
+      face.current.rotation.z = Math.sin(t * 20) * ang * 0.04;
+    }
+    if (bolt.current) {
+      bolt.current.visible = ang \u003e 0.3 \u0026\u0026 Math.sin(t * 25) \u003e 0.3;
+      bolt.current.position.y = -0.55 - Math.sin(t * 3) * 0.05;
+    }

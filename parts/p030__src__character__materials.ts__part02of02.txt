@@ -1,0 +1,15 @@
+[PART 2 of 2 | src/character/materials.ts]
+          vec4 wp = modelMatrix * pos;
+          wp.xyz += wn * uWidth;
+          gl_Position = projectionMatrix * viewMatrix * wp;
+        }
+      `,
+      fragmentShader: /* glsl */ `
+        uniform vec3 uColor;
+        void main() { gl_FragColor = vec4(uColor, 1.0); }
+      `,
+    });
+    outlineCache.set(key, m);
+  }
+  return m;
+}

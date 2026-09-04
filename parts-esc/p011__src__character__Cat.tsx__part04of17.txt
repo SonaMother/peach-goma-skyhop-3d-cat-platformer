@@ -1,0 +1,88 @@
+[PART 4 of 17 | src/character/Cat.tsx]
+  children?: React.ReactNode;
+}
+
+type Refs = Record\u003cstring, THREE.Object3D\u003e;
+type RefFn = (name: string) =\u003e (o: THREE.Object3D | null) =\u003e void;
+const TAIL_N = 6;
+
+/* ---- static sub-parts (module-level so re-renders never remount them) ---- */
+const PawPad = ({ position, rotation, scale = 1, mat }: { position: [number, number, number]; rotation: [number, number, number]; scale?: number; mat: THREE.Material }) =\u003e (
+  \u003cgroup position={position} rotation={rotation} scale={scale}\u003e
+    \u003cmesh geometry={G.padBig} material={mat} position={[0, -0.03, 0]} scale={[1.1, 0.95, 1]} /\u003e
+    {[-0.07, 0, 0.07].map((dx, i) =\u003e (
+      \u003cmesh key={i} geometry={G.padToe} material={mat} position={[dx, 0.075 - Math.abs(dx) * 0.35, 0]} /\u003e
+    ))}
+  \u003c/group\u003e
+);
+
+const Arm = ({ side, fur, pawMat, r }: { side: "L" | "R"; fur: string; pawMat: THREE.Material; r: RefFn }) =\u003e {
+  const sgn = side === "L" ? -1 : 1;
+  return (
+    \u003cgroup ref={r("arm" + side)} position={[sgn * 0.56, 1.14, 0.14]}\u003e
+      \u003cPart geometry={G.armUpper} color={fur} position={[0, -0.17, 0]} /\u003e
+      \u003cgroup ref={r("fore" + side)} position={[0, -0.34, 0]}\u003e
+        \u003cPart geometry={G.armFore} color={fur} position={[0, -0.12, 0]} /\u003e
+        \u003cPawPad position={[0, -0.27, 0.168]} rotation={[-0.3, 0, 0]} mat={pawMat} /\u003e
+      \u003c/group\u003e
+    \u003c/group\u003e
+  );
+};
+
+const TailChain = ({ i, fur, tip, r }: { i: number; fur: string; tip: string; r: RefFn }): React.ReactElement =\u003e {
+  const rad = 0.13 - i * 0.011;
+  return (
+    \u003cgroup ref={r("tail" + i)} position={[i === 0 ? 0 : 0.19, 0, 0]}\u003e
+      \u003cPart geometry={G.tailSeg} color={i === TAIL_N - 1 ? tip : fur} scale={rad / 0.11} outlineWidth={OUTLINE_W * 0.85} /\u003e
+      {i \u003c TAIL_N - 1 \u0026\u0026 \u003cTailChain i={i + 1} fur={fur} tip={tip} r={r} /\u003e}
+    \u003c/group\u003e
+  );
+};
+
+const ZLetter = ({ idx, r }: { idx: number; r: RefFn }) =\u003e (
+  \u003cgroup ref={r("zzz" + idx)}\u003e
+    \u003cmesh geometry={G.zBar} material={M.emoteBlue} position={[0, 0.08, 0]} /\u003e
+    \u003cmesh geometry={G.zDiag} material={M.emoteBlue} rotation={[0, 0, 0.9]} /\u003e
+    \u003cmesh geometry={G.zBar} material={M.emoteBlue} position={[0, -0.08, 0]} /\u003e
+  \u003c/group\u003e
+);
+
+export const Cat = memo(CatRig);
+
+function CatRig({ palette, driver, position, rotation, scale = 1, groupRef, interactive, onPoke, onEvent, children }: CatProps) {
+  const R = useRef\u003cRefs\u003e({});
+  const r = useCallback\u003cRefFn\u003e(
+    (name: string) =\u003e (o: THREE.Object3D | null) =\u003e {
+      if (o) R.current[name] = o;
+    },
+    [],
+  );
+  const per = palette.personality;
+
+  const blushMat = useMemo(() =\u003e flat(palette.blush, { transparent: true, opacity: 0.95 }), [palette.blush]);
+
+  /* mutable animation memory */
+  const S = useMemo(() =\u003e {
+    const springs = {} as Record\u003ckeyof PoseParams, Spring\u003e;
+    for (const k of POSE_KEYS) {
+      const [st, dm] = POSE_SPRING_TUNING[k] ?? [90, 12];
+      springs[k] = new Spring(POSES.idle[k], st, dm);
+    }
+    const soft = 1 - per.floppiness * 0.35;
+    return {
+      t: rand(0, 100),
+      springs,
+      expr: { ...EXPRESSIONS.content } as ExpressionParams,
+      flash: null as null | { name: ExpressionName; until: number },
+      emote: null as null | { name: EmoteName; until: number },
+      emoteS: new Spring(0, 240, 11),
+      emoteCur: null as EmoteName | null,
+      earL: new Spring(0, 220 * soft, 9 * soft),
+      earR: new Spring(0, 220 * soft, 9 * soft),
+      earTipL: new Spring(0, 260 * soft, 8 * soft),
+      earTipR: new Spring(0, 260 * soft, 8 * soft),
+      whiskerL: new Spring(0, 300, 10),
+      whiskerR: new Spring(0, 300, 10),
+      tail: new Chain(TAIL_N, 120 * soft, 9),
+      tailRoot: new Spring(0, 70, 7),
+      head: new Spring2(170, 11),

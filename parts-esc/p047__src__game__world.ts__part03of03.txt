@@ -1,0 +1,52 @@
+[PART 3 of 3 | src/game/world.ts]
+      if (r \u003c 0.15) w.items.push(makeItem(w, "heart", x, y + 1.15));
+      else if (r \u003c 0.2) w.items.push(makeItem(w, "fish", x + rand(-0.4, 0.4), y + 1.2));
+      else if (r \u003c 0.225 \u0026\u0026 alt \u003e 30) w.items.push(makeItem(w, "star", x, y + 1.4));
+    }
+    // power-ups (spaced out)
+    if (y - w.lastPowerY \u003e rand(22, 40) \u0026\u0026 alt \u003e 15) {
+      const kinds: ItemKind[] = alt \u003e 80 ? ["rocket", "balloon", "shield", "magnet"] : ["balloon", "shield", "magnet", "rocket"];
+      const kind = kinds[Math.floor(Math.random() * kinds.length)];
+      w.items.push(makeItem(w, kind, x, y + 1.3));
+      w.lastPowerY = y;
+    }
+    // grumpy storm clouds
+    if (alt \u003e 55 \u0026\u0026 y - w.lastEnemyY \u003e rand(16, 30) - diff * 8) {
+      const ex = x \u003e 0 ? rand(-C.halfW + 1.5, -1) : rand(1, C.halfW - 1.5);
+      w.enemies.push(makeEnemy(w, ex, y + rand(2.2, 3.4)));
+      w.lastEnemyY = y;
+    }
+    // companion cats waiting for a hug
+    if (type === "normal" \u0026\u0026 !p.spiky \u0026\u0026 y - w.lastCompanionY \u003e rand(38, 60) \u0026\u0026 alt \u003e 12) {
+      p.companion = true;
+      p.w = Math.max(p.w, 2.3);
+      const moods: CompanionMood[] = ["sit", "sleep", "wave", "read"];
+      p.companionMood = moods[Math.floor(Math.random() * moods.length)];
+      p.companionDriver = createDriver({ state: p.companionMood === "sleep" ? "sleep" : "sit", expression: p.companionMood === "sleep" ? "asleep" : "content", fidgets: false });
+      if (p.companionMood === "sleep") p.companionDriver.emote = "zzz";
+      w.lastCompanionY = y;
+    }
+    w.platforms.push(p);
+    w.topY = y;
+    added = true;
+  }
+  return added;
+}
+
+export function cullBelow(w: World, y: number) {
+  let changed = false;
+  for (let i = w.platforms.length - 1; i \u003e= 0; i--) if (w.platforms[i].y \u003c y) (w.platforms.splice(i, 1), (changed = true));
+  for (let i = w.items.length - 1; i \u003e= 0; i--) if (w.items[i].y \u003c y || (w.items[i].taken \u0026\u0026 w.items[i].takenT \u003e 1)) (w.items.splice(i, 1), (changed = true));
+  for (let i = w.enemies.length - 1; i \u003e= 0; i--) if (w.enemies[i].y \u003c y || (!w.enemies[i].alive \u0026\u0026 w.enemies[i].popT \u003e 1.2)) (w.enemies.splice(i, 1), (changed = true));
+  return changed;
+}
+
+export const ITEM_INFO: Record\u003cItemKind, { label: string; color: string; points: number }\u003e = {
+  heart: { label: "♥ +50", color: "#FF8FAF", points: 50 },
+  fish: { label: "YUM! +80", color: "#7FB8FF", points: 80 },
+  star: { label: "★ +200", color: "#FFD35C", points: 200 },
+  rocket: { label: "ROCKET!", color: "#FF6B7A", points: 100 },
+  balloon: { label: "BALLOON~", color: "#FF8FAF", points: 60 },
+  shield: { label: "SHIELD!", color: "#9FD8FF", points: 60 },
+  magnet: { label: "MAGNET!", color: "#E9455D", points: 60 },
+};

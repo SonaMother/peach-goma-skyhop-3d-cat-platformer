@@ -1,0 +1,83 @@
+[PART 3 of 3 | src/world/Platform.tsx]
+          <Part geometry={box(w, C.platformH, C.platformD, 0.15)} color={COLORS.moving} outlineWidth={0.065} />
+          <Part geometry={box(w * 0.6, 0.12, 0.5, 0.05)} color="#FFFFFF" position={[0, C.platformH / 2 + 0.02, 0]} outlineWidth={0} />
+          {[-1, 1].map((s) => (
+            <mesh key={s} geometry={ARROW} material={flat("#7FB8FF")} position={[s * (w / 2 - 0.2), C.platformH / 2 + 0.09, 0.35]} rotation={[0, 0, (-s * Math.PI) / 2]} />
+          ))}
+        </group>
+      );
+    default:
+      return (
+        <group>
+          <Part geometry={box(w, C.platformH, C.platformD, 0.15)} color={COLORS.normal} outlineWidth={0.065} />
+          <Part geometry={box(w * 0.7, 0.1, 0.55, 0.04)} color="#EFFCF4" position={[0, C.platformH / 2 + 0.02, 0]} outlineWidth={0} />
+          {p.spiky !== 0 && <Cactus side={p.spiky} />}
+        </group>
+      );
+  }
+}
+
+function Book({ side }: { side: number }) {
+  return (
+    <group position={[side * -0.05, 0.02, 0.55]} rotation={[-0.4, 0, 0]}>
+      <Part geometry={BOOK} color="#FF8FAF" outlineWidth={0.03} />
+      <mesh geometry={PAGE} material={toon("#FFFFFF")} position={[0, 0.05, 0]} />
+    </group>
+  );
+}
+
+export const Platform = memo(PlatformImpl);
+
+function PlatformImpl({ p, companionId }: { p: PlatformData; companionId: CatId }) {
+  const g = useRef<THREE.Group>(null);
+  const bodyG = useRef<THREE.Group>(null);
+  const driverRef = useMemo(() => ({ current: p.companionDriver! }), [p]);
+
+  useFrame(({ clock }, dt) => {
+    const o = g.current;
+    if (!o) return;
+    const t = clock.elapsedTime;
+    if (p.type === "moving") p.x = p.baseX + Math.sin(t * p.speed + p.phase) * p.range;
+    o.position.set(p.x, p.y, 0);
+    const wy = p.wobble.update(dt);
+    o.scale.set(1 / Math.sqrt(Math.max(0.3, wy)), Math.max(0.3, wy), 1);
+    const b = bodyG.current;
+    if (!b) return;
+    if (p.type === "cloud") {
+      if (!p.alive) {
+        p.fade = Math.min(1, p.fade + dt * 2.2);
+        const s = Math.max(0.0001, 1 - p.fade);
+        b.scale.set(1 + p.fade * 0.6, s, 1 + p.fade * 0.6);
+        b.position.y = -p.fade * 0.5;
+      } else b.position.y = Math.sin(t * 1.5 + p.phase) * 0.06;
+    } else if (p.type === "crumble") {
+      if (p.crumbleTimer > 0) {
+        b.position.x = Math.sin(t * 60) * 0.04 * Math.min(1, p.crumbleTimer * 4);
+        b.rotation.z = Math.sin(t * 45) * 0.03;
+      } else if (!p.alive) {
+        p.fade = Math.min(1, p.fade + dt * 1.6);
+        b.position.y = -p.fade * p.fade * 8;
+        b.rotation.z = p.fade * 0.8;
+        b.scale.setScalar(Math.max(0.0001, 1 - p.fade * 0.6));
+      }
+    } else if (p.type === "spring") {
+      b.position.y = 0;
+    }
+  });
+
+  return (
+    <group ref={g} position={[p.x, p.y, 0]}>
+      <group position={[0, -C.platformH / 2, 0]}>
+        <group ref={bodyG}>
+          <Body p={p} />
+        </group>
+      </group>
+      {p.companion && p.companionDriver && (
+        <group position={[p.companionSide * 0.55, 0, -0.15]}>
+          <Cat palette={PALETTES[companionId]} driver={driverRef} scale={C.catScale} />
+          {p.companionMood === "read" && !p.hugged && <Book side={p.companionSide} />}
+        </group>
+      )}
+    </group>
+  );
+}

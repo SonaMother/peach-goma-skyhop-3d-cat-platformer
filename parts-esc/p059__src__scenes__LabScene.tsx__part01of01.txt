@@ -1,0 +1,89 @@
+[PART 1 of 1 | src/scenes/LabScene.tsx]
+import * as THREE from "three";
+import { useFrame, useThree } from "@react-three/fiber";
+import { useMemo, useRef } from "react";
+import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
+import { Cat, createDriver } from "../character/Cat";
+import { PALETTES } from "../character/palettes";
+import { Part } from "../character/Part";
+import { EXPRESSION_NAMES } from "../character/expressions";
+import { POSE_NAMES } from "../character/poses";
+import { useGame } from "../game/store";
+import { C } from "../game/world";
+import { Backdrop } from "../world/Backdrop";
+import { fx } from "../world/Particles";
+import { CameraRig } from "./GameScene";
+import { catSound } from "./MenuScene";
+import { damp } from "../character/springs";
+
+const STAGE = new RoundedBoxGeometry(5.2, 0.6, 2.6, 5, 0.28);
+const STAGE_TOP = new RoundedBoxGeometry(4.4, 0.25, 1.8, 4, 0.1);
+
+/** Global hook so the overlay can fire events at the lab cat. */
+export const labBus: { fire: (e: string) =\u003e void } = { fire: () =\u003e {} };
+
+export function LabScene() {
+  const character = useGame((s) =\u003e s.character);
+  const pal = PALETTES[character];
+  const camY = useRef(0.55);
+  const camX = useRef(0);
+  const driver = useRef(createDriver({ state: "idle" }));
+  const g = useRef\u003cTHREE.Group | null\u003e(null);
+  const { pointer } = useThree();
+  const mem = useMemo(() =\u003e ({ t: 0, tourT: 0, tourIdx: 0, vxDemo: 0, vyDemo: 0 }), []);
+
+  useMemo(() =\u003e {
+    labBus.fire = (e) =\u003e {
+      driver.current.events.push(e as never);
+      if (g.current) fx.burst("sparkle", g.current.position.x, 1.9, 0.6, 4);
+    };
+  }, []);
+
+  useFrame((_, dt) =\u003e {
+    mem.t += dt;
+    const d = driver.current;
+    const lab = useGame.getState().lab;
+    const setLab = useGame.getState().setLab;
+    if (lab.autoTour) {
+      mem.tourT -= dt;
+      if (mem.tourT \u003c= 0) {
+        mem.tourT = 2.4;
+        mem.tourIdx++;
+        const total = EXPRESSION_NAMES.length + POSE_NAMES.length;
+        const i = mem.tourIdx % total;
+        if (i \u003c EXPRESSION_NAMES.length) setLab({ expression: EXPRESSION_NAMES[i], pose: "idle" });
+        else setLab({ expression: null, pose: POSE_NAMES[i - EXPRESSION_NAMES.length] });
+      }
+    }
+    d.state = lab.pose;
+    d.expression = lab.expression;
+    d.accessory = lab.accessory;
+    d.emote = lab.emote;
+    // simulated velocity so velocity-driven layers can be previewed
+    mem.vxDemo = damp(mem.vxDemo, lab.vx, 4, dt);
+    mem.vyDemo = damp(mem.vyDemo, lab.vy, 4, dt);
+    d.vx = mem.vxDemo;
+    d.vy = mem.vyDemo;
+    d.look = THREE.MathUtils.clamp(pointer.x * 1.3, -1, 1);
+    d.lookY = THREE.MathUtils.clamp(pointer.y, -1, 1);
+    // when idle without overrides the fidget system shows off on its own
+    if (g.current) {
+      g.current.rotation.y = Math.sin(mem.t * 0.35) * 0.18;
+      g.current.position.y = lab.pose === "float" || lab.pose === "rocket" || lab.pose === "glide" ? 0.6 + Math.sin(mem.t * 1.5) * 0.1 : 0;
+    }
+  });
+
+  return (
+    \u003c\u003e
+      \u003cCameraRig camY={camY} camX={camX} lookDown={1.25} zoom={2.05} /\u003e
+      \u003cgroup position={[0, -0.02, 0]}\u003e
+        \u003cPart geometry={STAGE} color="#FBD9E4" position={[0, -0.3, 0]} outlineWidth={0.07} /\u003e
+        \u003cPart geometry={STAGE_TOP} color="#FFF0F5" position={[0, 0.05, 0]} outlineWidth={0} /\u003e
+      \u003c/group\u003e
+      \u003cgroup ref={g}\u003e
+        \u003cCat palette={pal} driver={driver} scale={C.catScale * 1.35} interactive onEvent={catSound} /\u003e
+      \u003c/group\u003e
+      \u003cBackdrop camYRef={camY} count={7} spread={8} /\u003e
+    \u003c/\u003e
+  );
+}

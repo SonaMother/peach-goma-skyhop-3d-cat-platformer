@@ -1,0 +1,101 @@
+[PART 5 of 16 | src/character/Cat.tsx]
+      blinkPhase: -1,
+      doubleBlink: false,
+      earTwitchTimer: rand(2, 6),
+      tailFlickTimer: rand(3, 8),
+      whiskerTimer: rand(2, 5),
+      lastState: "idle" as MotionState,
+      prevVx: 0,
+      prevVy: 0,
+      idleFor: 0,
+      fidget: null as null | { state: MotionState; expression?: ExpressionName; emote?: EmoteName; until: number },
+      fidgetTimer: rand(4, 8) / (0.5 + per.energy),
+      asleep: false,
+      dizzy: 0,
+      sparkle: 0,
+      shieldPulse: 0,
+      flameFlicker: 0,
+      petAmount: 0,
+      petCooldown: 0,
+    };
+  }, [per.energy, per.floppiness]);
+
+  const fire = (e: CatEvent) => {
+    driver.current.events.push(e);
+    onEvent?.(e);
+  };
+
+  useFrame((_, rawDt) => {
+    const dt = Math.min(rawDt, 0.05);
+    S.t += dt;
+    const t = S.t;
+    const d = driver.current;
+    const o = R.current;
+    if (!o.root) return;
+
+    /* ---- events ---- */
+    if (d.events.length) {
+      for (const e of d.events) {
+        const f = EVENT_FLASH[e];
+        if (f) S.flash = { name: f[0], until: t + f[1] };
+        const em = EVENT_EMOTE[e];
+        if (em) S.emote = { name: em[0], until: t + em[1] };
+        if (S.asleep && e !== "wakeUp") {
+          S.asleep = false;
+          S.fidget = null;
+          S.flash = { name: "shocked", until: t + 0.6 };
+          S.emote = { name: "exclaim", until: t + 0.6 };
+        }
+        S.fidget = null;
+        S.idleFor = 0;
+        switch (e) {
+          case "land":
+            S.springs.stretch.impulse(-7);
+            S.earL.impulse(-9);
+            S.earR.impulse(-9);
+            S.earTipL.impulse(-6);
+            S.earTipR.impulse(-6);
+            S.head.impulse(0, 5);
+            S.jiggle.impulse(6);
+            S.cheek.impulse(5);
+            S.tail.impulse(3);
+            break;
+          case "jump":
+            S.springs.stretch.impulse(4.5);
+            S.head.impulse(0, -3);
+            S.tail.impulse(-3);
+            break;
+          case "superJump":
+          case "rocketOn":
+            S.springs.stretch.impulse(10);
+            S.earL.impulse(-14);
+            S.earR.impulse(-14);
+            S.head.impulse(0, -6);
+            S.tail.impulse(-6);
+            S.jiggle.impulse(-3);
+            break;
+          case "spring":
+            S.springs.stretch.impulse(8);
+            S.head.impulse(0, -5);
+            S.roll = 0.0001;
+            break;
+          case "collect":
+          case "yum":
+            S.springs.headTilt.impulse(3);
+            S.springs.stretch.impulse(2.5);
+            S.cheek.impulse(3);
+            break;
+          case "star":
+          case "record":
+          case "milestone":
+            S.springs.stretch.impulse(4);
+            S.earL.impulse(10);
+            S.earR.impulse(10);
+            S.sparkle = 1;
+            S.tail.impulse(5);
+            break;
+          case "hurt":
+            S.springs.stretch.impulse(-5);
+            S.tailRoot.impulse(6);
+            S.head.impulse(4, 2);
+            S.jiggle.impulse(4);

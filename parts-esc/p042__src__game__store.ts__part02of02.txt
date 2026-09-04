@@ -1,0 +1,29 @@
+[PART 2 of 2 | src/game/store.ts]
+  openLab: () =\u003e set({ phase: "lab", skyTier: 0 }),
+  backToMenu: () =\u003e set({ phase: "menu", skyTier: 0, paused: false }),
+  updateRun: (s) =\u003e set(s),
+  setSkyTier: (t) =\u003e {
+    if (get().skyTier !== t) set({ skyTier: t });
+  },
+  setPower: (k, left) =\u003e {
+    const s = get();
+    if (s.power !== k || Math.abs(s.powerLeft - left) \u003e 0.02) set({ power: k, powerLeft: left });
+  },
+  setShield: (on) =\u003e {
+    if (get().shield !== on) set({ shield: on });
+  },
+  flashHurt: () =\u003e set((s) =\u003e ({ hurtFlash: s.hurtFlash + 1 })),
+  endRun: () =\u003e {
+    const { score, character, best } = get();
+    const nb = { ...best, [character]: Math.max(best[character], score) };
+    try {
+      localStorage.setItem("peachgoma.best", JSON.stringify(nb));
+    } catch {
+      /* ignore */
+    }
+    set({ phase: "gameover", best: nb, power: null, shield: false });
+  },
+  toggleMute: () =\u003e set((s) =\u003e ({ muted: !s.muted })),
+  togglePause: () =\u003e set((s) =\u003e ({ paused: !s.paused })),
+  setLab: (l) =\u003e set((s) =\u003e ({ lab: { ...s.lab, ...l } })),
+}));

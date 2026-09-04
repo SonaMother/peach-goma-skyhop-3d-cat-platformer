@@ -1,0 +1,79 @@
+[PART 2 of 2 | src/world/Backdrop.tsx]
+    return g;
+  }, [spread]);
+  const starMat = useMemo(() => new THREE.PointsMaterial({ color: "#FFF6D6", size: 0.16, transparent: true, opacity: 0, sizeAttenuation: true, depthWrite: false }), []);
+  const starsRef = useRef<THREE.Points>(null);
+  const sunRef = useRef<THREE.Group>(null);
+  const planetRef = useRef<THREE.Group>(null);
+  const sunMat = useMemo(() => flat("#FFF1B8", { opacity: 0.9 }), []);
+  const ringMat = useMemo(() => flat("#FFF7DA", { opacity: 0.25, depthWrite: false }), []);
+
+  useFrame(({ clock }, dt) => {
+    const camY = camYRef.current;
+    const tier = useGame.getState().skyTier;
+    clouds.forEach((c, i) => {
+      c.x += c.speed * dt;
+      if (c.x > 16) c.x = -16;
+      if (c.x < -16) c.x = 16;
+      if (c.y < camY - spread) Object.assign(c, makeCloud(camY, spread), { y: camY + spread * rand(0.7, 1) });
+      const g = refs.current[i];
+      if (g) {
+        g.position.set(c.x, c.y + Math.sin(clock.elapsedTime * 0.4 + i) * 0.15, c.z);
+        // clouds thin out in space
+        const k = tier >= 4 ? 0.35 : 1;
+        g.scale.setScalar(c.s * k);
+      }
+    });
+    if (starsRef.current) {
+      const pos = stars.attributes.position as THREE.BufferAttribute;
+      let dirty = false;
+      for (let i = 0; i < pos.count; i++) {
+        const y = pos.getY(i);
+        if (y < camY - spread) {
+          pos.setY(i, camY + spread * rand(0.5, 1));
+          pos.setX(i, rand(-16, 16));
+          dirty = true;
+        }
+      }
+      if (dirty) pos.needsUpdate = true;
+      const target = camY > 95 ? Math.min(1, (camY - 95) / 60) : 0;
+      starMat.opacity += (target - starMat.opacity) * Math.min(1, dt * 2);
+      starMat.size = 0.14 + Math.sin(clock.elapsedTime * 3) * 0.03;
+    }
+    if (sunRef.current) {
+      // the sun slowly sinks as you climb into dusk, then becomes the moon
+      const k = Math.min(1, camY / 190);
+      sunRef.current.position.set(6 - k * 3, camY + 9 - k * 6, -26);
+      const isMoon = tier >= 3;
+      sunMat.color.set(isMoon ? "#F4F1FF" : "#FFF1B8");
+      ringMat.color.set(isMoon ? "#DCD6FF" : "#FFF7DA");
+      sunRef.current.rotation.z = clock.elapsedTime * 0.05;
+    }
+    if (planetRef.current) {
+      planetRef.current.visible = tier >= 4;
+      planetRef.current.position.set(-7, camY + 5 + Math.sin(clock.elapsedTime * 0.3) * 0.3, -24);
+      planetRef.current.rotation.y = clock.elapsedTime * 0.2;
+    }
+  });
+
+  return (
+    <group>
+      <group ref={sunRef} position={[6, 9, -26]}>
+        <mesh geometry={SUN} material={sunMat} />
+        <mesh geometry={RING} material={ringMat} />
+      </group>
+      <group ref={planetRef} visible={false}>
+        <mesh geometry={PLANET} material={toon("#C7B3FF")} scale={1.6} />
+        <mesh geometry={PLANET} material={outline(0.1, "#8E77D6")} scale={1.6} />
+        <mesh geometry={PLANET_RING} material={toon("#FFD7EB")} rotation={[1.2, 0.3, 0]} scale={1.4} />
+      </group>
+      {clouds.map((c, i) => (
+        <group key={i} ref={(g) => (refs.current[i] = g)} position={[c.x, c.y, c.z]} scale={c.s}>
+          <Cloud d={c} />
+        </group>
+      ))}
+      <points ref={starsRef} geometry={stars} material={starMat} frustumCulled={false} />
+      <Birds camYRef={camYRef} />
+    </group>
+  );
+}

@@ -1,0 +1,90 @@
+[PART 1 of 1 | src/world/geometries.ts]
+import * as THREE from "three";
+
+export function heartShape() {
+  const s = new THREE.Shape();
+  const x = 0,
+    y = 0;
+  s.moveTo(x, y + 0.25);
+  s.bezierCurveTo(x, y + 0.25, x - 0.05, y, x - 0.5, y);
+  s.bezierCurveTo(x - 1.05, y, x - 1.05, y + 0.7, x - 1.05, y + 0.7);
+  s.bezierCurveTo(x - 1.05, y + 1.05, x - 0.7, y + 1.4, x, y + 1.9);
+  s.bezierCurveTo(x + 0.7, y + 1.4, x + 1.05, y + 1.05, x + 1.05, y + 0.7);
+  s.bezierCurveTo(x + 1.05, y + 0.7, x + 1.05, y, x + 0.5, y);
+  s.bezierCurveTo(x + 0.05, y, x, y + 0.25, x, y + 0.25);
+  return s;
+}
+
+export function starShape(inner = 0.45) {
+  const s = new THREE.Shape();
+  const pts = 5;
+  for (let i = 0; i < pts * 2; i++) {
+    const r = i % 2 === 0 ? 1 : inner;
+    const a = (i / (pts * 2)) * Math.PI * 2 + Math.PI / 2;
+    const px = Math.cos(a) * r;
+    const py = Math.sin(a) * r;
+    if (i === 0) s.moveTo(px, py);
+    else s.lineTo(px, py);
+  }
+  s.closePath();
+  return s;
+}
+
+export function makeHeartGeometry(size = 0.3, depth = 0.12) {
+  const g = new THREE.ExtrudeGeometry(heartShape(), { depth, bevelEnabled: true, bevelSegments: 4, bevelSize: 0.12, bevelThickness: 0.1, curveSegments: 12 });
+  g.center();
+  g.rotateZ(Math.PI); // point down
+  g.scale(size, size, size);
+  g.computeVertexNormals();
+  return g;
+}
+
+export function makeStarGeometry(size = 0.2) {
+  const g = new THREE.ExtrudeGeometry(starShape(), { depth: 0.3, bevelEnabled: true, bevelSegments: 2, bevelSize: 0.1, bevelThickness: 0.1 });
+  g.center();
+  g.scale(size, size, size);
+  g.computeVertexNormals();
+  return g;
+}
+
+/** Flat heart for eyes / emotes (unit ≈ 0.1 wide). */
+export const HEART_FLAT = (() => {
+  const g = new THREE.ShapeGeometry(heartShape(), 10);
+  g.center();
+  g.rotateZ(Math.PI);
+  g.scale(0.055, 0.055, 0.055);
+  return g;
+})();
+
+export const STAR_FLAT = (() => {
+  const g = new THREE.ShapeGeometry(starShape(0.5), 4);
+  g.center();
+  g.scale(0.12, 0.12, 0.12);
+  return g;
+})();
+
+export function makeFishGeometry() {
+  const s = new THREE.Shape();
+  s.moveTo(-0.5, 0);
+  s.bezierCurveTo(-0.3, 0.45, 0.3, 0.45, 0.55, 0);
+  s.bezierCurveTo(0.3, -0.45, -0.3, -0.45, -0.5, 0);
+  s.lineTo(-0.85, 0.32);
+  s.lineTo(-0.85, -0.32);
+  s.lineTo(-0.5, 0);
+  const g = new THREE.ExtrudeGeometry(s, { depth: 0.18, bevelEnabled: true, bevelSegments: 3, bevelSize: 0.06, bevelThickness: 0.06, curveSegments: 10 });
+  g.center();
+  g.scale(0.42, 0.42, 0.42);
+  g.computeVertexNormals();
+  return g;
+}
+
+export const HEART_GEO = makeHeartGeometry(0.3);
+export const HEART_GEO_SMALL = makeHeartGeometry(0.16, 0.08);
+export const STAR_GEO = makeStarGeometry(0.16);
+export const STAR_GEO_BIG = makeStarGeometry(0.3);
+export const FISH_GEO = makeFishGeometry();
+export const PUFF_GEO = new THREE.SphereGeometry(0.22, 12, 10);
+export const SPARK_GEO = new THREE.OctahedronGeometry(0.1, 0);
+export const CONFETTI_GEO = new THREE.BoxGeometry(0.14, 0.09, 0.02);
+export const SHARD_GEO = new THREE.TetrahedronGeometry(0.1, 0);
+export const BUBBLE_GEO = new THREE.SphereGeometry(0.12, 10, 8);

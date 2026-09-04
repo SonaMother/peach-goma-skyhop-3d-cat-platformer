@@ -1,0 +1,57 @@
+[PART 15 of 17 | src/character/Cat.tsx]
+                \u003c/group\u003e
+                \u003cgroup ref={r("emote_question")}\u003e
+                  \u003cPart geometry={G.qArc} material={M.emoteBlue} position={[0, 0.28, 0]} rotation={[0, 0, -0.6]} outlineWidth={0.035} /\u003e
+                  \u003cPart geometry={G.qStem} material={M.emoteBlue} position={[0.02, 0.06, 0]} outlineWidth={0.035} /\u003e
+                  \u003cPart geometry={G.exclaimDot} material={M.emoteBlue} position={[0.02, -0.14, 0]} outlineWidth={0.035} /\u003e
+                \u003c/group\u003e
+                \u003cgroup ref={r("emote_heart")}\u003e
+                  \u003cPart geometry={HEART_FLAT} material={M.heart} scale={2.2} outlineWidth={0.03} /\u003e
+                \u003c/group\u003e
+                \u003cgroup ref={r("emote_hearts3")}\u003e
+                  {[0, 1, 2].map((i) =\u003e (
+                    \u003cgroup key={i} ref={r("h3_" + i)}\u003e
+                      \u003cPart geometry={HEART_FLAT} material={M.heart} scale={1.6} outlineWidth={0.03} /\u003e
+                    \u003c/group\u003e
+                  ))}
+                \u003c/group\u003e
+                \u003cgroup ref={r("emote_zzz")}\u003e
+                  {[0, 1, 2].map((i) =\u003e (
+                    \u003cZLetter key={i} idx={i} r={r} /\u003e
+                  ))}
+                \u003c/group\u003e
+                \u003cgroup ref={r("emote_note")}\u003e
+                  \u003cPart geometry={G.noteHead} material={M.emoteRed} position={[-0.06, -0.1, 0]} scale={[1.2, 0.85, 1]} rotation={[0, 0, -0.4]} outlineWidth={0.03} /\u003e
+                  \u003cPart geometry={G.noteStem} material={M.emoteRed} position={[0.03, 0.05, 0]} outlineWidth={0.03} /\u003e
+                  \u003cPart geometry={G.noteFlag} material={M.emoteRed} position={[0.085, 0.16, 0]} rotation={[0, 0, -0.5]} outlineWidth={0.03} /\u003e
+                \u003c/group\u003e
+                \u003cgroup ref={r("emote_sweat")}\u003e
+                  \u003cPart geometry={G.drop} material={M.tear} scale={1.8} outlineWidth={0.03} /\u003e
+                \u003c/group\u003e
+                \u003cgroup ref={r("emote_anger")} position={[-0.15, -0.3, 0]}\u003e
+                  {[0, 1, 2, 3].map((i) =\u003e (
+                    \u003cmesh key={i} geometry={G.angerBar} material={M.anger} rotation={[0, 0, (i * Math.PI) / 4 + 0.4]} position={[Math.cos(i * 1.57) * 0.03, Math.sin(i * 1.57) * 0.03, 0]} scale={1.6} /\u003e
+                  ))}
+                \u003c/group\u003e
+                \u003cgroup ref={r("emote_sparkles")}\u003e
+                  {[0, 1, 2, 3].map((i) =\u003e (
+                    \u003cmesh key={i} ref={r("spark" + i)} geometry={G.sparkle} material={M.spark} position={[Math.cos(i * 1.6) * 0.4 - 0.5, Math.sin(i * 1.6) * 0.35, 0]} scale={[1, 1.6, 1]} /\u003e
+                  ))}
+                \u003c/group\u003e
+              \u003c/group\u003e
+              {/* ambient sparkles (record / star) shares the spark refs */}
+              \u003cgroup ref={r("sparkles")} visible={false} /\u003e
+              {/* dizzy stars orbiting */}
+              \u003cgroup ref={r("dizzy")} position={[0, 0.95, 0]}\u003e
+                {[0, 1, 2].map((i) =\u003e (
+                  \u003cPart key={i} ref={r("dz" + i)} geometry={STAR_GEO} material={M.emoteGold} scale={0.9} outlineWidth={0.025} /\u003e
+                ))}
+              \u003c/group\u003e
+            \u003c/group\u003e
+
+            {/* ---- accessories ---- */}
+            \u003cgroup ref={r("shield")} position={[0, 1.35, 0]} visible={false}\u003e
+              \u003cmesh geometry={G.shield} material={M.shield} /\u003e
+              \u003cmesh geometry={G.shieldGloss} material={M.shieldGloss} position={[-0.9, 1.05, 1.0]} scale={[1, 0.5, 0.3]} rotation={[0, 0, 0.6]} /\u003e
+            \u003c/group\u003e
+            \u003cgroup ref={r("rocket")} position={[0, 1.0, -0.72]} visible={false}\u003e

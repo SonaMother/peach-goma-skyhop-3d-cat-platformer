@@ -1,0 +1,19 @@
+[PART 3 of 3 | src/world/Items.tsx]
+        <Part geometry={PUFF} color={col} position={[0, -0.22, 0.1]} scale={[1.3, 0.45, 0.9]} outlineWidth={0.06} />
+      </group>
+      <group ref={face} position={[0, 0.05, 0.55]}>
+        <mesh geometry={EYE} material={ink} position={[-0.18, 0.05, 0]} />
+        <mesh geometry={EYE} material={ink} position={[0.18, 0.05, 0]} />
+        <mesh geometry={BROW} material={ink} position={[-0.19, 0.17, 0]} rotation={[0, 0, -0.5]} />
+        <mesh geometry={BROW} material={ink} position={[0.19, 0.17, 0]} rotation={[0, 0, 0.5]} />
+        <mesh geometry={FROWN} material={ink} position={[0, -0.16, 0]} />
+        <mesh geometry={CHEEK} material={cheekMat} position={[-0.34, -0.06, -0.02]} />
+        <mesh geometry={CHEEK} material={cheekMat} position={[0.34, -0.06, -0.02]} />
+      </group>
+      <mesh ref={bolt} geometry={BOLT} material={boltMat} position={[0.1, -0.55, 0.2]} />
+    </group>
+  );
+}
+
+export const Item = memo(ItemImpl);
+export const Grump = memo(GrumpImpl);

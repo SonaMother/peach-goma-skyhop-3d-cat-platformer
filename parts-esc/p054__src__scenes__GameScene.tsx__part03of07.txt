@@ -1,0 +1,101 @@
+[PART 3 of 7 | src/scenes/GameScene.tsx]
+        d.events.push("superJump");
+        fx.burst("stars", P.x, P.y + 0.3, 0.4);
+        sfx.pillow();
+        store.pushToast("BOING!", "#7FB8FF");
+      } else if (p.type === "spring") {
+        P.vy = C.springV;
+        P.springTimer = 0.62;
+        p.wobble.impulse(-12);
+        d.events.push("spring");
+        fx.burst("sparkle", P.x, P.y + 0.3, 0.4, 8);
+        sfx.spring();
+        store.pushToast("FLIP!", "#F28CA0");
+      } else if (p.type === "ice") {
+        P.vy = C.iceV;
+        P.slipTimer = 0.45;
+        P.vx += (Math.random() \u003c 0.5 ? -1 : 1) * rand(3, 5);
+        P.combo = 0;
+        p.wobble.impulse(-2);
+        d.events.push("slip");
+        fx.burst("shards", P.x, P.y + 0.1, 0.4, 8);
+        sfx.ice();
+        store.pushToast("SLIPPERY!", "#7FD0F0");
+      } else {
+        P.vy = C.jumpV;
+        P.landTimer = 0.09;
+        p.wobble.impulse(p.type === "cloud" ? -2 : -4);
+        d.events.push("land", "jump");
+        fx.burst("dust", P.x, P.y + 0.05, 0.5, 4);
+        if (p.type === "cloud") {
+          p.alive = false;
+          fx.burst("puff", p.x, p.y, 0.3);
+          sfx.cloud();
+        } else if (p.type === "crumble") {
+          if (p.crumbleTimer \u003c= 0) p.crumbleTimer = 0.5;
+          fx.burst("smoke", P.x, P.y, 0.3, 4);
+          sfx.crack();
+        } else sfx.jump();
+        // perfect landing combo
+        if (p.type !== "ground" \u0026\u0026 center \u003c p.w * 0.17) {
+          P.combo++;
+          P.bestCombo = Math.max(P.bestCombo, P.combo);
+          if (P.combo \u003e= 2) {
+            P.bonus += P.combo * 10;
+            d.events.push("perfect");
+            sfx.perfect(P.combo);
+            store.pushToast(`PERFECT x${P.combo}`, "#FFD35C");
+            fx.burst("sparkle", P.x, P.y + 0.2, 0.4, Math.min(12, 3 + P.combo));
+          }
+        } else if (p.type !== "ground") P.combo = 0;
+      }
+      // companion hug
+      if (p.companion \u0026\u0026 !p.hugged \u0026\u0026 p.companionDriver) {
+        p.hugged = true;
+        P.hugs++;
+        p.companionDriver.state = "hug";
+        p.companionDriver.expression = "love";
+        p.companionDriver.emote = null;
+        p.companionDriver.accessory = "none";
+        p.companionDriver.events.push("hugged");
+        p.cheerTimer = 2.5;
+        d.events.push("hugged");
+        fx.burst("hearts", P.x, P.y + 1.2, 0.6, 12);
+        celebrate(p.x, p.y + 1.5, 0.4);
+        sfx.hug();
+        store.pushToast("HUG! +300", "#FF6F91");
+      }
+    }
+
+    /* ---------- crumble timers ---------- */
+    for (const p of world.platforms) {
+      if (p.type === "crumble" \u0026\u0026 p.crumbleTimer \u003e 0) {
+        p.crumbleTimer -= dt;
+        if (p.crumbleTimer \u003c= 0) {
+          p.alive = false;
+          fx.burst("smoke", p.x, p.y, 0.3, 8);
+          sfx.crumble();
+        }
+      }
+    }
+
+    /* ---------- items ---------- */
+    const catCy = P.y + 0.6;
+    for (const it of world.items) {
+      if (it.taken) continue;
+      const collectible = it.kind === "heart" || it.kind === "fish" || it.kind === "star";
+      if (P.power === "magnet" \u0026\u0026 collectible) {
+        const ddx = P.x - it.x;
+        const ddy = catCy - it.y;
+        const dist = Math.hypot(ddx, ddy);
+        if (dist \u003c 4.5) {
+          const k = Math.min(1, dt * (14 / Math.max(0.6, dist)));
+          it.x += ddx * k;
+          it.y += ddy * k;
+        }
+      }
+      if (Math.abs(P.x - it.x) \u003c 0.8 \u0026\u0026 Math.abs(catCy - it.y) \u003c 0.9) {
+        it.taken = true;
+        it.takenT = 0;
+        const info = ITEM_INFO[it.kind];
+        switch (it.kind) {

@@ -1,0 +1,72 @@
+[PART 1 of 1 | src/App.tsx]
+import { Canvas } from "@react-three/fiber";
+import { Suspense, useEffect } from "react";
+import { useGame } from "./game/store";
+import { useInput } from "./game/useInput";
+import { C } from "./game/world";
+import { GameScene } from "./scenes/GameScene";
+import { MenuScene } from "./scenes/MenuScene";
+import { GameOverScene } from "./scenes/GameOverScene";
+import { LabScene } from "./scenes/LabScene";
+import { Particles } from "./world/Particles";
+import { Sky } from "./ui/Sky";
+import { GameOverOverlay, HUD, LabOverlay, MenuOverlay } from "./ui/Overlays";
+
+function Lights() {
+  const tier = useGame((s) =\u003e s.skyTier);
+  const night = tier \u003e= 3;
+  // three's toon BRDF multiplies everything by 1/π, so the key light sits ~π×
+  // higher than "classic" values (top ramp step clamps to pure white), while
+  // ambient stays low so the soft shadow step on the ramp remains visible.
+  return (
+    \u003c\u003e
+      \u003chemisphereLight args={[night ? "#B9C6FF" : "#ffffff", night ? "#5E4C8A" : "#f7d9e3", night ? 0.4 : 0.3]} /\u003e
+      \u003cdirectionalLight position={[4, 9, 7]} intensity={night ? 2.2 : 3.0} color={night ? "#DCE4FF" : "#ffffff"} /\u003e
+      \u003cdirectionalLight position={[-6, 2, 4]} intensity={night ? 0.2 : 0.25} color="#dbe9ff" /\u003e
+    \u003c/\u003e
+  );
+}
+
+export default function App() {
+  const phase = useGame((s) =\u003e s.phase);
+  const input = useInput(phase === "playing");
+  useEffect(() =\u003e {
+    // debug deep-links: #gameover / #play / #lab
+    if (location.hash === "#gameover") useGame.setState({ phase: "gameover" });
+    if (location.hash === "#play") useGame.getState().start();
+    if (location.hash === "#lab") useGame.getState().openLab();
+  }, []);
+
+  return (
+    \u003cdiv className="fixed inset-0 flex items-center justify-center bg-[#F4DDE5] font-[Baloo_2,ui-rounded,system-ui,sans-serif]"\u003e
+      {/* decorative desktop backdrop */}
+      \u003cdiv
+        className="pointer-events-none absolute inset-0 opacity-60"
+        style={{ background: "radial-gradient(circle at 20% 20%, #ffe4ec 0, transparent 40%), radial-gradient(circle at 80% 80%, #dbe9ff 0, transparent 40%)" }}
+      /\u003e
+      \u003cdiv id="game-viewport" className="relative h-full w-full max-w-[min(100vw,calc(100dvh*0.62))] overflow-hidden bg-[#dcebff] shadow-[0_0_80px_rgba(120,60,90,0.25)]" style={{ touchAction: "none" }}\u003e
+        \u003cSky /\u003e
+        \u003cCanvas
+          flat
+          dpr={[1, 2]}
+          gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
+          camera={{ fov: C.fov, near: 0.1, far: 120, position: [0, 4, 20] }}
+          style={{ position: "absolute", inset: 0 }}
+        \u003e
+          \u003cLights /\u003e
+          \u003cSuspense fallback={null}\u003e
+            \u003cParticles /\u003e
+            {phase === "menu" \u0026\u0026 \u003cMenuScene /\u003e}
+            {phase === "playing" \u0026\u0026 \u003cGameScene input={input} /\u003e}
+            {phase === "gameover" \u0026\u0026 \u003cGameOverScene /\u003e}
+            {phase === "lab" \u0026\u0026 \u003cLabScene /\u003e}
+          \u003c/Suspense\u003e
+        \u003c/Canvas\u003e
+        {phase === "menu" \u0026\u0026 \u003cMenuOverlay /\u003e}
+        {phase === "playing" \u0026\u0026 \u003cHUD /\u003e}
+        {phase === "gameover" \u0026\u0026 \u003cGameOverOverlay /\u003e}
+        {phase === "lab" \u0026\u0026 \u003cLabOverlay /\u003e}
+      \u003c/div\u003e
+    \u003c/div\u003e
+  );
+}

@@ -1,0 +1,82 @@
+[PART 1 of 6 | src/ui/Overlays.tsx]
+import { useEffect, useState } from "react";
+import { useGame } from "../game/store";
+import { PALETTES, type CatId } from "../character/palettes";
+import { sfx } from "../game/sfx";
+import { requestTilt } from "../game/useInput";
+import { EXPRESSION_NAMES } from "../character/expressions";
+import { POSE_NAMES } from "../character/poses";
+import { ALL_ACCESSORIES, ALL_EMOTES, ALL_EVENTS } from "../character/Cat";
+import { labBus } from "../scenes/LabScene";
+
+/* ------------------------------------------------------------------ */
+const Btn = ({ children, onClick, color = "#FF8FAF", className = "", small = false }: { children: React.ReactNode; onClick: () =\u003e void; color?: string; className?: string; small?: boolean }) =\u003e (
+  \u003cbutton
+    data-ui
+    onClick={(e) =\u003e {
+      e.stopPropagation();
+      sfx.unlock();
+      sfx.click();
+      onClick();
+    }}
+    className={`sticker-btn select-none rounded-full font-black tracking-wide text-white transition-transform hover:scale-105 active:scale-95 ${small ? "px-4 py-2 text-sm" : "px-9 py-4 text-xl"} ${className}`}
+    style={{ background: color, boxShadow: `0 6px 0 rgba(0,0,0,0.18), 0 10px 24px ${color}66` }}
+  \u003e
+    {children}
+  \u003c/button\u003e
+);
+
+const Title = () =\u003e (
+  \u003cdiv className="text-center"\u003e
+    \u003cdiv className="sticker-text-sm text-[13px] font-black uppercase tracking-[0.45em] text-white/95"\u003ePeach \u0026 Goma\u003c/div\u003e
+    \u003ch1 className="sticker-text mt-1 text-5xl font-black leading-none text-white sm:text-6xl"\u003e
+      Sky\u003cspan className="text-[#FFD3E0]"\u003eHop\u003c/span\u003e
+    \u003c/h1\u003e
+  \u003c/div\u003e
+);
+
+const LEGEND = [
+  { icon: "☁️", text: "Clouds vanish" },
+  { icon: "🛏️", text: "Pillows launch" },
+  { icon: "🪀", text: "Trampolines flip" },
+  { icon: "🧊", text: "Ice slips" },
+  { icon: "🪨", text: "Crumble breaks" },
+  { icon: "🌵", text: "Cactus hurts" },
+  { icon: "⛈️", text: "Grumps bonk" },
+  { icon: "🚀🎈🛡️🧲", text: "Power-ups!" },
+];
+
+/* ------------------------------------------------------------------ */
+export function MenuOverlay() {
+  const character = useGame((s) =\u003e s.character);
+  const setCharacter = useGame((s) =\u003e s.setCharacter);
+  const best = useGame((s) =\u003e s.best);
+  const start = useGame((s) =\u003e s.start);
+  const openLab = useGame((s) =\u003e s.openLab);
+  const isTouch = typeof window !== "undefined" \u0026\u0026 matchMedia("(pointer: coarse)").matches;
+  const [legend, setLegend] = useState(false);
+
+  return (
+    \u003cdiv className="pointer-events-none absolute inset-0 flex flex-col items-center justify-between py-5"\u003e
+      \u003cdiv className="pointer-events-auto mt-1 floaty"\u003e
+        \u003cTitle /\u003e
+      \u003c/div\u003e
+      \u003cdiv className="pointer-events-auto flex w-full max-w-sm flex-col items-center gap-3 px-5"\u003e
+        \u003cdiv className="grid w-full grid-cols-2 gap-3"\u003e
+          {(["peach", "goma"] as CatId[]).map((id) =\u003e {
+            const p = PALETTES[id];
+            const sel = character === id;
+            return (
+              \u003cbutton
+                data-ui
+                key={id}
+                onClick={() =\u003e {
+                  sfx.unlock();
+                  sfx.select();
+                  setCharacter(id);
+                }}
+                className={`rounded-3xl border-4 px-3 py-3 text-left transition-all ${sel ? "scale-[1.03] border-white bg-white/90 shadow-xl" : "border-white/40 bg-white/45 hover:bg-white/60"}`}
+              \u003e
+                \u003cdiv className="flex items-center gap-2"\u003e
+                  \u003cspan className="inline-block h-5 w-5 rounded-full border-[3px] border-[#3B3231]" style={{ background: p.fur }} /\u003e
+                  \u003cspan className="text-lg font-black text-[#3B3231]"\u003e{p.name}\u003c/span\u003e

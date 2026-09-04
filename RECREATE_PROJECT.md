@@ -4,9 +4,9 @@ This single file contains **every source file** of **Peach & Goma: SkyHop** with
 exact repository path and byte-exact contents, so the complete directory tree can be
 recreated 1:1 from one URL — no shell, no zip tool, nothing but the ability to read text.
 
-- Source commit: `042a6e05e626cb2b4fc8220a148600b35130259d`
-- Generated (UTC): 2026-09-04 04:26:31
-- Files: 35 | Total: 334,126 bytes
+- Source commit: `361c570557767b4a112c54b4830d26793015c602`
+- Generated (UTC): 2026-09-04 08:20:32
+- Files: 35 | Total: 335,107 bytes
 - `gameproject.zip` (binary, byte-exact archive of these sources) is NOT inlined here;
   it sits in the repo root if you prefer `unzip` / `git clone`.
 
@@ -35,7 +35,7 @@ recreated 1:1 from one URL — no shell, no zip tool, nothing but the ability to
 | Path | Bytes | Lines | SHA-256 (first 12) |
 |---|---|---|---|
 | `.gitignore` | 334 | 36 | `5199f895d96b` |
-| `README.md` | 7,356 | 114 | `924e9bb802c9` |
+| `README.md` | 8,337 | 128 | `622410a0bef4` |
 | `index.html` | 783 | 17 | `4e453943df7b` |
 | `package-lock.json` | 111,680 | 3,274 | `1817046d8b0e` |
 | `package.json` | 784 | 33 | `ba25f973eae6` |
@@ -112,7 +112,7 @@ Thumbs.db
 
 <<<<< END FILE: .gitignore >>>>>
 
-<<<<< BEGIN FILE: README.md (7356 bytes) >>>>>
+<<<<< BEGIN FILE: README.md (8337 bytes) >>>>>
 # 🍑 Peach & Goma: SkyHop 🐾
 
 A cozy **3D vertical hopping platformer** starring two procedurally-rigged cats — **Peach** (the pink one) and
@@ -205,6 +205,12 @@ everywhere (including the Cat Lab). Full guide in [`src/character/README.md`](sr
 
 ## 🤖 For AI agents & programmatic access
 
+**Start here:** [`AGENT_PROMPT.txt`](AGENT_PROMPT.txt) — a 3.4 KB, tag-proof, plain-text
+instruction sheet an agent can follow verbatim: two one-fetch calibration probes, then a
+channel decision tree, anti-hallucination rules, and sanity anchors. Point your agent at
+its raw URL and it needs nothing else:
+`https://raw.githubusercontent.com/SonaMother/peach-goma-skyhop-3d-cat-platformer/main/AGENT_PROMPT.txt`
+
 Pick the first channel your toolset supports:
 
 1. **Shell** → `git clone https://github.com/SonaMother/peach-goma-skyhop-3d-cat-platformer.git`
@@ -212,13 +218,21 @@ Pick the first channel your toolset supports:
 3. **Code execution, no unzip** → GitHub contents API returns JSON with **base64** content — tag-proof by construction:
    `https://api.github.com/repos/SonaMother/peach-goma-skyhop-3d-cat-platformer/contents/<path>?ref=main`
    (decode `.content` with `atob` / `base64 -d`; works for `gameproject.zip` itself too)
-4. **Fetch-only agent (no shell)** → use **[`bundle/INDEX.json`](bundle/INDEX.json)** + the listed `bundle/shard-*.json`.
-   JSON responses survive HTML-stripping fetchers that mutilate raw `.tsx` (a fetch-only agent observed exactly
-   this failure mode with this repo — the shards exist because of it). Each file entry has exact `path`, `bytes`,
-   `sha256`, and `content`; write each `content` to its `path` and verify the hashes. `package-lock.json` is
-   regenerable via `npm install` if its shard is too big for your fetch cap.
+4. **Fetch-only agent (no shell)** → **simple parts walk** (easiest): fetch
+   [`PARTS_INDEX.md`](PARTS_INDEX.md) and follow *THE LOOP*. The repo's 34 source files are
+   pre-split into [`parts/`](parts/) — tiny plain-text `p001…p081` files, each ≤ 100 lines and
+   ≤ 4,000 bytes (caps chosen from measured 38.7 B/line average, safely under every observed
+   truncation cap). Each part's first line is a header `[PART k of n | path]`; the agent
+   creates/appends the target file as it reads — write-as-you-read, no JSON, no decoding.
+   If the agent's fetcher strips tag-like text (a known failure mode), the identical
+   [`parts-esc/`](parts-esc/) set stores `< > &` as `\u003c`-style sequences to be
+   replace-all'd back after each file.
+5. **Fetch-only, hardest fetchers** → JSON bundle: [`bundle/INDEX.json`](bundle/INDEX.json) +
+   `bundle/shard-NN.json`. Single-line JSON ≤ 8 KB with zero raw `< > &`, for agents that
+   strip tags even inside JSON and collapse newlines. Parts table, per-part and per-file
+   `sha256` inside; `package-lock.json` is regenerable via `npm install`.
    Mirror (serves proper `application/json`): `https://cdn.jsdelivr.net/gh/SonaMother/peach-goma-skyhop-3d-cat-platformer@main/bundle/INDEX.json`
-5. **Humans / normal markdown readers** → [`RECREATE_PROJECT.md`](RECREATE_PROJECT.md) (single-file bundle with
+6. **Humans / normal markdown readers** → [`RECREATE_PROJECT.md`](RECREATE_PROJECT.md) (single-file bundle with
    the same data in marked text blocks — avoid this one if your fetcher strips tags).
 
 ⚠️ Do **not** reconstruct this project from memory or partial fetches — the cat rig is ~2,600 lines of dense

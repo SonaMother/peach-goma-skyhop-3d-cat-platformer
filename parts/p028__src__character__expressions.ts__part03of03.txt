@@ -1,0 +1,18 @@
+[PART 3 of 3 | src/character/expressions.ts]
+  pout: ex({ eyeOpen: 0.8, eyeOffsetY: -0.02, browLift: 0.6, browAngle: 0.2, mouthPout: 1, cheekPuff: 1, blush: 1, headTilt: -0.12, whiskerLift: -0.4, earMood: -0.5 }),
+  bleh: ex({ eyeOpen: 0, eyeSquash: 1, winkR: 1, mouthTongue: 1, blush: 0.9, headTilt: 0.12, whiskerLift: 0.2 }),
+  yum: ex({ eyeOpen: 0, eyeHappy: 1, mouthTongue: 1, blush: 1.2, cheekPuff: 0.5, whiskerLift: 0.6, earMood: 0.5 }),
+  cold: ex({ eyeOpen: 0.7, eyeScale: 0.9, browLift: 1, browAngle: 0.4, mouthWobble: 1, blush: 1.2, whiskerLift: -0.5, earMood: -0.6, shiver: 1 }),
+  confused: ex({ eyeScale: 1.05, browLift: 1, browAngle: 0.15, browHeight: 0.4, winkR: 0.4, mouthLine: 0.6, mouthO: 0.3, blush: 0.6, headTilt: 0.3, whiskerLift: 0.1, earMood: 0.3 }),
+  proud: ex({ eyeOpen: 0.4, eyeLid: 0.6, mouthSmile: 1, blush: 0.9, headTilt: -0.08, browLift: 0.5, browAngle: -0.15, whiskerLift: 0.5, earMood: 0.6 }),
+  kiss: ex({ eyeOpen: 0, eyeSquash: 1, mouthPout: 1, blush: 1.5, headTilt: 0.18, whiskerLift: 0.4, earMood: 0.3 }),
+  sing: ex({ eyeOpen: 0, eyeHappy: 1, mouthO: 1, blush: 1, headTilt: 0.15, whiskerLift: 0.5, earMood: 0.5 }),
+  unimpressed: ex({ eyeOpen: 0.6, eyeLid: 0.6, mouthLine: 1, blush: 0.5, whiskerLift: -0.2, earMood: -0.3 }),
+  wink: ex({ mouthSmile: 1, winkR: 1, blush: 1, eyeSparkle: 1, headTilt: -0.1, whiskerLift: 0.4, earMood: 0.5 }),
+  ouch: ex({ eyeOpen: 0, eyeCry: 1, browLift: 1, browAngle: 0.5, mouthScream: 0.6, blush: 0.9, tears: 0.6, sweat: 0.5, whiskerLift: -0.5, earMood: -0.7 }),
+  relieved: ex({ eyeOpen: 0, eyeHappy: 0.7, eyeSquash: 0.4, mouthSmile: 0.8, blush: 0.8, sweat: 0.7, headTilt: 0.1, whiskerLift: 0.1, earMood: -0.1 }),
+  wow: ex({ eyeScale: 1.25, eyeSparkle: 1.2, mouthO: 1, blush: 0.9, browLift: 0.5, browHeight: 0.6, whiskerLift: 0.9, earMood: 1 }),
+};
+
+export const EXPRESSION_KEYS = Object.keys(BASE) as (keyof ExpressionParams)[];
+export const EXPRESSION_NAMES = Object.keys(EXPRESSIONS) as ExpressionName[];

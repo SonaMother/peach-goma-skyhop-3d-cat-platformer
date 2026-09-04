@@ -1,0 +1,101 @@
+[PART 1 of 16 | src/character/Cat.tsx]
+import * as THREE from "three";
+import { useFrame } from "@react-three/fiber";
+import { memo, useCallback, useMemo, useRef, type MutableRefObject } from "react";
+import { Part, OUTLINE_W } from "./Part";
+import { bubble, flat, toon } from "./materials";
+import { Spring, Spring2, Chain, damp, clamp, rand, noise1 } from "./springs";
+import { EXPRESSIONS, EXPRESSION_KEYS, type ExpressionName, type ExpressionParams } from "./expressions";
+import { POSES, POSE_EXPRESSION, POSE_KEYS, POSE_SPRING_TUNING, type MotionState, type PoseParams } from "./poses";
+import type { CatPalette } from "./palettes";
+import { HEART_FLAT, STAR_FLAT, STAR_GEO } from "../world/geometries";
+
+/* ------------------------------------------------------------------ */
+/*  Driver: the tiny mutable contract between game logic and the rig   */
+/* ------------------------------------------------------------------ */
+export type CatEvent =
+  | "land"
+  | "jump"
+  | "superJump"
+  | "spring"
+  | "collect"
+  | "star"
+  | "yum"
+  | "hurt"
+  | "hugged"
+  | "bump"
+  | "cheer"
+  | "slip"
+  | "stun"
+  | "shieldOn"
+  | "shieldPop"
+  | "rocketOn"
+  | "balloonOn"
+  | "balloonPop"
+  | "magnet"
+  | "wrap"
+  | "perfect"
+  | "milestone"
+  | "record"
+  | "poke"
+  | "pokeBelly"
+  | "pokeTail"
+  | "pet"
+  | "nearMiss"
+  | "startle"
+  | "wakeUp";
+
+export type EmoteName = "exclaim" | "question" | "heart" | "zzz" | "note" | "sweat" | "sparkles" | "anger" | "hearts3";
+export type Accessory = "none" | "balloon" | "rocket" | "shield" | "umbrella" | "fish";
+export type PokeZone = "head" | "belly" | "tail";
+
+export interface CatDriver {
+  vx: number;
+  vy: number;
+  state: MotionState;
+  /** Optional base expression override (otherwise derived from the motion state) */
+  expression: ExpressionName | null;
+  /** -1..1 where the cat looks / turns */
+  look: number;
+  /** -1..1 vertical gaze */
+  lookY: number;
+  /** Persistent emote bubble (null = only event-driven emotes) */
+  emote: EmoteName | null;
+  accessory: Accessory;
+  /** One-shot events consumed by the rig every frame */
+  events: CatEvent[];
+  /** Freeze autonomous behaviours (blink, look-around) */
+  autonomous: boolean;
+  /** Allow idle fidgets (yawn, stretch, groom, doze off…) when idle for a while */
+  fidgets: boolean;
+}
+
+export const createDriver = (o: Partial<CatDriver> = {}): CatDriver => ({
+  vx: 0,
+  vy: 0,
+  state: "idle",
+  expression: null,
+  look: 0,
+  lookY: 0,
+  emote: null,
+  accessory: "none",
+  events: [],
+  autonomous: true,
+  fidgets: true,
+  ...o,
+});
+
+/* Timed expression flashes triggered by events (name, seconds) */
+const EVENT_FLASH: Partial<Record<CatEvent, [ExpressionName, number]>> = {
+  land: ["squint", 0.13],
+  superJump: ["joy", 0.9],
+  spring: ["wow", 0.7],
+  collect: ["love", 0.7],
+  star: ["starEyes", 1.0],
+  yum: ["yum", 1.2],
+  hurt: ["ouch", 1.3],
+  hugged: ["love", 1.8],
+  bump: ["surprised", 0.35],
+  cheer: ["joy", 1.2],
+  slip: ["shocked", 0.6],
+  stun: ["dizzy", 1.4],

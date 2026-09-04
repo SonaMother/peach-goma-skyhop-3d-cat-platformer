@@ -1,0 +1,101 @@
+[PART 1 of 4 | src/character/poses.ts]
+/**
+ * POSE / MOTION-STATE SYSTEM
+ * --------------------------
+ * A "pose" is a set of body targets. The rig springs toward the active pose
+ * each frame and layers procedural motion (velocity reactions, breathing,
+ * flailing, wagging, shivering...) on top.
+ *
+ * To add a new motion state: add an entry to POSES (and, optionally, a
+ * default expression in POSE_EXPRESSION).
+ */
+import type { ExpressionName } from "./expressions";
+
+export interface PoseParams {
+  stretch: number; // vertical stretch factor (1 = neutral)
+  crouch: number; // lowers the whole body (world units)
+  lean: number; // extra body lean (radians, z)
+  bodyPitch: number; // whole body pitch (x), + = leaning forward
+  bodyRoll: number; // continuous spin speed (rad/s) around x — trampoline flips
+  headTilt: number; // z
+  headPitch: number; // x, + = looking down
+  headYaw: number; // y
+  armRaiseL: number; // outward/up rotation
+  armRaiseR: number;
+  armForwardL: number; // toward camera
+  armForwardR: number;
+  armWiggle: number; // sinus flail amplitude
+  armWiggleSpeed: number;
+  wave: number; // right-arm wave amplitude
+  pawUpL: number; // paw pad shown / forearm curl
+  pawUpR: number;
+  legL: number; // leg forward rotation
+  legR: number;
+  legSpread: number; // legs apart (z rot)
+  walkCycle: number; // 0..1 leg cycle amplitude
+  walkSpeed: number;
+  earFold: number; // - = flat back, + = perked
+  earTipFlop: number; // - = tips droop
+  tailLift: number;
+  tailWag: number; // wag amplitude
+  tailWagSpeed: number;
+  tailCurl: number; // curl tightness
+  bob: number; // idle bob amplitude
+  bobSpeed: number;
+  shiver: number; // body jitter amplitude
+  whiskerFlare: number;
+}
+
+export type MotionState =
+  | "idle"
+  | "walk"
+  | "run"
+  | "rise"
+  | "apex"
+  | "fall"
+  | "plummet"
+  | "land"
+  | "superJump"
+  | "spin"
+  | "rocket"
+  | "float"
+  | "glide"
+  | "stunned"
+  | "hurt"
+  | "slip"
+  | "balance"
+  | "sit"
+  | "sitSad"
+  | "hug"
+  | "wave"
+  | "celebrate"
+  | "dance"
+  | "dizzy"
+  | "lieDown"
+  | "sleep"
+  | "yawn"
+  | "stretchUp"
+  | "groom"
+  | "peek"
+  | "shiver"
+  | "pounce"
+  | "think"
+  | "bow"
+  | "yum"
+  | "laugh"
+  | "scaredBack"
+  | "proud";
+
+const BASE: PoseParams = {
+  stretch: 1,
+  crouch: 0,
+  lean: 0,
+  bodyPitch: 0,
+  bodyRoll: 0,
+  headTilt: 0,
+  headPitch: 0,
+  headYaw: 0,
+  armRaiseL: 0.35,
+  armRaiseR: 0.35,
+  armForwardL: 0.25,
+  armForwardR: 0.25,

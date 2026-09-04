@@ -1,0 +1,101 @@
+[PART 1 of 3 | src/character/expressions.ts]
+/**
+ * EXPRESSION SYSTEM
+ * -----------------
+ * Every facial feature is a continuous channel. An "expression" is a preset.
+ * The rig cross-fades between presets every frame, so any two expressions blend
+ * naturally, and event "flashes" can interrupt for a moment and melt back.
+ *
+ * To add a new expression: add an entry to EXPRESSIONS. That's it.
+ */
+export interface ExpressionParams {
+  /* ---- eyes ---- */
+  eyeOpen: number; // 0 = closed line, 1 = fully open dot
+  eyeScale: number; // 1 = normal, \u003e1 = wide, \u003c1 = tiny
+  eyeHappy: number; // ^ ^ arcs
+  eyeCry: number; // \u003e \u003c  squeezed
+  eyeHeart: number; // ♥ ♥
+  eyeStar: number; // ★ ★
+  eyeSpiral: number; // @ @ dizzy
+  eyeShock: number; // tiny pupil in a white ring
+  eyeLid: number; // upper lid coverage 0..1 (smug / sleepy / unimpressed)
+  eyeSparkle: number; // highlight size
+  eyeOffsetY: number; // vertical shift
+  eyeSquash: number; // horizontal squash of the dot (0..1) for a "flat" line look
+  winkR: number; // right eye closes independently
+  /* ---- brows ---- */
+  browLift: number; // visibility
+  browAngle: number; // + worried (inner up), - angry
+  browHeight: number; // extra raise
+  /* ---- mouth ---- */
+  mouthCat: number; // ω
+  mouthSmile: number; // ◡
+  mouthOpen: number; // open happy mouth w/ tongue
+  mouthO: number; // small o
+  mouthFrown: number; // ︿
+  mouthWobble: number; // ~ (about to cry)
+  mouthScream: number; // big D: shape
+  mouthGrin: number; // wide toothy grin
+  mouthTongue: number; // :P bleh
+  mouthLine: number; // flat —
+  mouthPout: number; // 3 / kiss
+  /* ---- extras ---- */
+  blush: number;
+  tears: number;
+  sweat: number;
+  angerMark: number; // 💢
+  cheekPuff: number; // puffed cheeks
+  whiskerLift: number; // -1 droop .. +1 perk
+  earMood: number; // -1 flat back .. +1 perked (blends into ears)
+  headTilt: number; // additive radians
+  shiver: number; // face jitter amplitude
+}
+
+export type ExpressionName =
+  | "neutral"
+  | "content"
+  | "happy"
+  | "joy"
+  | "laugh"
+  | "excited"
+  | "surprised"
+  | "shocked"
+  | "worried"
+  | "scared"
+  | "terrified"
+  | "squint"
+  | "love"
+  | "heartEyes"
+  | "starEyes"
+  | "sad"
+  | "cry"
+  | "sob"
+  | "sleepy"
+  | "asleep"
+  | "smug"
+  | "determined"
+  | "dizzy"
+  | "shy"
+  | "angry"
+  | "pout"
+  | "bleh"
+  | "yum"
+  | "cold"
+  | "confused"
+  | "proud"
+  | "kiss"
+  | "sing"
+  | "unimpressed"
+  | "wink"
+  | "ouch"
+  | "relieved"
+  | "focus"
+  | "wow";
+
+const BASE: ExpressionParams = {
+  eyeOpen: 1,
+  eyeScale: 1,
+  eyeHappy: 0,
+  eyeCry: 0,
+  eyeHeart: 0,
+  eyeStar: 0,

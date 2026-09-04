@@ -1,0 +1,100 @@
+[PART 6 of 7 | src/scenes/GameScene.tsx]
+    d.expression = P.dead ? "terrified" : P.combo \u003e= 6 \u0026\u0026 d.state === "rise" ? "smug" : P.combo \u003e= 3 \u0026\u0026 d.state === "rise" ? "determined" : null;
+    d.vx = P.vx;
+    d.vy = P.vy;
+    d.look = clamp(P.vx / 5, -1, 1);
+    d.lookY = clamp(P.vy / 22, -1, 1) * 0.6;
+    let acc: Accessory = "none";
+    if (rocket) acc = "rocket";
+    else if (balloon) acc = "balloon";
+    else if (P.fishTimer \u003e 0) acc = "fish";
+    d.accessory = acc;
+
+    if (catRef.current) catRef.current.position.set(P.x, P.y, 0);
+
+    /* ---------- shield bubble ---------- */
+    if (shieldRef.current) {
+      shieldRef.current.visible = P.shield;
+      if (P.shield) {
+        const blink = P.shieldT \u003c 2.5 ? (Math.sin(P.t * 18) \u003e 0 ? 1 : 0.35) : 1;
+        shieldRef.current.position.set(P.x, P.y + 0.72, 0);
+        shieldRef.current.scale.setScalar((1 + Math.sin(P.t * 3) * 0.03) * blink);
+        shieldRef.current.rotation.y = P.t * 0.5;
+      }
+    }
+
+    /* ---------- contact shadow ---------- */
+    if (shadowRef.current) {
+      let bestTop = -Infinity;
+      for (const p of world.platforms) {
+        if (!p.alive) continue;
+        const top = p.y + topOffset(p);
+        if (top \u003c= P.y + 0.05 \u0026\u0026 top \u003e bestTop \u0026\u0026 Math.abs(P.x - p.x) \u003c p.w / 2 + 0.25) bestTop = top;
+      }
+      const dist = P.y - bestTop;
+      if (bestTop \u003e -Infinity \u0026\u0026 dist \u003c 7) {
+        const k = 1 - dist / 7;
+        shadowRef.current.visible = true;
+        shadowRef.current.position.set(P.x, bestTop + 0.03, 0.15);
+        shadowRef.current.scale.set(0.35 + 0.65 * k, 0.6 * (0.35 + 0.65 * k), 1);
+        shadowMat.opacity = 0.05 + 0.2 * k * k;
+      } else shadowRef.current.visible = false;
+    }
+
+    /* ---------- camera ---------- */
+    const aspect = size.width / size.height;
+    const halfTan = Math.tan(THREE.MathUtils.degToRad(C.fov / 2));
+    const dist = clamp((C.halfW * 1.08) / (halfTan * aspect), 8, 40);
+    const H = dist * halfTan;
+    const wanted = Math.max(camY.current, P.y + H * (rocket ? 0.15 : 0.3));
+    camY.current = damp(camY.current, wanted, rocket ? 12 : 7, dt);
+    camX.current = damp(camX.current, P.x, 3, dt);
+
+    /* ---------- world streaming ---------- */
+    let changed = false;
+    if (spawnUpTo(world, camY.current + H + 6)) changed = true;
+    if (cullBelow(world, camY.current - H - 6)) changed = true;
+    if (changed) setVersion((v) =\u003e v + 1);
+
+    /* ---------- scoring ---------- */
+    P.maxY = Math.max(P.maxY, P.y);
+    if (P.maxY \u003e= P.nextMilestone) {
+      store.pushToast(`${P.nextMilestone}m!`, "#FFFFFF");
+      P.nextMilestone += 100;
+      d.events.push("milestone");
+      celebrate(P.x, P.y + 1.4, 0.4);
+      sfx.milestone();
+    }
+    const score = Math.floor(P.maxY * 10) + P.hearts * 50 + P.hugs * 300 + P.bonus;
+    if (score !== P.lastScore) {
+      P.lastScore = score;
+      store.updateRun({ score, altitude: Math.floor(P.maxY), hearts: P.hearts, hugs: P.hugs, combo: P.combo, bestCombo: P.bestCombo, stars: P.stars, fish: P.fish });
+      const tier = P.maxY \u003c 45 ? 0 : P.maxY \u003c 110 ? 1 : P.maxY \u003c 190 ? 2 : P.maxY \u003c 300 ? 3 : 4;
+      store.setSkyTier(tier);
+      const best = store.best[character];
+      if (!P.recordShown \u0026\u0026 best \u003e 0 \u0026\u0026 score \u003e best) {
+        P.recordShown = true;
+        d.events.push("record");
+        store.pushToast("NEW BEST!", "#FFD35C");
+        celebrate(P.x, P.y + 1.4, 0.4);
+        sfx.milestone();
+      }
+    }
+
+    /* ---------- death ---------- */
+    if (!P.dead \u0026\u0026 P.y \u003c camY.current - H - 1.2) {
+      P.dead = true;
+      P.deadTimer = 0.9;
+      sfx.fall();
+    }
+    if (P.dead) {
+      P.deadTimer -= dt;
+      if (P.deadTimer \u003c= 0) {
+        store.endRun();
+        sfx.sad();
+      }
+    }
+  });
+
+  return (
+    \u003c\u003e

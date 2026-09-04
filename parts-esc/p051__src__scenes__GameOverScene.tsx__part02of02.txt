@@ -1,0 +1,33 @@
+[PART 2 of 2 | src/scenes/GameOverScene.tsx]
+        m.expression = null;
+      }
+      m.look = 0.5;
+      m.lookY = 0.2;
+      if (t \u003e 4.5) {
+        b.state = t % 6 \u003c 3 ? "hug" : "wave";
+        b.expression = t % 6 \u003c 3 ? "love" : "happy";
+      }
+    }
+    mem.heartTimer -= dt;
+    if (mem.hugged \u0026\u0026 mem.heartTimer \u003c= 0) {
+      mem.heartTimer = 1.6;
+      fx.burst("hearts", 0.3, 2.0, 0.6, 3);
+    }
+  });
+
+  return (
+    \u003c\u003e
+      \u003cCameraRig camY={camY} camX={camX} lookDown={1.3} zoom={2.3} /\u003e
+      \u003cgroup position={[0, -0.02, 0]}\u003e
+        \u003cPart geometry={STAGE} color="#C9E9C0" position={[0, -0.3, 0]} outlineWidth={0.07} /\u003e
+        \u003cPart geometry={STAGE_TOP} color="#EAF8E4" position={[0, 0.05, 0]} outlineWidth={0} /\u003e
+      \u003c/group\u003e
+      \u003cCat palette={pal} driver={me} position={[-0.3, 0, 0.5]} scale={C.catScale * 1.15} interactive onEvent={catSound} /\u003e
+      \u003cTissueBox position={[-0.3, 0.02, 1.25]} /\u003e
+      \u003cgroup ref={buddyG} position={[3.8, 0, -0.35]}\u003e
+        \u003cCat palette={comp} driver={buddy} scale={C.catScale * 1.1} /\u003e
+      \u003c/group\u003e
+      \u003cBackdrop camYRef={camY} count={8} spread={8} /\u003e
+    \u003c/\u003e
+  );
+}

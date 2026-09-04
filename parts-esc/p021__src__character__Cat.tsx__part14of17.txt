@@ -1,0 +1,48 @@
+[PART 14 of 17 | src/character/Cat.tsx]
+                  \u003cmesh geometry={G.tinyArc} material={M.ink} position={[0.034, -0.01, 0]} rotation={[0, 0, Math.PI]} /\u003e
+                \u003c/group\u003e
+                \u003cgroup ref={r("mouthLine")}\u003e
+                  \u003cmesh geometry={G.line} material={M.ink} position={[0, -0.01, 0]} /\u003e
+                \u003c/group\u003e
+                \u003cgroup ref={r("mouthPout")}\u003e
+                  \u003cmesh geometry={G.tinyArc} material={M.ink} position={[0.005, 0.03, 0]} rotation={[0, 0, -Math.PI / 2]} /\u003e
+                  \u003cmesh geometry={G.tinyArc} material={M.ink} position={[0.005, -0.04, 0]} rotation={[0, 0, -Math.PI / 2]} /\u003e
+                \u003c/group\u003e
+                \u003cgroup ref={r("mouthO")}\u003e
+                  \u003cmesh geometry={G.oMouth} material={M.ink} /\u003e
+                  \u003cmesh geometry={G.oMouth} material={M.mouthIn} position={[0, 0, 0.002]} scale={0.62} /\u003e
+                \u003c/group\u003e
+                \u003cgroup ref={r("mouthOpen")} position={[0, -0.04, 0]}\u003e
+                  \u003cmesh geometry={G.mouthOpenRim} material={M.ink} scale={[0.95, 1.1, 1]} /\u003e
+                  \u003cmesh geometry={G.mouthOpen} material={M.mouthIn} position={[0, 0, 0.002]} scale={[0.95, 1.1, 1]} /\u003e
+                  \u003cmesh geometry={G.tongue} material={M.tongue} position={[0, -0.05, 0.004]} /\u003e
+                \u003c/group\u003e
+                \u003cgroup ref={r("mouthScream")} position={[0, -0.1, 0]}\u003e
+                  \u003cmesh geometry={G.screamRim} material={M.ink} scale={[0.9, 1.15, 1]} /\u003e
+                  \u003cmesh geometry={G.scream} material={M.mouthIn} position={[0, 0, 0.002]} scale={[0.9, 1.15, 1]} /\u003e
+                  \u003cmesh geometry={G.tongue} material={M.tongue} position={[0, -0.1, 0.004]} scale={1.2} /\u003e
+                \u003c/group\u003e
+                \u003cgroup ref={r("mouthGrin")} position={[0, -0.02, 0]}\u003e
+                  \u003cmesh geometry={G.mouthOpenRim} material={M.ink} scale={[1.7, 0.95, 1]} /\u003e
+                  \u003cmesh geometry={G.mouthOpen} material={M.mouthIn} position={[0, 0, 0.002]} scale={[1.7, 0.95, 1]} /\u003e
+                  \u003cmesh geometry={G.teeth} material={M.white} position={[0, 0.06, 0.004]} /\u003e
+                  \u003cmesh geometry={G.tongue} material={M.tongue} position={[0, -0.06, 0.004]} scale={[1.3, 0.9, 1]} /\u003e
+                \u003c/group\u003e
+                \u003cgroup ref={r("mouthTongue")} position={[0, -0.06, 0]}\u003e
+                  \u003cmesh geometry={G.tongue} material={M.ink} position={[0, 0, 0]} scale={[0.85, 1.25, 1]} /\u003e
+                  \u003cmesh geometry={G.tongue} material={M.tongue} position={[0, -0.005, 0.003]} scale={[0.68, 1.1, 1]} /\u003e
+                \u003c/group\u003e
+              \u003c/group\u003e
+              {/* sweat drop + anger mark */}
+              \u003cPart ref={r("sweat")} geometry={G.drop} material={M.tear} outlineWidth={0.03} position={[0.82, 0.55, 0.45]} /\u003e
+              \u003cgroup ref={r("anger")} position={[0.6, 0.62, faceZ(0.6, 0.62) + 0.02]} rotation={[0, 0.5, 0]}\u003e
+                {[0, 1, 2, 3].map((i) =\u003e (
+                  \u003cmesh key={i} geometry={G.angerBar} material={M.anger} rotation={[0, 0, (i * Math.PI) / 4 + 0.4]} position={[Math.cos(i * 1.57) * 0.03, Math.sin(i * 1.57) * 0.03, 0]} /\u003e
+                ))}
+              \u003c/group\u003e
+
+              {/* ---- emote bubbles ---- */}
+              \u003cgroup ref={r("emotes")} position={[0.7, 1.25, 0.1]}\u003e
+                \u003cgroup ref={r("emote_exclaim")}\u003e
+                  \u003cPart geometry={G.exclaimBar} material={M.emoteRed} position={[0, 0.25, 0]} outlineWidth={0.035} /\u003e
+                  \u003cPart geometry={G.exclaimDot} material={M.emoteRed} position={[0, -0.05, 0]} outlineWidth={0.035} /\u003e

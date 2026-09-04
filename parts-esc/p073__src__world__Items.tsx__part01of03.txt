@@ -1,0 +1,78 @@
+[PART 1 of 3 | src/world/Items.tsx]
+import * as THREE from "three";
+import { useFrame } from "@react-three/fiber";
+import { memo, useRef } from "react";
+import { Part } from "../character/Part";
+import { flat, toon, bubble } from "../character/materials";
+import type { EnemyData, ItemData } from "../game/world";
+import { FISH_GEO, HEART_GEO, STAR_GEO_BIG } from "./geometries";
+
+const HEART_COLOR = "#FF6F91";
+const BALLOON = new THREE.SphereGeometry(0.34, 22, 16);
+const KNOT = new THREE.ConeGeometry(0.06, 0.08, 8);
+const STRING = new THREE.CylinderGeometry(0.01, 0.01, 0.5, 6);
+const ROCKET_BODY = new THREE.CapsuleGeometry(0.17, 0.36, 8, 16);
+const ROCKET_TIP = new THREE.ConeGeometry(0.16, 0.24, 16);
+const FIN = new THREE.BoxGeometry(0.06, 0.22, 0.18);
+const WINDOW = new THREE.CircleGeometry(0.07, 14);
+const SHIELD_ORB = new THREE.SphereGeometry(0.36, 24, 16);
+const SHIELD_CORE = new THREE.OctahedronGeometry(0.16, 0);
+const MAGNET_U = new THREE.TorusGeometry(0.22, 0.08, 10, 20, Math.PI);
+const MAGNET_LEG = new THREE.CylinderGeometry(0.08, 0.08, 0.2, 10);
+const MAGNET_TIP = new THREE.CylinderGeometry(0.085, 0.085, 0.09, 10);
+const GLOW = new THREE.CircleGeometry(0.55, 24);
+const PUFF = new THREE.SphereGeometry(0.5, 18, 12);
+const EYE = new THREE.CircleGeometry(0.07, 12);
+const BROW = new THREE.BoxGeometry(0.22, 0.05, 0.01);
+const FROWN = new THREE.TorusGeometry(0.12, 0.028, 8, 16, Math.PI);
+const BOLT = (() =\u003e {
+  const s = new THREE.Shape();
+  s.moveTo(0.05, 0.3);
+  s.lineTo(-0.12, 0);
+  s.lineTo(0.0, 0);
+  s.lineTo(-0.06, -0.3);
+  s.lineTo(0.14, 0.04);
+  s.lineTo(0.02, 0.04);
+  s.closePath();
+  const g = new THREE.ExtrudeGeometry(s, { depth: 0.06, bevelEnabled: false });
+  g.center();
+  return g;
+})();
+
+const glowMat = flat("#FFF6D6", { opacity: 0.35, depthWrite: false });
+const ink = flat("#3B3231");
+const CHEEK = new THREE.CircleGeometry(0.09, 14);
+const cheekMat = flat("#C7A5B8", { opacity: 0.8 });
+const boltMat = toon("#FFE45C", { emissive: "#FFC400", emissiveIntensity: 0.7 });
+
+function ItemBody({ kind }: { kind: ItemData["kind"] }) {
+  switch (kind) {
+    case "heart":
+      return \u003cPart geometry={HEART_GEO} color={HEART_COLOR} outlineWidth={0.045} /\u003e;
+    case "fish":
+      return (
+        \u003cgroup rotation={[0, 0, 0.2]}\u003e
+          \u003cPart geometry={FISH_GEO} color="#9FD0FF" outlineWidth={0.04} /\u003e
+          \u003cmesh geometry={EYE} material={ink} position={[0.1, 0.03, 0.1]} scale={0.6} /\u003e
+          \u003cmesh geometry={EYE} material={flat("#ffffff")} position={[0.115, 0.045, 0.102]} scale={0.22} /\u003e
+        \u003c/group\u003e
+      );
+    case "star":
+      return \u003cPart geometry={STAR_GEO_BIG} color="#FFD35C" outlineWidth={0.045} /\u003e;
+    case "rocket":
+      return (
+        \u003cgroup rotation={[0, 0, -0.35]}\u003e
+          \u003cPart geometry={ROCKET_BODY} color="#FF6B7A" outlineWidth={0.045} /\u003e
+          \u003cPart geometry={ROCKET_TIP} color="#FFFFFF" position={[0, 0.44, 0]} outlineWidth={0.04} /\u003e
+          \u003cPart geometry={FIN} color="#FFFFFF" position={[-0.2, -0.25, 0]} outlineWidth={0.03} /\u003e
+          \u003cPart geometry={FIN} color="#FFFFFF" position={[0.2, -0.25, 0]} outlineWidth={0.03} /\u003e
+          \u003cmesh geometry={WINDOW} material={flat("#9FD8FF")} position={[0, 0.08, 0.175]} /\u003e
+          \u003cmesh geometry={WINDOW} material={ink} position={[0, 0.08, 0.172]} scale={1.3} /\u003e
+        \u003c/group\u003e
+      );
+    case "balloon":
+      return (
+        \u003cgroup position={[0, 0.15, 0]}\u003e
+          \u003cmesh geometry={STRING} material={ink} position={[0, -0.55, 0]} /\u003e
+          \u003cPart geometry={KNOT} color="#FFD35C" position={[0, -0.36, 0]} rotation={[Math.PI, 0, 0]} outlineWidth={0.03} /\u003e
+          \u003cPart geometry={BALLOON} color="#FFD35C" scale={[1, 1.15, 1]} outlineWidth={0.045}\u003e

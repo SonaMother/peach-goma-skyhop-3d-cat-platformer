@@ -1,0 +1,28 @@
+[PART 3 of 3 | src/world/Items.tsx]
+    if (puffs.current) puffs.current.rotation.z = Math.sin(t * 2) * 0.05;
+  });
+  const col = "#8E8AA6";
+  return (
+    \u003cgroup ref={g} position={[e.x, e.y, 0]}\u003e
+      \u003cgroup ref={puffs}\u003e
+        \u003cPart geometry={PUFF} color={col} position={[-0.45, -0.05, 0]} scale={[0.9, 0.7, 0.8]} outlineWidth={0.06} /\u003e
+        \u003cPart geometry={PUFF} color={col} position={[0, 0.12, 0.05]} scale={[1.2, 0.9, 0.95]} outlineWidth={0.06} /\u003e
+        \u003cPart geometry={PUFF} color={col} position={[0.45, -0.05, 0]} scale={[0.9, 0.7, 0.8]} outlineWidth={0.06} /\u003e
+        \u003cPart geometry={PUFF} color={col} position={[0, -0.22, 0.1]} scale={[1.3, 0.45, 0.9]} outlineWidth={0.06} /\u003e
+      \u003c/group\u003e
+      \u003cgroup ref={face} position={[0, 0.05, 0.55]}\u003e
+        \u003cmesh geometry={EYE} material={ink} position={[-0.18, 0.05, 0]} /\u003e
+        \u003cmesh geometry={EYE} material={ink} position={[0.18, 0.05, 0]} /\u003e
+        \u003cmesh geometry={BROW} material={ink} position={[-0.19, 0.17, 0]} rotation={[0, 0, -0.5]} /\u003e
+        \u003cmesh geometry={BROW} material={ink} position={[0.19, 0.17, 0]} rotation={[0, 0, 0.5]} /\u003e
+        \u003cmesh geometry={FROWN} material={ink} position={[0, -0.16, 0]} /\u003e
+        \u003cmesh geometry={CHEEK} material={cheekMat} position={[-0.34, -0.06, -0.02]} /\u003e
+        \u003cmesh geometry={CHEEK} material={cheekMat} position={[0.34, -0.06, -0.02]} /\u003e
+      \u003c/group\u003e
+      \u003cmesh ref={bolt} geometry={BOLT} material={boltMat} position={[0.1, -0.55, 0.2]} /\u003e
+    \u003c/group\u003e
+  );
+}
+
+export const Item = memo(ItemImpl);
+export const Grump = memo(GrumpImpl);

@@ -1,0 +1,83 @@
+[PART 2 of 6 | src/ui/Overlays.tsx]
+                  {sel \u0026\u0026 \u003cspan className="ml-auto rounded-full bg-[#FF8FAF] px-2 py-0.5 text-[10px] font-black text-white"\u003ePICKED\u003c/span\u003e}
+                \u003c/div\u003e
+                \u003cdiv className="mt-1 text-[11px] font-semibold leading-tight text-[#6b5e5c]"\u003e{p.tagline}\u003c/div\u003e
+                \u003cdiv className="mt-1 text-[11px] font-bold text-[#a0898a]"\u003eBest: {best[id].toLocaleString()}\u003c/div\u003e
+              \u003c/button\u003e
+            );
+          })}
+        \u003c/div\u003e
+        \u003cBtn
+          onClick={() =\u003e {
+            if (isTouch) requestTilt();
+            start();
+          }}
+          className="w-full"
+        \u003e
+          ▶ \u0026nbsp;Play as {PALETTES[character].name}
+        \u003c/Btn\u003e
+        \u003cdiv className="flex w-full gap-2"\u003e
+          \u003cBtn small color="#B08BEA" className="flex-1" onClick={openLab}\u003e
+            🔬 Cat Lab
+          \u003c/Btn\u003e
+          \u003cBtn small color="#8FB8FF" className="flex-1" onClick={() =\u003e setLegend((v) =\u003e !v)}\u003e
+            {legend ? "Hide" : "📖 How to play"}
+          \u003c/Btn\u003e
+        \u003c/div\u003e
+        {legend ? (
+          \u003cdiv className="pop-in grid w-full grid-cols-2 gap-x-3 gap-y-1 rounded-2xl border-4 border-white/70 bg-white/80 px-3 py-2 text-[11px] font-bold text-[#3B3231]"\u003e
+            {LEGEND.map((l) =\u003e (
+              \u003cdiv key={l.text} className="flex items-center gap-1.5"\u003e
+                \u003cspan\u003e{l.icon}\u003c/span\u003e
+                \u003cspan\u003e{l.text}\u003c/span\u003e
+              \u003c/div\u003e
+            ))}
+            \u003cdiv className="col-span-2 mt-1 text-center text-[10px] text-[#6b5e5c]"\u003eLand dead-center for PERFECT combos ✨ Hug friends 🤗\u003c/div\u003e
+          \u003c/div\u003e
+        ) : (
+          \u003cp className="text-center text-[12px] font-bold leading-snug text-[#3B3231]/70"\u003e
+            {isTouch ? "Tilt or tap left / right to steer." : "← → or A / D to steer."} Poke, pet \u0026 tickle the cats!
+          \u003c/p\u003e
+        )}
+      \u003c/div\u003e
+    \u003c/div\u003e
+  );
+}
+
+/* ------------------------------------------------------------------ */
+const POWER_INFO = { rocket: { label: "🚀 ROCKET", color: "#FF6B7A" }, balloon: { label: "🎈 BALLOON", color: "#FFD35C" }, magnet: { label: "🧲 MAGNET", color: "#E9455D" } };
+
+export function HUD() {
+  const score = useGame((s) =\u003e s.score);
+  const hearts = useGame((s) =\u003e s.hearts);
+  const hugs = useGame((s) =\u003e s.hugs);
+  const stars = useGame((s) =\u003e s.stars);
+  const fish = useGame((s) =\u003e s.fish);
+  const combo = useGame((s) =\u003e s.combo);
+  const altitude = useGame((s) =\u003e s.altitude);
+  const muted = useGame((s) =\u003e s.muted);
+  const paused = useGame((s) =\u003e s.paused);
+  const power = useGame((s) =\u003e s.power);
+  const powerLeft = useGame((s) =\u003e s.powerLeft);
+  const shield = useGame((s) =\u003e s.shield);
+  const hurtFlash = useGame((s) =\u003e s.hurtFlash);
+  const toggleMute = useGame((s) =\u003e s.toggleMute);
+  const togglePause = useGame((s) =\u003e s.togglePause);
+  const backToMenu = useGame((s) =\u003e s.backToMenu);
+  const toasts = useGame((s) =\u003e s.toasts);
+  const [pop, setPop] = useState(false);
+  const [flashKey, setFlashKey] = useState(0);
+
+  useEffect(() =\u003e {
+    if (hearts === 0 \u0026\u0026 hugs === 0 \u0026\u0026 stars === 0 \u0026\u0026 fish === 0) return;
+    setPop(true);
+    const t = setTimeout(() =\u003e setPop(false), 220);
+    return () =\u003e clearTimeout(t);
+  }, [hearts, hugs, stars, fish]);
+  useEffect(() =\u003e {
+    if (hurtFlash \u003e 0) setFlashKey((k) =\u003e k + 1);
+  }, [hurtFlash]);
+
+  useEffect(() =\u003e {
+    const kd = (e: KeyboardEvent) =\u003e {
+      if (e.code === "KeyP" || e.code === "Escape") togglePause();

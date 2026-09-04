@@ -1,0 +1,7 @@
+[PART 4 of 4 | src/world/Platform.tsx]
+          {p.companionMood === "read" \u0026\u0026 !p.hugged \u0026\u0026 \u003cBook side={p.companionSide} /\u003e}
+        \u003c/group\u003e
+      )}
+    \u003c/group\u003e
+  );
+}

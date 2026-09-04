@@ -1,0 +1,29 @@
+[PART 2 of 2 | src/game/store.ts]
+  openLab: () => set({ phase: "lab", skyTier: 0 }),
+  backToMenu: () => set({ phase: "menu", skyTier: 0, paused: false }),
+  updateRun: (s) => set(s),
+  setSkyTier: (t) => {
+    if (get().skyTier !== t) set({ skyTier: t });
+  },
+  setPower: (k, left) => {
+    const s = get();
+    if (s.power !== k || Math.abs(s.powerLeft - left) > 0.02) set({ power: k, powerLeft: left });
+  },
+  setShield: (on) => {
+    if (get().shield !== on) set({ shield: on });
+  },
+  flashHurt: () => set((s) => ({ hurtFlash: s.hurtFlash + 1 })),
+  endRun: () => {
+    const { score, character, best } = get();
+    const nb = { ...best, [character]: Math.max(best[character], score) };
+    try {
+      localStorage.setItem("peachgoma.best", JSON.stringify(nb));
+    } catch {
+      /* ignore */
+    }
+    set({ phase: "gameover", best: nb, power: null, shield: false });
+  },
+  toggleMute: () => set((s) => ({ muted: !s.muted })),
+  togglePause: () => set((s) => ({ paused: !s.paused })),
+  setLab: (l) => set((s) => ({ lab: { ...s.lab, ...l } })),
+}));

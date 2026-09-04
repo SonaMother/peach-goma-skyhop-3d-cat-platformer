@@ -1,0 +1,19 @@
+[PART 7 of 7 | src/scenes/GameScene.tsx]
+      <Backdrop camYRef={camY} />
+      {world.platforms.map((p) => (
+        <Platform key={p.id} p={p} companionId={companionId} />
+      ))}
+      {world.items.map((it) => (
+        <Item key={it.id} it={it} />
+      ))}
+      {world.enemies.map((e) => (
+        <Grump key={e.id} e={e} />
+      ))}
+      <mesh ref={shadowRef} rotation={[-Math.PI / 2, 0, 0]} material={shadowMat}>
+        <circleGeometry args={[0.6, 28]} />
+      </mesh>
+      <mesh ref={shieldRef} geometry={SHIELD_GEO} material={shieldMat} visible={false} />
+      <Cat palette={palette} driver={driver} groupRef={catRef} scale={C.catScale} position={[0, 0.2, 0]} />
+    </>
+  );
+}

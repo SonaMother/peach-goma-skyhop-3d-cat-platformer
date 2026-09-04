@@ -1,0 +1,39 @@
+[PART 17 of 17 | src/character/Cat.tsx]
+                  \u003cmeshBasicMaterial visible={false} /\u003e
+                \u003c/mesh\u003e
+                \u003cmesh
+                  position={[0, 0.8, 0.2]}
+                  onPointerDown={(e) =\u003e {
+                    e.stopPropagation();
+                    fire("pokeBelly");
+                    onPoke?.("belly");
+                  }}
+                \u003e
+                  \u003csphereGeometry args={[0.8, 12, 8]} /\u003e
+                  \u003cmeshBasicMaterial visible={false} /\u003e
+                \u003c/mesh\u003e
+                \u003cmesh
+                  position={[1.05, 0.45, -0.3]}
+                  onPointerDown={(e) =\u003e {
+                    e.stopPropagation();
+                    fire("pokeTail");
+                    onPoke?.("tail");
+                  }}
+                \u003e
+                  \u003csphereGeometry args={[0.5, 10, 8]} /\u003e
+                  \u003cmeshBasicMaterial visible={false} /\u003e
+                \u003c/mesh\u003e
+              \u003c/\u003e
+            )}
+            {children}
+          \u003c/group\u003e
+        \u003c/group\u003e
+      \u003c/group\u003e
+    \u003c/group\u003e
+  );
+}
+
+const EMOTE_NAMES: EmoteName[] = ["exclaim", "question", "heart", "zzz", "note", "sweat", "sparkles", "anger", "hearts3"];
+export const ALL_EMOTES = EMOTE_NAMES;
+export const ALL_ACCESSORIES: Accessory[] = ["none", "balloon", "rocket", "shield", "umbrella", "fish"];
+export const ALL_EVENTS: CatEvent[] = Object.keys(EVENT_FLASH) as CatEvent[];

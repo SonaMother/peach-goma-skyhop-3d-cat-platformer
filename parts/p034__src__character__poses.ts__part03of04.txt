@@ -1,0 +1,23 @@
+[PART 3 of 4 | src/character/poses.ts]
+  sitSad: p({ crouch: 0.32, stretch: 0.96, legL: 1.5, legR: 1.5, armRaiseL: 0.1, armRaiseR: 0.1, armForwardL: 0.9, armForwardR: 0.9, headPitch: 0.25, earFold: -0.5, earTipFlop: 0.7, tailLift: -0.2, tailWag: 0.05, bob: 0.01 }),
+  hug: p({ armRaiseL: 0.5, armRaiseR: 0.5, armForwardL: 1.5, armForwardR: 1.5, headTilt: 0.2, headPitch: 0.1, earFold: -0.15, tailWag: 0.6, tailWagSpeed: 6, bob: 0.03 }),
+  wave: p({ armRaiseR: 2.6, wave: 0.45, pawUpR: 1, headTilt: -0.1, earFold: 0.2, tailWag: 0.5 }),
+  celebrate: p({ stretch: 1.05, armRaiseL: 2.6, armRaiseR: 2.6, armWiggle: 0.5, pawUpL: 1, pawUpR: 1, bob: 0.08, bobSpeed: 7, earFold: 0.3, tailWag: 0.9, tailWagSpeed: 9, tailLift: 0.3 }),
+  dance: p({ armRaiseL: 1.2, armRaiseR: 1.2, armWiggle: 0.9, armWiggleSpeed: 9, pawUpL: 1, pawUpR: 1, walkCycle: 0.6, walkSpeed: 9, bob: 0.07, bobSpeed: 4.5, headTilt: 0.15, earFold: 0.4, tailWag: 0.8, tailWagSpeed: 9, lean: 0.1 }),
+  dizzy: p({ headTilt: 0.3, armRaiseL: 0.9, armRaiseR: 0.2, armForwardL: 0.4, armForwardR: 0.5, earFold: -0.6, earTipFlop: 0.7, lean: 0.12, bob: 0.03, bobSpeed: 1.4 }),
+  lieDown: p({ crouch: 0.35, legL: 1.4, legR: 1.4, legSpread: 0.3, armRaiseL: 0.15, armRaiseR: 0.15, armForwardL: 1.2, armForwardR: 1.2, headPitch: -0.2, tailLift: 0.5, tailCurl: 0.8, tailWagSpeed: 2 }),
+  sleep: p({ crouch: 0.4, stretch: 0.97, legL: 1.4, legR: 1.4, legSpread: 0.3, armRaiseL: 0.1, armRaiseR: 0.1, armForwardL: 1.3, armForwardR: 1.3, headPitch: 0.25, headTilt: 0.2, earFold: -0.4, earTipFlop: 0.6, tailLift: 0.2, tailCurl: 1, tailWag: 0.05, tailWagSpeed: 1, bob: 0.03, bobSpeed: 1.1 }),
+  yawn: p({ crouch: 0.05, stretch: 1.04, armRaiseL: 1.0, armRaiseR: 1.0, armForwardL: 0.9, armForwardR: 0.9, pawUpR: 0.8, headPitch: -0.25, earFold: -0.6, earTipFlop: 0.3, tailLift: 0.2 }),
+  stretchUp: p({ stretch: 1.2, armRaiseL: 2.9, armRaiseR: 2.9, headPitch: -0.2, earFold: -0.4, tailLift: 0.7, tailCurl: 0.3, legL: -0.2, legR: -0.2 }),
+  groom: p({ crouch: 0.2, legL: 1.3, legR: 1.3, armRaiseR: 1.4, armForwardR: 1.6, pawUpR: 1, armWiggle: 0.12, armWiggleSpeed: 11, headTilt: -0.25, headPitch: 0.15, earFold: -0.3, tailCurl: 0.5 }),
+  peek: p({ crouch: 0.15, headPitch: 0.1, headYaw: 0.4, armRaiseL: 0.6, armRaiseR: 0.6, armForwardL: 1.1, armForwardR: 1.1, earFold: 0.8, legSpread: 0.1, tailLift: 0.3, tailWag: 0.15 }),
+  shiver: p({ crouch: 0.08, stretch: 0.96, armRaiseL: 0.2, armRaiseR: 0.2, armForwardL: 1.1, armForwardR: 1.1, pawUpL: 0.5, pawUpR: 0.5, earFold: -0.6, earTipFlop: 0.4, tailLift: -0.4, tailCurl: 0.9, tailWag: 0.05, shiver: 1 }),
+  pounce: p({ crouch: 0.22, stretch: 0.85, bodyPitch: 0.25, armRaiseL: 0.2, armRaiseR: 0.2, armForwardL: 1.0, armForwardR: 1.0, legL: 0.3, legR: 0.3, earFold: 0.6, tailLift: 0.9, tailWag: 0.9, tailWagSpeed: 13, headPitch: -0.1 }),
+  think: p({ armRaiseR: 1.1, armForwardR: 1.4, pawUpR: 1, headTilt: 0.22, headPitch: -0.1, earFold: 0.2, tailWag: 0.4, tailWagSpeed: 3 }),
+  bow: p({ crouch: 0.1, bodyPitch: 0.55, headPitch: 0.35, armRaiseL: 0.2, armRaiseR: 0.2, armForwardL: 0.9, armForwardR: 0.9, earFold: -0.2, tailLift: 0.4 }),
+  yum: p({ crouch: 0.05, armRaiseL: 0.9, armRaiseR: 0.9, armForwardL: 1.5, armForwardR: 1.5, pawUpL: 1, pawUpR: 1, headTilt: 0.1, bob: 0.04, bobSpeed: 5, earFold: 0.3, tailWag: 0.7, tailWagSpeed: 8 }),
+  laugh: p({ stretch: 1.03, headPitch: -0.2, armRaiseL: 0.6, armRaiseR: 0.6, armForwardL: 1.2, armForwardR: 1.2, pawUpL: 0.8, pawUpR: 0.8, bob: 0.06, bobSpeed: 11, earFold: 0.3, tailWag: 0.8, tailWagSpeed: 10 }),
+  scaredBack: p({ crouch: 0.1, stretch: 0.92, bodyPitch: -0.2, lean: 0.05, armRaiseL: 1.6, armRaiseR: 1.6, armForwardL: 0.9, armForwardR: 0.9, pawUpL: 1, pawUpR: 1, earFold: -1, earTipFlop: 0.6, tailLift: 0.9, tailCurl: 0.2, tailWag: 0.2, shiver: 0.5 }),
+  proud: p({ stretch: 1.04, bodyPitch: -0.1, armRaiseL: 0.15, armRaiseR: 0.15, armForwardL: 0.9, armForwardR: 0.9, headPitch: -0.15, earFold: 0.6, tailLift: 0.9, tailCurl: 0.4, tailWag: 0.3 }),
+};
+
