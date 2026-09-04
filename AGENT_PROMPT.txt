@@ -1,0 +1,98 @@
+AGENT PROMPT - EXACT RECONSTRUCTION OF THIS REPOSITORY
+=======================================================
+
+You are asked to reproduce the exact source tree of this repository on disk,
+byte for byte. This file is the complete instruction set. Follow the steps in
+order. Do not skip steps. Do not improvise. Never write any file from memory,
+from "understanding", or by re-typing from a screenshot: every file must come
+from the bundle data or channels described below.
+
+WHO THIS IS FOR
+  Web-only AI agents whose fetch pipeline: strips HTML-like tags, collapses
+  newlines, and truncates large responses. If you have a real shell, git, or
+  npm, skip to CHANNEL DECISION - you are done in one command.
+
+ANTI-HALLUCINATION RULES - NON-NEGOTIABLE
+  R1. Never claim a step succeeded without printing its verification value
+      (byte count or sha256) in the same message.
+  R2. Never invent file names, shard numbers, hashes, or URLs. If you are
+      about to state a value you did not just fetch or compute, stop.
+  R3. If a fetch fails or looks truncated, re-fetch once, then STOP and
+      report the exact error. Never continue with partial data.
+  R4. Never "clean up", reformat, or rewrite file contents. Byte-exact only.
+  R5. You are DONE only when every file's computed sha256 equals the sha256
+      printed in bundle/INDEX.json for that file. Print the full table.
+      Any mismatch means FAILURE. Say so plainly. Do not fake success.
+  R6. Known trap: CRA-style index.html with %PUBLIC_URL% is WRONG. The real
+      index.html is Vite-style and references /src/main.tsx. If what you
+      wrote differs, you fabricated it - redo from the bundle.
+
+CHANNEL DECISION - TRY IN THIS ORDER, STOP AT FIRST SUCCESS
+  A. npm available (BEST): run one of
+       npm pack github:SonaMother/peach-goma-skyhop-3d-cat-platformer
+       npm install github:SonaMother/peach-goma-skyhop-3d-cat-platformer
+     The repo lands byte-exact (pack: tarball; install: under
+     node_modules/react-vite-tailwind/). Unpack if needed. DONE.
+  B. git available: git clone
+     https://github.com/SonaMother/peach-goma-skyhop-3d-cat-platformer.git
+     DONE.
+  C. Code execution + HTTP: fetch each tracked path via the GitHub Contents
+     API with raw media type and base64-decode. Tag-proof and byte-exact.
+  D. Web fetcher only: use the JSON BUNDLE PROCEDURE below.
+
+JSON BUNDLE PROCEDURE (channel D)
+  The bundle is hardened for your exact failure modes: every bundle file is
+  single-line JSON containing ZERO raw angle bracket or ampersand characters
+  (they are escaped as backslash-u sequences, decoded by any JSON parser),
+  and every shard is at most 8,192 bytes on the wire - below every truncation
+  cap observed so far.
+
+  Base URLs (either works):
+    https://raw.githubusercontent.com/SonaMother/peach-goma-skyhop-3d-cat-platformer/main/bundle/INDEX.json
+    https://cdn.jsdelivr.net/gh/SonaMother/peach-goma-skyhop-3d-cat-platformer@main/bundle/INDEX.json
+  (For shards, replace INDEX.json with shard-01.json, shard-02.json, ...)
+
+  Step 1. Fetch INDEX.json. It must parse as JSON and its "layout" field
+          must read "parts-v3". Echo back: "bundle", "layout", and the whole
+          "totals" object. If layout differs, stop and report.
+  Step 2. Fetch every file named in the "shards" array - one URL per fetch.
+          The count you fetched must equal totals.shards. After EACH fetch
+          print the shard file name and its byte count. A valid shard
+          parses as JSON; if it does not, it was truncated: re-fetch once,
+          then stop and report. Never guess the missing content.
+  Step 3. Each shard contains parts: a list of
+            path, seq, of, bytes, sha256, text
+          For every part, sha256 of the UTF-8 bytes of "text" must equal the
+          part "sha256". Check it if you can run code; otherwise at minimum
+          verify the text length in bytes. A failed part = re-fetch, else stop.
+  Step 4. Assemble: group parts by "path", sort by "seq", concatenate "text".
+          Write each assembled file to disk at exactly that relative path,
+          creating directories as needed. Do this for every "path" listed in
+          INDEX "files". Expected file count: totals.files.
+          No shell and no code execution: Write part with seq 1 first, then
+          Edit-append each next part in seq order (append at end of file).
+  Step 5. Verify each assembled file: its byte size equals "bytes" and its
+          sha256 equals the "sha256" in INDEX "files". Print a final table:
+          path, expected sha256 (copy from INDEX), computed sha256, MATCH or
+          MISMATCH. All rows must read MATCH. Then, and only then, report
+          success with that table. package-lock.json may be skipped ONLY if
+          you are truncation-capped and you say so explicitly - it is
+          regenerable with npm install.
+  Step 6. Run npm install, then npm run dev, to verify the project builds.
+
+  Sanity anchors (catch fabrication early):
+    - totals.files is 36 (35 source files plus this AGENT_PROMPT.txt).
+    - src/character/Cat.tsx is the largest source file: 58,242 bytes,
+      split across 9 parts.
+    - src/main.tsx is 230 bytes and starts with: import { StrictMode }
+    - index.html is 783 bytes and contains: /src/main.tsx
+    - If any anchor fails, your pipeline altered the data. Do not proceed.
+
+FINAL REPORT FORMAT
+  Print exactly these five lines when done (fill the dots):
+    files assembled: ...
+    files verified MATCH: ...
+    files skipped: ... (must be none, or package-lock.json with reason)
+    npm install: OK or FAIL (with error text)
+    npm run dev: OK or FAIL (with error text)
+  Honesty about a failure is more valuable than a false success report.

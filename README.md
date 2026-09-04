@@ -90,6 +90,12 @@ everywhere (including the Cat Lab). Full guide in [`src/character/README.md`](sr
 
 ## 🤖 For AI agents & programmatic access
 
+**Start here:** [`AGENT_PROMPT.txt`](AGENT_PROMPT.txt) — a 5.7 KB, tag-proof, plain-text
+instruction sheet an agent can follow verbatim: channel decision tree, anti-hallucination
+rules, assembly steps, and sanity anchors. Point your agent at its raw URL and it needs
+nothing else:
+`https://raw.githubusercontent.com/SonaMother/peach-goma-skyhop-3d-cat-platformer/main/AGENT_PROMPT.txt`
+
 Pick the first channel your toolset supports:
 
 1. **Shell** → `git clone https://github.com/SonaMother/peach-goma-skyhop-3d-cat-platformer.git`
