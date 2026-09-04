@@ -97,11 +97,12 @@ Pick the first channel your toolset supports:
 3. **Code execution, no unzip** → GitHub contents API returns JSON with **base64** content — tag-proof by construction:
    `https://api.github.com/repos/SonaMother/peach-goma-skyhop-3d-cat-platformer/contents/<path>?ref=main`
    (decode `.content` with `atob` / `base64 -d`; works for `gameproject.zip` itself too)
-4. **Fetch-only agent (no shell)** → use **[`bundle/INDEX.json`](bundle/INDEX.json)** + the listed `bundle/shard-*.json`.
-   JSON responses survive HTML-stripping fetchers that mutilate raw `.tsx` (a fetch-only agent observed exactly
-   this failure mode with this repo — the shards exist because of it). Each file entry has exact `path`, `bytes`,
-   `sha256`, and `content`; write each `content` to its `path` and verify the hashes. `package-lock.json` is
-   regenerable via `npm install` if its shard is too big for your fetch cap.
+4. **Fetch-only agent (no shell)** → use **[`bundle/INDEX.json`](bundle/INDEX.json)** + the listed `bundle/shard-NN.json`.
+   Built for fetchers that (a) HTML-strip plain text (raw `.tsx` arrives with JSX tags deleted — JSON bodies
+   survive) and (b) hard-truncate large responses (observed: a 58 KB file truncated mid-function). Every shard
+   is **≤ 16 KB on the wire**; files larger than that are split into ordered parts — concatenate part texts per
+   file (`seq` 1→N) and verify every `sha256` before trusting the result. `package-lock.json` is regenerable
+   via `npm install` if you want to skip its parts.
    Mirror (serves proper `application/json`): `https://cdn.jsdelivr.net/gh/SonaMother/peach-goma-skyhop-3d-cat-platformer@main/bundle/INDEX.json`
 5. **Humans / normal markdown readers** → [`RECREATE_PROJECT.md`](RECREATE_PROJECT.md) (single-file bundle with
    the same data in marked text blocks — avoid this one if your fetcher strips tags).
