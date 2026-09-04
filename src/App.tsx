@@ -2,21 +2,26 @@ import { Canvas } from "@react-three/fiber";
 import { Suspense, useEffect } from "react";
 import { useGame } from "./game/store";
 import { useInput } from "./game/useInput";
+import { C } from "./game/world";
 import { GameScene } from "./scenes/GameScene";
 import { MenuScene } from "./scenes/MenuScene";
 import { GameOverScene } from "./scenes/GameOverScene";
+import { LabScene } from "./scenes/LabScene";
 import { Particles } from "./world/Particles";
 import { Sky } from "./ui/Sky";
-import { GameOverOverlay, HUD, MenuOverlay } from "./ui/Overlays";
-import { C } from "./game/world";
+import { GameOverOverlay, HUD, LabOverlay, MenuOverlay } from "./ui/Overlays";
 
 function Lights() {
+  const tier = useGame((s) => s.skyTier);
+  const night = tier >= 3;
+  // three's toon BRDF multiplies everything by 1/π, so the key light sits ~π×
+  // higher than "classic" values (top ramp step clamps to pure white), while
+  // ambient stays low so the soft shadow step on the ramp remains visible.
   return (
     <>
-      <ambientLight intensity={0.95} />
-      <hemisphereLight args={["#ffffff", "#f7d9e3", 0.55]} />
-      <directionalLight position={[4, 9, 7]} intensity={1.15} />
-      <directionalLight position={[-6, 2, 4]} intensity={0.25} color="#dbe9ff" />
+      <hemisphereLight args={[night ? "#B9C6FF" : "#ffffff", night ? "#5E4C8A" : "#f7d9e3", night ? 0.4 : 0.3]} />
+      <directionalLight position={[4, 9, 7]} intensity={night ? 2.2 : 3.0} color={night ? "#DCE4FF" : "#ffffff"} />
+      <directionalLight position={[-6, 2, 4]} intensity={night ? 0.2 : 0.25} color="#dbe9ff" />
     </>
   );
 }
@@ -25,16 +30,20 @@ export default function App() {
   const phase = useGame((s) => s.phase);
   const input = useInput(phase === "playing");
   useEffect(() => {
-    // debug deep-links: #gameover / #play
+    // debug deep-links: #gameover / #play / #lab
     if (location.hash === "#gameover") useGame.setState({ phase: "gameover" });
     if (location.hash === "#play") useGame.getState().start();
+    if (location.hash === "#lab") useGame.getState().openLab();
   }, []);
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-[#F4DDE5] font-[Baloo_2,ui-rounded,system-ui,sans-serif]">
       {/* decorative desktop backdrop */}
-      <div className="pointer-events-none absolute inset-0 opacity-60" style={{ background: "radial-gradient(circle at 20% 20%, #ffe4ec 0, transparent 40%), radial-gradient(circle at 80% 80%, #dbe9ff 0, transparent 40%)" }} />
-      <div className="relative h-full w-full max-w-[min(100vw,calc(100dvh*0.62))] overflow-hidden bg-[#dcebff] shadow-[0_0_80px_rgba(120,60,90,0.25)]" style={{ touchAction: "none" }}>
+      <div
+        className="pointer-events-none absolute inset-0 opacity-60"
+        style={{ background: "radial-gradient(circle at 20% 20%, #ffe4ec 0, transparent 40%), radial-gradient(circle at 80% 80%, #dbe9ff 0, transparent 40%)" }}
+      />
+      <div id="game-viewport" className="relative h-full w-full max-w-[min(100vw,calc(100dvh*0.62))] overflow-hidden bg-[#dcebff] shadow-[0_0_80px_rgba(120,60,90,0.25)]" style={{ touchAction: "none" }}>
         <Sky />
         <Canvas
           flat
@@ -49,11 +58,13 @@ export default function App() {
             {phase === "menu" && <MenuScene />}
             {phase === "playing" && <GameScene input={input} />}
             {phase === "gameover" && <GameOverScene />}
+            {phase === "lab" && <LabScene />}
           </Suspense>
         </Canvas>
         {phase === "menu" && <MenuOverlay />}
         {phase === "playing" && <HUD />}
         {phase === "gameover" && <GameOverOverlay />}
+        {phase === "lab" && <LabOverlay />}
       </div>
     </div>
   );

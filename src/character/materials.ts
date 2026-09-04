@@ -1,10 +1,13 @@
 import * as THREE from "three";
 
-/* ---------- Toon gradient (3 soft steps → sticker-like shading) ---------- */
+/* ---------- Toon gradient (soft 4-step ramp → plush sticker shading) ---------- */
 let gradientTex: THREE.DataTexture | null = null;
 export function getGradientMap() {
   if (gradientTex) return gradientTex;
-  const data = new Uint8Array([214, 240, 255, 255]);
+  // Toon diffuse is scaled by 1/π in the shader, so lights are boosted (see App
+  // lights) to land the top step at pure white. Floor ≈ 75% keeps a soft,
+  // bright shadow band instead of gray mud.
+  const data = new Uint8Array([190, 214, 236, 255]);
   const tex = new THREE.DataTexture(data, 4, 1, THREE.RedFormat);
   tex.minFilter = THREE.NearestFilter;
   tex.magFilter = THREE.NearestFilter;
@@ -15,16 +18,18 @@ export function getGradientMap() {
 }
 
 const toonCache = new Map<string, THREE.MeshToonMaterial>();
-export function toon(color: string, opts: { emissive?: string; transparent?: boolean; opacity?: number } = {}) {
-  const key = `${color}|${opts.emissive ?? ""}|${opts.opacity ?? 1}`;
+export function toon(color: string, opts: { emissive?: string; emissiveIntensity?: number; transparent?: boolean; opacity?: number; side?: THREE.Side } = {}) {
+  const key = `${color}|${opts.emissive ?? ""}|${opts.emissiveIntensity ?? 1}|${opts.opacity ?? 1}|${opts.side ?? 0}`;
   let m = toonCache.get(key);
   if (!m) {
     m = new THREE.MeshToonMaterial({
       color,
       gradientMap: getGradientMap(),
       emissive: opts.emissive ?? "#000000",
+      emissiveIntensity: opts.emissiveIntensity ?? 1,
       transparent: !!opts.transparent || (opts.opacity ?? 1) < 1,
       opacity: opts.opacity ?? 1,
+      side: opts.side ?? THREE.FrontSide,
     });
     toonCache.set(key, m);
   }
@@ -33,8 +38,8 @@ export function toon(color: string, opts: { emissive?: string; transparent?: boo
 
 const flatCache = new Map<string, THREE.MeshBasicMaterial>();
 /** Unlit flat color (used for face features so they read like ink). */
-export function flat(color: string, opts: { transparent?: boolean; opacity?: number; depthWrite?: boolean } = {}) {
-  const key = `${color}|${opts.opacity ?? 1}|${opts.depthWrite ?? true}`;
+export function flat(color: string, opts: { transparent?: boolean; opacity?: number; depthWrite?: boolean; side?: THREE.Side } = {}) {
+  const key = `${color}|${opts.opacity ?? 1}|${opts.depthWrite ?? true}|${opts.side ?? 0}`;
   let m = flatCache.get(key);
   if (!m) {
     m = new THREE.MeshBasicMaterial({
@@ -43,8 +48,32 @@ export function flat(color: string, opts: { transparent?: boolean; opacity?: num
       opacity: opts.opacity ?? 1,
       depthWrite: opts.depthWrite ?? true,
       toneMapped: false,
+      side: opts.side ?? THREE.FrontSide,
     });
     flatCache.set(key, m);
+  }
+  return m;
+}
+
+/** Glossy translucent bubble (shield, balloons). */
+const bubbleCache = new Map<string, THREE.MeshPhysicalMaterial>();
+export function bubble(color: string, opacity = 0.35) {
+  const key = `${color}|${opacity}`;
+  let m = bubbleCache.get(key);
+  if (!m) {
+    m = new THREE.MeshPhysicalMaterial({
+      color,
+      transparent: true,
+      opacity,
+      roughness: 0.15,
+      metalness: 0,
+      transmission: 0,
+      clearcoat: 1,
+      clearcoatRoughness: 0.1,
+      depthWrite: false,
+      side: THREE.FrontSide,
+    });
+    bubbleCache.set(key, m);
   }
   return m;
 }

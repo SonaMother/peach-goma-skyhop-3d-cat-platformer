@@ -7,10 +7,12 @@ export interface InputState {
   pointers: Map<number, number>; // pointerId → -1|1
   tilt: number;
   tiltEnabled: boolean;
+  /** pointer x in -1..1 across the game viewport (used for analog steering) */
+  pointerX: number;
 }
 
 export function useInput(active: boolean): MutableRefObject<InputState> {
-  const ref = useRef<InputState>({ axis: 0, keys: new Set(), pointers: new Map(), tilt: 0, tiltEnabled: false });
+  const ref = useRef<InputState>({ axis: 0, keys: new Set(), pointers: new Map(), tilt: 0, tiltEnabled: false, pointerX: 0 });
 
   useEffect(() => {
     const s = ref.current;
@@ -22,6 +24,15 @@ export function useInput(active: boolean): MutableRefObject<InputState> {
       s.pointers.forEach((v) => (p += v));
       p = clamp(p, -1, 1);
       s.axis = k !== 0 ? k : p !== 0 ? p : s.tiltEnabled ? clamp(s.tilt / 22, -1, 1) : 0;
+    };
+    const side = (e: PointerEvent) => {
+      // steer relative to the game viewport (centered column on desktop)
+      const el = document.getElementById("game-viewport");
+      const rect = el?.getBoundingClientRect();
+      const cx = rect ? rect.left + rect.width / 2 : window.innerWidth / 2;
+      const half = rect ? rect.width / 2 : window.innerWidth / 2;
+      s.pointerX = clamp((e.clientX - cx) / half, -1, 1);
+      return e.clientX < cx ? -1 : 1;
     };
     const kd = (e: KeyboardEvent) => {
       if (["ArrowLeft", "ArrowRight", "KeyA", "KeyD"].includes(e.code)) {
@@ -38,12 +49,12 @@ export function useInput(active: boolean): MutableRefObject<InputState> {
       if (!active) return;
       const target = e.target as HTMLElement | null;
       if (target && target.closest("[data-ui]")) return;
-      s.pointers.set(e.pointerId, e.clientX < window.innerWidth / 2 ? -1 : 1);
+      s.pointers.set(e.pointerId, side(e));
       compute();
     };
     const pm = (e: PointerEvent) => {
       if (!s.pointers.has(e.pointerId)) return;
-      s.pointers.set(e.pointerId, e.clientX < window.innerWidth / 2 ? -1 : 1);
+      s.pointers.set(e.pointerId, side(e));
       compute();
     };
     const pu = (e: PointerEvent) => {
@@ -53,7 +64,6 @@ export function useInput(active: boolean): MutableRefObject<InputState> {
     const orient = (e: DeviceOrientationEvent) => {
       if (e.gamma == null) return;
       s.tiltEnabled = true;
-      // landscape/portrait normalisation
       const angle = (screen.orientation?.angle ?? 0) as number;
       let g = e.gamma;
       if (angle === 90) g = -(e.beta ?? 0);

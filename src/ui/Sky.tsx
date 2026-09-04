@@ -5,6 +5,7 @@ const TIERS = [
   "linear-gradient(180deg,#8EC5FF 0%,#B9DDFF 45%,#E4F1FF 100%)", // day sky
   "linear-gradient(180deg,#6F7CFF 0%,#B79BFF 45%,#FFB4CE 100%)", // dusk
   "linear-gradient(180deg,#1F2358 0%,#3E3F8F 50%,#8A6BC8 100%)", // starry night
+  "linear-gradient(180deg,#07081C 0%,#1B1650 55%,#4A2E86 100%)", // outer space
 ];
 
 export function Sky() {
@@ -14,7 +15,6 @@ export function Sky() {
       {TIERS.map((bg, i) => (
         <div key={i} className="absolute inset-0 transition-opacity duration-[2500ms] ease-in-out" style={{ background: bg, opacity: tier === i ? 1 : 0 }} />
       ))}
-      {/* soft vignette + sun glow */}
       <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at 50% 110%, rgba(255,255,255,0.35), transparent 60%)" }} />
       <div className="absolute inset-0" style={{ boxShadow: "inset 0 0 120px rgba(80,40,90,0.10)" }} />
     </div>

@@ -15,16 +15,17 @@ export interface PartProps {
   rotation?: [number, number, number];
   scale?: number | [number, number, number];
   renderOrder?: number;
+  visible?: boolean;
   children?: React.ReactNode;
 }
 
 /** A toon-shaded mesh with a sticker-style ink outline (inverted hull). */
 export const Part = forwardRef<THREE.Group, PartProps>(function Part(
-  { geometry, color = "#ffffff", material, outlineWidth = OUTLINE_W, outlineColor = OUTLINE_COLOR, position, rotation, scale, renderOrder, children },
+  { geometry, color = "#ffffff", material, outlineWidth = OUTLINE_W, outlineColor = OUTLINE_COLOR, position, rotation, scale, renderOrder, visible, children },
   ref,
 ) {
   return (
-    <group ref={ref} position={position} rotation={rotation} scale={scale}>
+    <group ref={ref} position={position} rotation={rotation} scale={scale} visible={visible}>
       <mesh geometry={geometry} material={material ?? toon(color)} renderOrder={renderOrder} />
       {outlineWidth > 0 && <mesh geometry={geometry} material={outline(outlineWidth, outlineColor)} renderOrder={renderOrder} />}
       {children}
