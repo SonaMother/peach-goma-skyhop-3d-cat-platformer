@@ -20,10 +20,15 @@ use npm (see AGENT_PROMPT.txt) or the JSON bundle bundle/INDEX.json.
 ## THE LOOP (your whole job)
 1. Run npm install once now. It regenerates package-lock.json, which
    is intentionally not shipped here.
-2. Open your set's folder and process parts strictly in order:
-   p001, p002, p003, ... (one fetch per part). If a fetch fails or
-   a part looks cut off, re-fetch that part once; never guess lines.
-   raw.githubusercontent.com blocked? Same files, no rate limit, at:
+2. Process parts strictly in order: p001, p002, p003, ... (one
+   fetch per part). Part filenames follow one rule:
+   pNNN__<file path, with / written as __>__partKKofNN.txt
+   Example: p008__src__character__Cat.tsx__part01of17.txt holds the start of src/character/Cat.tsx.
+   Cannot list a folder? https://ungh.cc/repos/SonaMother/peach-goma-skyhop-3d-cat-platformer/files/main
+   lists every file path (plain JSON, no headers needed).
+   If a fetch fails or a part looks cut off, re-fetch that part
+   once; never guess lines. raw.githubusercontent.com blocked?
+   Same files, no rate limit, at:
    https://cdn.jsdelivr.net/gh/SonaMother/peach-goma-skyhop-3d-cat-platformer@main/parts/FILE.txt
 3. Line 1 of each part is a header [PART k of n | path].
    It is a label only - NEVER copy it into the target file.
