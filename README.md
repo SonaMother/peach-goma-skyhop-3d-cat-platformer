@@ -88,4 +88,27 @@ everywhere (including the Cat Lab). Full guide in [`src/character/README.md`](sr
 
 ---
 
+## 🤖 For AI agents & programmatic access
+
+Pick the first channel your toolset supports:
+
+1. **Shell** → `git clone https://github.com/SonaMother/peach-goma-skyhop-3d-cat-platformer.git`
+2. **Can download + unzip** → [`gameproject.zip`](gameproject.zip) (byte-exact archive of all sources)
+3. **Code execution, no unzip** → GitHub contents API returns JSON with **base64** content — tag-proof by construction:
+   `https://api.github.com/repos/SonaMother/peach-goma-skyhop-3d-cat-platformer/contents/<path>?ref=main`
+   (decode `.content` with `atob` / `base64 -d`; works for `gameproject.zip` itself too)
+4. **Fetch-only agent (no shell)** → use **[`bundle/INDEX.json`](bundle/INDEX.json)** + the listed `bundle/shard-*.json`.
+   JSON responses survive HTML-stripping fetchers that mutilate raw `.tsx` (a fetch-only agent observed exactly
+   this failure mode with this repo — the shards exist because of it). Each file entry has exact `path`, `bytes`,
+   `sha256`, and `content`; write each `content` to its `path` and verify the hashes. `package-lock.json` is
+   regenerable via `npm install` if its shard is too big for your fetch cap.
+   Mirror (serves proper `application/json`): `https://cdn.jsdelivr.net/gh/SonaMother/peach-goma-skyhop-3d-cat-platformer@main/bundle/INDEX.json`
+5. **Humans / normal markdown readers** → [`RECREATE_PROJECT.md`](RECREATE_PROJECT.md) (single-file bundle with
+   the same data in marked text blocks — avoid this one if your fetcher strips tags).
+
+⚠️ Do **not** reconstruct this project from memory or partial fetches — the cat rig is ~2,600 lines of dense
+procedural code that hallucinated rewrites will not reproduce. Always verify against the `sha256` manifest.
+
+---
+
 Made with 🧶, springs, and a lot of ear twitches.

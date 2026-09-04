@@ -4,9 +4,9 @@ This single file contains **every source file** of **Peach & Goma: SkyHop** with
 exact repository path and byte-exact contents, so the complete directory tree can be
 recreated 1:1 from one URL — no shell, no zip tool, nothing but the ability to read text.
 
-- Source commit: `ea5c6446427d7fc320a0440293103056e80dcf5c`
-- Generated (UTC): 2026-09-04 04:18:37
-- Files: 35 | Total: 332,395 bytes
+- Source commit: `042a6e05e626cb2b4fc8220a148600b35130259d`
+- Generated (UTC): 2026-09-04 04:26:31
+- Files: 35 | Total: 334,126 bytes
 - `gameproject.zip` (binary, byte-exact archive of these sources) is NOT inlined here;
   it sits in the repo root if you prefer `unzip` / `git clone`.
 
@@ -24,13 +24,18 @@ recreated 1:1 from one URL — no shell, no zip tool, nothing but the ability to
 > Parsing note for AI agents: file boundaries are the lines starting with
 > `<<<<< BEGIN FILE:` / `<<<<< END FILE:`. Paths never contain newlines, and this
 > marker sequence never occurs inside file contents. Content is UTF-8.
+>
+> ⚠️ If your web fetcher strips HTML/JSX-like tags (symptom: fetched `.tsx` files
+> arrive missing `<Canvas>`, `<div>`, …), this file WILL be mutilated too. Use the
+> JSON shards instead — `bundle/INDEX.json` + `bundle/shard-*.json` — JSON bodies
+> survive such converters. Verify every file against the SHA-256 manifest either way.
 
 ## Manifest
 
 | Path | Bytes | Lines | SHA-256 (first 12) |
 |---|---|---|---|
 | `.gitignore` | 334 | 36 | `5199f895d96b` |
-| `README.md` | 5,625 | 91 | `122d09767061` |
+| `README.md` | 7,356 | 114 | `924e9bb802c9` |
 | `index.html` | 783 | 17 | `4e453943df7b` |
 | `package-lock.json` | 111,680 | 3,274 | `1817046d8b0e` |
 | `package.json` | 784 | 33 | `ba25f973eae6` |
@@ -107,7 +112,7 @@ Thumbs.db
 
 <<<<< END FILE: .gitignore >>>>>
 
-<<<<< BEGIN FILE: README.md (5625 bytes) >>>>>
+<<<<< BEGIN FILE: README.md (7356 bytes) >>>>>
 # 🍑 Peach & Goma: SkyHop 🐾
 
 A cozy **3D vertical hopping platformer** starring two procedurally-rigged cats — **Peach** (the pink one) and
@@ -195,6 +200,29 @@ src/
 Everything is data — add a pose to `poses.ts`, an expression to `expressions.ts`, a fidget to `FIDGETS`, an
 event reaction to `EVENT_FLASH` / `EVENT_EMOTE`, or a whole new cat to `palettes.ts`, and it instantly works
 everywhere (including the Cat Lab). Full guide in [`src/character/README.md`](src/character/README.md).
+
+---
+
+## 🤖 For AI agents & programmatic access
+
+Pick the first channel your toolset supports:
+
+1. **Shell** → `git clone https://github.com/SonaMother/peach-goma-skyhop-3d-cat-platformer.git`
+2. **Can download + unzip** → [`gameproject.zip`](gameproject.zip) (byte-exact archive of all sources)
+3. **Code execution, no unzip** → GitHub contents API returns JSON with **base64** content — tag-proof by construction:
+   `https://api.github.com/repos/SonaMother/peach-goma-skyhop-3d-cat-platformer/contents/<path>?ref=main`
+   (decode `.content` with `atob` / `base64 -d`; works for `gameproject.zip` itself too)
+4. **Fetch-only agent (no shell)** → use **[`bundle/INDEX.json`](bundle/INDEX.json)** + the listed `bundle/shard-*.json`.
+   JSON responses survive HTML-stripping fetchers that mutilate raw `.tsx` (a fetch-only agent observed exactly
+   this failure mode with this repo — the shards exist because of it). Each file entry has exact `path`, `bytes`,
+   `sha256`, and `content`; write each `content` to its `path` and verify the hashes. `package-lock.json` is
+   regenerable via `npm install` if its shard is too big for your fetch cap.
+   Mirror (serves proper `application/json`): `https://cdn.jsdelivr.net/gh/SonaMother/peach-goma-skyhop-3d-cat-platformer@main/bundle/INDEX.json`
+5. **Humans / normal markdown readers** → [`RECREATE_PROJECT.md`](RECREATE_PROJECT.md) (single-file bundle with
+   the same data in marked text blocks — avoid this one if your fetcher strips tags).
+
+⚠️ Do **not** reconstruct this project from memory or partial fetches — the cat rig is ~2,600 lines of dense
+procedural code that hallucinated rewrites will not reproduce. Always verify against the `sha256` manifest.
 
 ---
 

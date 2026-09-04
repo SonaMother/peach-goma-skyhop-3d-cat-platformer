@@ -1,0 +1,105 @@
+{
+ "bundle": "peach-goma-skyhop-recreate",
+ "repo": "SonaMother/peach-goma-skyhop-3d-cat-platformer",
+ "commit": "042a6e05e626cb2b4fc8220a148600b35130259d",
+ "generated_utc": "2026-09-04 04:25:38",
+ "purpose": "Exact 1:1 reconstruction of this repository's files for agents whose web fetcher strips HTML/JSX-like tags from plain-text responses. JSON responses pass those fetchers untouched (verified empirically by the agent that inspired this bundle).",
+ "how_to_reconstruct": [
+  "1. For each entry in files[]: mkdir -p the dirname of 'path', then write 'content' to 'path' verbatim (it is the exact file text).",
+  "2. 'bytes' and 'sha256' let you verify each file after writing (sha256 of the utf-8 encoded content).",
+  "3. Root-level files go in the project root; everything else follows its repo-relative path.",
+  "4. npm install && npm run dev"
+ ],
+ "channels_if_you_have_more_tools": {
+  "git": "git clone https://github.com/SonaMother/peach-goma-skyhop-3d-cat-platformer.git",
+  "unzip": "fetch https://github.com/SonaMother/peach-goma-skyhop-3d-cat-platformer/raw/main/gameproject.zip (byte-exact archive)",
+  "code_execution_no_unzip": "GitHub contents API returns JSON with base64 content - tag-proof by construction: https://api.github.com/repos/SonaMother/peach-goma-skyhop-3d-cat-platformer/contents/<path>?ref=main (decode .content with atob/base64 -d; also works for gameproject.zip itself)",
+  "human_readable": "RECREATE_PROJECT.md in repo root (do NOT fetch this if your fetcher strips tags - use these shards instead)"
+ },
+ "totals": {
+  "files": 35,
+  "content_bytes": 332395
+ },
+ "regenerable": {
+  "package-lock.json": "recreate via npm install if shard-06 is too large for your fetch cap"
+ },
+ "shards": [
+  {
+   "file": "shard-01-root.json",
+   "bytes": 17945,
+   "sha256": "54cbec58b45e95f60277845ad95c24c3de45f5e1d78ed70fb02c99b4d4eb46db",
+   "paths": [
+    ".gitignore",
+    "README.md",
+    "index.html",
+    "package.json",
+    "src/App.tsx",
+    "src/index.css",
+    "src/main.tsx",
+    "src/three-jsx.d.ts",
+    "src/utils/cn.ts",
+    "tsconfig.json",
+    "vite.config.ts"
+   ]
+  },
+  {
+   "file": "shard-02-character.json",
+   "bytes": 97166,
+   "sha256": "eafef47079d3634661714f7ac3013eeacd590d4047a5fff2745e43bb6d797a21",
+   "paths": [
+    "src/character/Cat.tsx",
+    "src/character/Part.tsx",
+    "src/character/README.md",
+    "src/character/expressions.ts",
+    "src/character/materials.ts",
+    "src/character/palettes.ts",
+    "src/character/poses.ts",
+    "src/character/springs.ts"
+   ]
+  },
+  {
+   "file": "shard-03-game.json",
+   "bytes": 24491,
+   "sha256": "91ba0a32a9f157568adf37ec52fbc7efc17ba2dea5e7992e0e2e2696339fbb35",
+   "paths": [
+    "src/game/sfx.ts",
+    "src/game/store.ts",
+    "src/game/useInput.ts",
+    "src/game/world.ts"
+   ]
+  },
+  {
+   "file": "shard-04-scenes.json",
+   "bytes": 36558,
+   "sha256": "e982800dbbed58b5d0f3bd7f146e20deb1efe7d2a952d83bcc0c1266527ccde7",
+   "paths": [
+    "src/scenes/GameOverScene.tsx",
+    "src/scenes/GameScene.tsx",
+    "src/scenes/LabScene.tsx",
+    "src/scenes/MenuScene.tsx"
+   ]
+  },
+  {
+   "file": "shard-05-ui-world.json",
+   "bytes": 59904,
+   "sha256": "b69f215d1329dddba8a8672b64f72ce7dc8128a12c61d5ef0bda09715ca27060",
+   "paths": [
+    "src/ui/Overlays.tsx",
+    "src/ui/Sky.tsx",
+    "src/world/Backdrop.tsx",
+    "src/world/Items.tsx",
+    "src/world/Particles.tsx",
+    "src/world/Platform.tsx",
+    "src/world/geometries.ts"
+   ]
+  },
+  {
+   "file": "shard-06-package-lock.json",
+   "bytes": 123298,
+   "sha256": "3b3fcf95b1991f2bf8a5cf4288dab7f4ad3dd3b4c32141d92d17c52368a14429",
+   "paths": [
+    "package-lock.json"
+   ]
+  }
+ ]
+}
