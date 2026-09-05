@@ -51,6 +51,8 @@ export interface PlatformData {
   cheerTimer: number;
   wobble: Spring;
   landedCount: number;
+  /** measured horizontal velocity this frame (moving platforms hand it to whoever lands on them) */
+  vxNow: number;
 }
 
 export interface ItemData {
@@ -117,6 +119,7 @@ function makePlatform(w: World, type: PlatformType, x: number, y: number, width:
     cheerTimer: 0,
     wobble: new Spring(1, 320, 12),
     landedCount: 0,
+    vxNow: 0,
   };
 }
 

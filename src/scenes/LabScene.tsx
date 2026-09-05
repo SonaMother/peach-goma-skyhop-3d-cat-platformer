@@ -5,6 +5,7 @@ import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeom
 import { Cat, createDriver } from "../character/Cat";
 import { PALETTES } from "../character/palettes";
 import { Part } from "../character/Part";
+import { flat } from "../character/materials";
 import { EXPRESSION_NAMES } from "../character/expressions";
 import { POSE_NAMES } from "../character/poses";
 import { useGame } from "../game/store";
@@ -80,6 +81,9 @@ export function LabScene() {
         <Part geometry={STAGE_TOP} color="#FFF0F5" position={[0, 0.05, 0]} outlineWidth={0} />
       </group>
       <group ref={g}>
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.19, 0.1]} material={flat("#3B3231", { opacity: 0.13, depthWrite: false })}>
+          <circleGeometry args={[0.85, 28]} />
+        </mesh>
         <Cat palette={pal} driver={driver} scale={C.catScale * 1.35} interactive onEvent={catSound} />
       </group>
       <Backdrop camYRef={camY} count={7} spread={8} />

@@ -74,7 +74,25 @@ function noise(dur: number, opts: { vol?: number; delay?: number; freq?: number;
   }
 }
 
+/* ---- tiny generative music box: pentatonic arpeggio + soft bass, brightens with sky tier ---- */
+const MELODY = [0, 4, 7, 9, 7, 4, 2, 4, 0, 4, 7, 12, 9, 7, 4, 2, 0, 2, 4, 7, 9, 12, 9, 7, 4, 2, 0, -3, 0, 2, 4, 2];
+const BASS = [0, -5, -3, -7];
+let musicStep = 0;
+const semi = (base: number, n: number) => base * Math.pow(2, n / 12);
+
 export const sfx = {
+  musicTick: (tier = 0) => {
+    const base = 523.25 * (tier >= 3 ? 0.5 : 1); // C5, drops an octave into the starry night
+    const m = MELODY[musicStep % MELODY.length];
+    const lift = tier === 2 ? 2 : 0; // dusk lifts the tune a whole step
+    tone(semi(base, m + lift), 0.75, { type: "sine", vol: 0.045, attack: 0.005 });
+    tone(semi(base * 2, m + lift), 0.35, { type: "sine", vol: 0.012, attack: 0.005 });
+    if (musicStep % 8 === 0) tone(semi(base / 4, BASS[(musicStep / 8) % BASS.length] + lift), 1.4, { type: "triangle", vol: 0.035, attack: 0.02 });
+    musicStep++;
+  },
+  musicReset: () => {
+    musicStep = 0;
+  },
   unlock: () => {
     try {
       ac();
@@ -158,5 +176,6 @@ export const sfx = {
   grumble: () => tone(180, 0.3, { type: "sawtooth", to: 120, vol: 0.05, vib: 8 }),
   yawn: () => tone(400, 0.7, { type: "triangle", to: 250, vol: 0.08, attack: 0.15 }),
   wrap: () => tone(500, 0.1, { type: "sine", to: 900, vol: 0.06 }),
+  whoosh: () => noise(0.28, { vol: 0.07, freq: 500, to: 1900, q: 0.7 }),
   tick: () => tone(1200, 0.04, { type: "square", vol: 0.03 }),
 };

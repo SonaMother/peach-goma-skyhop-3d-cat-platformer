@@ -23,7 +23,9 @@ export function useInput(active: boolean): MutableRefObject<InputState> {
       let p = 0;
       s.pointers.forEach((v) => (p += v));
       p = clamp(p, -1, 1);
-      s.axis = k !== 0 ? k : p !== 0 ? p : s.tiltEnabled ? clamp(s.tilt / 22, -1, 1) : 0;
+      // pointer steering is analog: the further from the centre you hold, the harder the cat leans
+      const analog = Math.abs(s.pointerX) > 0.1 ? clamp(s.pointerX * 1.7, -1, 1) : p * 0.3;
+      s.axis = k !== 0 ? k : p !== 0 ? analog : s.tiltEnabled ? clamp(s.tilt / 22, -1, 1) : 0;
     };
     const side = (e: PointerEvent) => {
       // steer relative to the game viewport (centered column on desktop)

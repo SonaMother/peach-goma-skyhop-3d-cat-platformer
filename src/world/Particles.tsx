@@ -1,11 +1,11 @@
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
-import { BUBBLE_GEO, CONFETTI_GEO, HEART_GEO_SMALL, PUFF_GEO, SHARD_GEO, SPARK_GEO, STAR_GEO } from "./geometries";
+import { BUBBLE_GEO, CONFETTI_GEO, HEART_GEO_SMALL, PUFF_GEO, SHARD_GEO, SPARK_GEO, STAR_GEO, STREAK_GEO } from "./geometries";
 import { toon, outline } from "../character/materials";
 import { rand } from "../character/springs";
 
-export type FxKind = "hearts" | "puff" | "sparkle" | "dust" | "stars" | "flame" | "shards" | "bubbles" | "confetti" | "confetti2" | "smoke" | "zap";
+export type FxKind = "hearts" | "puff" | "sparkle" | "dust" | "stars" | "flame" | "shards" | "bubbles" | "confetti" | "confetti2" | "smoke" | "zap" | "streak";
 
 interface Particle {
   alive: boolean;
@@ -53,6 +53,8 @@ const KIND_CFG: Record<FxKind, KindCfg> = {
   confetti2: { geo: CONFETTI_GEO, color: "#7FB8FF", outline: 0.015, count: 10, life: [1.2, 1.8], speed: 4, gravity: 3, up: 6, size: [0.8, 1.3], drag: 1.6 },
   smoke: { geo: PUFF_GEO, color: "#B9AFA8", outline: 0.02, count: 8, life: [0.5, 0.9], speed: 2, gravity: -1, up: 1, size: [0.7, 1.4], drag: 3, grow: true },
   zap: { geo: SPARK_GEO, color: "#FFF4A3", emissive: "#FFE45C", outline: 0.02, count: 8, life: [0.25, 0.45], speed: 6, gravity: 0, up: 0, size: [0.5, 1], drag: 4 },
+  // wind streaks that rush downward past the camera during rocket / super-jump ascents
+  streak: { geo: STREAK_GEO, color: "#FFFFFF", outline: 0, count: 2, life: [0.35, 0.55], speed: 0.2, gravity: 0, up: -34, size: [0.6, 1.4], drag: 0, pool: 50 },
 };
 
 type BurstFn = (kind: FxKind, x: number, y: number, z?: number, count?: number, spread?: number) => void;

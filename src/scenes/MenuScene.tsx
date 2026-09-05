@@ -7,6 +7,7 @@ import { damp, rand } from "../character/springs";
 import { useGame } from "../game/store";
 import { C } from "../game/world";
 import { Part } from "../character/Part";
+import { flat } from "../character/materials";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
 import { Backdrop } from "../world/Backdrop";
 import { fx } from "../world/Particles";
@@ -42,11 +43,23 @@ function MenuCat({ id, index }: { id: CatId; index: number }) {
   const driver = useRef(createDriver({ state: "idle" }));
   const g = useRef<THREE.Group | null>(null);
   const { pointer } = useThree();
-  const mem = useMemo(() => ({ x: index === 0 ? -1.3 : 1.3, hover: false, t: 0, greetT: 0 }), [index]);
+  const mem = useMemo(() => ({ x: index === 0 ? -1.3 : 1.3, hover: false, t: 0, greetT: 0, poutT: 0, wasSel: isSel }), [index]);
 
   useFrame((_, dt) => {
     const d = driver.current;
     mem.t += dt;
+    // react to being picked / un-picked: the chosen cat cheers, the other pouts for a moment
+    if (isSel !== mem.wasSel) {
+      mem.wasSel = isSel;
+      if (isSel) {
+        mem.greetT = Math.max(mem.greetT, 1.0);
+        d.events.push("cheer");
+      } else {
+        mem.poutT = 1.8;
+        d.events.push("bump");
+      }
+    }
+    mem.poutT -= dt;
     const targetX = isSel ? (index === 0 ? -0.7 : 0.7) : index === 0 ? -1.75 : 1.75;
     const targetZ = isSel ? 0.6 : -0.4;
     if (g.current) {
@@ -62,13 +75,20 @@ function MenuCat({ id, index }: { id: CatId; index: number }) {
     d.vx = 0;
     d.vy = 0;
     mem.greetT -= dt;
+    if (mem.hover && g.current && Math.random() < 0.06) fx.burst("sparkle", g.current.position.x + (Math.random() - 0.5) * 1.2, 1.9 + Math.random() * 0.6, 0.7, 1, 0.6);
     // the rig's own fidget system handles idle life; we only steer hover + selection
-    d.state = mem.greetT > 0 ? "celebrate" : mem.hover ? "wave" : "idle";
-    d.expression = mem.greetT > 0 ? null : mem.hover ? "excited" : isSel ? null : "content";
+    const pouting = mem.poutT > 0 && !mem.hover;
+    d.state = mem.greetT > 0 ? "celebrate" : mem.hover ? "wave" : pouting ? "sit" : "idle";
+    d.expression = mem.greetT > 0 ? null : mem.hover ? "excited" : pouting ? "pout" : isSel ? null : "content";
+    d.emote = pouting && mem.poutT < 1.2 ? "sweat" : null;
+    if (pouting) d.look = index === 0 ? 1 : -1; // side-eye the chosen one
   });
 
   return (
     <group ref={g} position={[mem.x, 0, 0]} scale={C.catScale}>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.34, 0.15]} material={flat("#3B3231", { opacity: 0.13, depthWrite: false })}>
+        <circleGeometry args={[1.15, 28]} />
+      </mesh>
       <Cat
         palette={PALETTES[id]}
         driver={driver}

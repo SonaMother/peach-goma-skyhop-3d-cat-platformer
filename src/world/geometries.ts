@@ -87,3 +87,4 @@ export const SPARK_GEO = new THREE.OctahedronGeometry(0.1, 0);
 export const CONFETTI_GEO = new THREE.BoxGeometry(0.14, 0.09, 0.02);
 export const SHARD_GEO = new THREE.TetrahedronGeometry(0.1, 0);
 export const BUBBLE_GEO = new THREE.SphereGeometry(0.12, 10, 8);
+export const STREAK_GEO = new THREE.CapsuleGeometry(0.02, 0.7, 2, 5);

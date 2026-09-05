@@ -271,6 +271,9 @@ const FIDGETS: Fidget[] = [
   { state: "dance", expression: "sing", emote: "note", dur: [2, 3], weight: 0.5 },
   { state: "sit", expression: "content", dur: [2.5, 4], weight: 0.8 },
   { state: "proud", expression: "proud", dur: [1.5, 2.2], weight: 0.5 },
+  { state: "pounce", expression: "focus", dur: [1.1, 1.6], weight: 0.45 },
+  { state: "lieDown", expression: "sleepy", dur: [2.6, 4], weight: 0.45 },
+  { state: "bow", expression: "content", emote: "heart", dur: [1.2, 1.6], weight: 0.35 },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -378,6 +381,8 @@ function CatRig({ palette, driver, position, rotation, scale = 1, groupRef, inte
       cheek: new Spring(0, 260, 9),
       armLag: new Spring(0, 140, 12),
       balloon: new Spring2(40, 5),
+      twist: new Spring(0, 45, 6),
+      puff: new Spring(0, 60, 6),
       roll: 0,
       lean: 0,
       turn: 0,
@@ -438,17 +443,20 @@ function CatRig({ palette, driver, position, rotation, scale = 1, groupRef, inte
         S.fidget = null;
         S.idleFor = 0;
         switch (e) {
-          case "land":
-            S.springs.stretch.impulse(-7);
-            S.earL.impulse(-9);
-            S.earR.impulse(-9);
+          case "land": {
+            // squash scales with how hard we hit (prevVy still holds the impact velocity)
+            const impact = Math.min(1.6, 0.6 + Math.abs(Math.min(0, S.prevVy)) * 0.045);
+            S.springs.stretch.impulse(-7 * impact);
+            S.earL.impulse(-9 * impact);
+            S.earR.impulse(-9 * impact);
             S.earTipL.impulse(-6);
             S.earTipR.impulse(-6);
-            S.head.impulse(0, 5);
-            S.jiggle.impulse(6);
-            S.cheek.impulse(5);
-            S.tail.impulse(3);
+            S.head.impulse(0, 5 * impact);
+            S.jiggle.impulse(6 * impact);
+            S.cheek.impulse(5 * impact);
+            S.tail.impulse(3 * impact);
             break;
+          }
           case "jump":
             S.springs.stretch.impulse(4.5);
             S.head.impulse(0, -3);
@@ -502,6 +510,9 @@ function CatRig({ palette, driver, position, rotation, scale = 1, groupRef, inte
             S.springs.headTilt.impulse(-4);
             S.earL.impulse(8);
             S.head.impulse(-6, 0);
+            // whip-twist the whole body around the vertical axis as the cat wraps the screen edge
+            S.twist.impulse(d.vx >= 0 ? -14 : 14);
+            S.tail.impulse(d.vx >= 0 ? 8 : -8, 0.9);
             break;
           case "cheer":
           case "perfect":
@@ -518,6 +529,7 @@ function CatRig({ palette, driver, position, rotation, scale = 1, groupRef, inte
             S.earL.impulse(-12);
             S.earR.impulse(12);
             S.jiggle.impulse(5);
+            S.puff.impulse(7);
             break;
           case "shieldOn":
             S.shieldPulse = 1;
@@ -552,6 +564,7 @@ function CatRig({ palette, driver, position, rotation, scale = 1, groupRef, inte
           case "pokeTail":
             S.tail.impulse(18, 0.9);
             S.tailRoot.impulse(10);
+            S.puff.impulse(9);
             S.head.impulse(6, 0);
             S.earL.impulse(-12);
             S.earR.impulse(-12);
@@ -566,6 +579,7 @@ function CatRig({ palette, driver, position, rotation, scale = 1, groupRef, inte
             S.earL.impulse(14);
             S.earR.impulse(14);
             S.tail.impulse(-12, 0.9);
+            S.puff.impulse(10);
             S.whiskerL.impulse(10);
             S.whiskerR.impulse(10);
             break;
@@ -714,7 +728,7 @@ function CatRig({ palette, driver, position, rotation, scale = 1, groupRef, inte
     const shakeX = shiver * 0.02 * Math.sin(t * 58) + shiver * 0.012 * Math.sin(t * 91 + 1);
     o.crouch.position.set(shakeX, -P.crouch + Math.sin(t * P.bobSpeed) * P.bob * (0.6 + per.energy * 0.6), 0);
     o.lean.rotation.z = S.lean;
-    o.lean.rotation.y = S.turn;
+    o.lean.rotation.y = S.turn + S.twist.update(dt);
     // spin (trampoline flips): accumulate roll, then settle back to upright
     if (P.bodyRoll > 0.5) S.roll += P.bodyRoll * dt;
     else {
@@ -736,7 +750,11 @@ function CatRig({ palette, driver, position, rotation, scale = 1, groupRef, inte
     o.head.position.y = 1.88 + hy * 0.012;
 
     /* ---- belly jiggle (cheek puff is expressed via the blush, not geometry) ---- */
-    o.bodyJiggle.scale.set(1 + jig * 0.05, 1 - jig * 0.04, 1 + jig * 0.05);
+    // chest breathing: quicker & deeper after exertion (speed), slow & gentle when calm / asleep
+    const effort = Math.min(1, (Math.abs(vx) + Math.abs(vy) * 0.6) / 14);
+    const breathRate = S.asleep ? 1.1 : 2.1 + effort * 3 + per.energy * 0.6;
+    const br = Math.sin(t * breathRate) * (0.012 + effort * 0.014);
+    o.bodyJiggle.scale.set(1 + jig * 0.05 + br * 0.8, 1 - jig * 0.04 + br * 0.5, 1 + jig * 0.05 + br * 1.4);
 
     /* ---- ears: pose + mood + vertical velocity + wind flap + spring twitch ---- */
     const earVel = clamp(-vy * 0.035, -0.45, 0.6);
@@ -791,11 +809,14 @@ function CatRig({ palette, driver, position, rotation, scale = 1, groupRef, inte
     const links = S.tail.update(rootAngle, dt);
     o.tail.rotation.z = rootAngle;
     o.tail.rotation.y = Math.sin(t * 3.1) * 0.25;
+    // fright puff: each link scales a little, compounding toward the tip → bottle-brush tail
+    const puffK = 1 + Math.max(0, S.puff.update(dt)) * 0.11;
     for (let i = 0; i < TAIL_N; i++) {
       const seg = o["tail" + i];
       const follow = links[i].value - (i === 0 ? rootAngle : links[i - 1].value);
       seg.rotation.z = follow * 1.6 + 0.28 + P.tailCurl * 0.34 + Math.sin(t * P.tailWagSpeed + i * 0.6) * P.tailWag * 0.25;
       seg.rotation.y = Math.sin(t * 2.3 + i * 0.5) * 0.08 * (i + 1);
+      seg.scale.setScalar(puffK);
     }
 
     /* ---- face ---- */
@@ -826,6 +847,9 @@ function CatRig({ palette, driver, position, rotation, scale = 1, groupRef, inte
       const hl = E.eyeSparkle * clamp((open - 0.35) / 0.3, 0, 1) * dot * (1 - shock * 0.6);
       o["hl" + side].scale.setScalar(Math.max(0.0001, hl));
       o["hl" + side].position.set(-0.035 + lookX * 0.3, 0.04 + lookYo * 0.2, 0.004);
+      // secondary glossy catch-light (smaller, opposite corner) — gives the eye depth
+      o["hl2" + side].scale.setScalar(Math.max(0.0001, hl * 0.5));
+      o["hl2" + side].position.set(0.042 + lookX * 0.3, -0.045 + lookYo * 0.2, 0.004);
       // happy arcs also serve as the closed eye for a wink
       o["happy" + side].scale.setScalar(Math.max(0.0001, Math.max(E.eyeHappy, wink * (1 - E.eyeSquash)) * E.eyeScale));
       o["cry" + side].scale.setScalar(Math.max(0.0001, E.eyeCry));
@@ -1060,6 +1084,7 @@ function CatRig({ palette, driver, position, rotation, scale = 1, groupRef, inte
                       <mesh ref={r("ring" + side)} geometry={G.eyeRing} material={M.white} position={[0, 0, -0.002]} />
                       <mesh ref={r("dot" + side)} geometry={G.eyeDot} material={M.ink} />
                       <mesh ref={r("hl" + side)} geometry={G.highlight} material={M.white} position={[-0.035, 0.04, 0.004]} />
+                      <mesh ref={r("hl2" + side)} geometry={G.highlight} material={M.white} position={[0.042, -0.045, 0.004]} scale={0.5} />
                       <mesh ref={r("happy" + side)} geometry={G.happyArc} material={M.ink} position={[0, -0.03, 0]} />
                       <group ref={r("cry" + side)}>
                         <mesh geometry={G.chevron} material={M.ink} position={[dir * 0.06 - dir * 0.065, 0.05, 0]} rotation={[0, 0, -dir * 0.7]} />

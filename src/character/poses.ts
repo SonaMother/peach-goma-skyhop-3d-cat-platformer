@@ -83,7 +83,8 @@ export type MotionState =
   | "yum"
   | "laugh"
   | "scaredBack"
-  | "proud";
+  | "proud"
+  | "brace";
 
 const BASE: PoseParams = {
   stretch: 1,
@@ -161,6 +162,8 @@ export const POSES: Record<MotionState, PoseParams> = {
   laugh: p({ stretch: 1.03, headPitch: -0.2, armRaiseL: 0.6, armRaiseR: 0.6, armForwardL: 1.2, armForwardR: 1.2, pawUpL: 0.8, pawUpR: 0.8, bob: 0.06, bobSpeed: 11, earFold: 0.3, tailWag: 0.8, tailWagSpeed: 10 }),
   scaredBack: p({ crouch: 0.1, stretch: 0.92, bodyPitch: -0.2, lean: 0.05, armRaiseL: 1.6, armRaiseR: 1.6, armForwardL: 0.9, armForwardR: 0.9, pawUpL: 1, pawUpR: 1, earFold: -1, earTipFlop: 0.6, tailLift: 0.9, tailCurl: 0.2, tailWag: 0.2, shiver: 0.5 }),
   proud: p({ stretch: 1.04, bodyPitch: -0.1, armRaiseL: 0.15, armRaiseR: 0.15, armForwardL: 0.9, armForwardR: 0.9, headPitch: -0.15, earFold: 0.6, tailLift: 0.9, tailCurl: 0.4, tailWag: 0.3 }),
+  // anticipation just before touchdown: paws reach for the platform, legs drop, tail up for balance
+  brace: p({ stretch: 0.95, crouch: 0.03, armRaiseL: 1.9, armRaiseR: 1.9, armForwardL: 0.45, armForwardR: 0.45, pawUpL: 0.7, pawUpR: 0.7, legL: 0.95, legR: 0.95, legSpread: 0.35, earFold: 0.45, earTipFlop: 0.35, tailLift: 0.75, tailWag: 0.45, tailWagSpeed: 9, headPitch: 0.28, whiskerFlare: 0.6 }),
 };
 
 /** Expression that plays by default with a motion state (can be overridden). */
@@ -203,6 +206,7 @@ export const POSE_EXPRESSION: Record<MotionState, ExpressionName> = {
   laugh: "laugh",
   scaredBack: "scared",
   proud: "proud",
+  brace: "focus",
 };
 
 /** Per-parameter spring tuning (stiffness, damping). Anything missing uses the default. */

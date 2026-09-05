@@ -191,7 +191,11 @@ function PlatformImpl({ p, companionId }: { p: PlatformData; companionId: CatId 
     const o = g.current;
     if (!o) return;
     const t = clock.elapsedTime;
-    if (p.type === "moving") p.x = p.baseX + Math.sin(t * p.speed + p.phase) * p.range;
+    if (p.type === "moving") {
+      const nx = p.baseX + Math.sin(t * p.speed + p.phase) * p.range;
+      p.vxNow = dt > 0 ? (nx - p.x) / dt : 0;
+      p.x = nx;
+    }
     o.position.set(p.x, p.y, 0);
     const wy = p.wobble.update(dt);
     o.scale.set(1 / Math.sqrt(Math.max(0.3, wy)), Math.max(0.3, wy), 1);

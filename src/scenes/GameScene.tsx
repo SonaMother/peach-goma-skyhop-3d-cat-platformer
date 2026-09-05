@@ -17,15 +17,21 @@ import { celebrate, fx } from "../world/Particles";
 const topOffset = (p: PlatformData) => (p.type === "pillow" ? 0.2 : p.type === "cloud" ? 0.28 : p.type === "ground" ? 0.2 : p.type === "spring" ? 0.15 : 0.02);
 const SHIELD_GEO = new THREE.SphereGeometry(1.05, 32, 20);
 
-export function CameraRig({ camY, camX, lookDown = 0, zoom = 1 }: { camY: MutableRefObject<number>; camX: MutableRefObject<number>; lookDown?: number; zoom?: number }) {
+export function CameraRig({ camY, camX, lookDown = 0, zoom = 1, shake }: { camY: MutableRefObject<number>; camX: MutableRefObject<number>; lookDown?: number; zoom?: number; shake?: MutableRefObject<number> }) {
   const { camera, size } = useThree();
-  useFrame(() => {
+  useFrame(({ clock }) => {
     const cam = camera as THREE.PerspectiveCamera;
     const aspect = size.width / size.height;
     const halfTan = Math.tan(THREE.MathUtils.degToRad(C.fov / 2));
     const dist = clamp((C.halfW * 1.08) / (halfTan * aspect), 8, 40) / zoom;
-    cam.position.set(camX.current * 0.1, camY.current + lookDown, dist);
-    cam.lookAt(camX.current * 0.1, camY.current, 0);
+    // impact shake: fast decaying noise, never random jitter (reads as weight, not glitch)
+    const sh = shake?.current ?? 0;
+    const tt = clock.elapsedTime;
+    const sx = sh * 0.22 * Math.sin(tt * 61) + sh * 0.1 * Math.sin(tt * 97 + 1.3);
+    const sy = sh * 0.18 * Math.sin(tt * 53 + 0.7) + sh * 0.08 * Math.sin(tt * 89);
+    cam.position.set(camX.current * 0.1 + sx, camY.current + lookDown + sy, dist);
+    cam.lookAt(camX.current * 0.1 + sx * 0.5, camY.current + sy * 0.5, 0);
+    cam.rotation.z += sh * 0.012 * Math.sin(tt * 47);
   });
   return null;
 }
@@ -52,6 +58,7 @@ export function GameScene({ input }: { input: MutableRefObject<InputState> }) {
   const shadowMat = useMemo(() => flat("#3B3231", { opacity: 0.16, depthWrite: false }), []);
   const shieldMat = useMemo(() => bubble("#9FD8FF", 0.3), []);
   const compMem = useMemo(() => new Map<number, CompanionMem>(), []);
+  const shakeRef = useRef(0);
 
   const P = useMemo(
     () => ({
@@ -88,6 +95,10 @@ export function GameScene({ input }: { input: MutableRefObject<InputState> }) {
       nearMissCd: 0,
       shieldWarned: false,
       t: 0,
+      hitStop: 0,
+      shake: 0,
+      groundDist: 99,
+      prevState: "idle" as string,
     }),
     [],
   );
@@ -102,6 +113,7 @@ export function GameScene({ input }: { input: MutableRefObject<InputState> }) {
       landTimer: 0, superTimer: 0, springTimer: 0, slipTimer: 0, stunTimer: 0, hurtTimer: 0, fishTimer: 0,
       power: null, powerT: 0, powerTotal: 1, shield: false, shieldT: 0, dead: false, deadTimer: 0, lastScore: -1,
       nextMilestone: 100, recordShown: false, wrapCd: 0, nearMissCd: 0, shieldWarned: false, t: 0,
+      hitStop: 0, shake: 0, groundDist: 99, prevState: "idle",
     });
     camY.current = 5;
     driver.current = createDriver({ state: "rise", fidgets: false });
@@ -110,11 +122,22 @@ export function GameScene({ input }: { input: MutableRefObject<InputState> }) {
   }, [runId, world, P, compMem]);
 
   useFrame(({ size }, rawDt) => {
-    const dt = Math.min(rawDt, 1 / 30);
+    let dt = Math.min(rawDt, 1 / 30);
     const d = driver.current;
     const store = useGame.getState();
     if (store.phase !== "playing" || store.paused) return;
+    // hit-stop: a few frames of slow-motion on big impacts sells weight
+    if (P.hitStop > 0) {
+      P.hitStop -= rawDt;
+      dt *= 0.22;
+    }
+    P.shake = Math.max(0, P.shake - rawDt * 3.2);
+    shakeRef.current = P.shake * P.shake;
     P.t += dt;
+    const aspect = size.width / size.height;
+    const halfTan = Math.tan(THREE.MathUtils.degToRad(C.fov / 2));
+    const dist = clamp((C.halfW * 1.08) / (halfTan * aspect), 8, 40);
+    const H = dist * halfTan;
 
     const controllable = !P.dead && P.stunTimer <= 0;
     const rocket = P.power === "rocket";
@@ -146,9 +169,13 @@ export function GameScene({ input }: { input: MutableRefObject<InputState> }) {
     } else if (balloon) {
       P.vy = damp(P.vy, C.balloonV + Math.sin(P.t * 2) * 0.6, 3, dt);
     } else {
-      P.vy -= C.gravity * dt;
+      // softer gravity around the apex = readable hang-time (classic platformer feel)
+      const hang = Math.abs(P.vy) < 3.5 ? 0.78 : 1;
+      P.vy -= C.gravity * hang * dt;
     }
     P.y += P.vy * dt;
+    // speed streaks past the camera when climbing very fast
+    if (P.vy > 18 && Math.random() < (P.vy - 16) * 0.06) fx.burst("streak", camX.current + rand(-C.halfW, C.halfW), camY.current + H + 1, rand(-3, 1.5), 1, 1);
 
     let landed: PlatformData | null = null;
     if (P.vy < 0 && !P.dead && !rocket) {
@@ -174,6 +201,7 @@ export function GameScene({ input }: { input: MutableRefObject<InputState> }) {
       const p = landed;
       p.landedCount++;
       const center = Math.abs(P.x - p.x);
+      const impact = Math.max(0, -P.vy);
       const onCactus = p.spiky !== 0 && (P.x - p.x) * p.spiky > p.w / 2 - 0.95;
       if (onCactus) {
         if (P.shield) {
@@ -187,6 +215,8 @@ export function GameScene({ input }: { input: MutableRefObject<InputState> }) {
           P.vy = C.hurtV;
           P.hurtTimer = 0.7;
           P.combo = 0;
+          P.hitStop = 0.08;
+          P.shake = 0.9;
           d.events.push("hurt");
           fx.burst("stars", P.x, P.y + 0.8, 0.4, 4);
           sfx.hurt();
@@ -197,6 +227,8 @@ export function GameScene({ input }: { input: MutableRefObject<InputState> }) {
       } else if (p.type === "pillow") {
         P.vy = C.pillowV;
         P.superTimer = 0.7;
+        P.hitStop = 0.05;
+        P.shake = 0.5;
         p.wobble.impulse(-9);
         d.events.push("superJump");
         fx.burst("stars", P.x, P.y + 0.3, 0.4);
@@ -205,6 +237,7 @@ export function GameScene({ input }: { input: MutableRefObject<InputState> }) {
       } else if (p.type === "spring") {
         P.vy = C.springV;
         P.springTimer = 0.62;
+        P.shake = 0.4;
         p.wobble.impulse(-12);
         d.events.push("spring");
         fx.burst("sparkle", P.x, P.y + 0.3, 0.4, 8);
@@ -223,9 +256,11 @@ export function GameScene({ input }: { input: MutableRefObject<InputState> }) {
       } else {
         P.vy = C.jumpV;
         P.landTimer = 0.09;
-        p.wobble.impulse(p.type === "cloud" ? -2 : -4);
+        if (p.type === "moving") P.vx += p.vxNow * 0.7; // carry the platform's momentum into the hop
+        p.wobble.impulse(p.type === "cloud" ? -2 : -(2.5 + Math.min(6, impact * 0.22)));
         d.events.push("land", "jump");
-        fx.burst("dust", P.x, P.y + 0.05, 0.5, 4);
+        fx.burst("dust", P.x, P.y + 0.05, 0.5, Math.round(3 + Math.min(8, impact * 0.3)), 0.8 + Math.min(1, impact * 0.04));
+        if (impact > 17) P.shake = Math.min(0.5, (impact - 17) * 0.05);
         if (p.type === "cloud") {
           p.alive = false;
           fx.burst("puff", p.x, p.y, 0.3);
@@ -241,6 +276,7 @@ export function GameScene({ input }: { input: MutableRefObject<InputState> }) {
           P.bestCombo = Math.max(P.bestCombo, P.combo);
           if (P.combo >= 2) {
             P.bonus += P.combo * 10;
+            if (P.combo >= 3) P.hitStop = 0.045;
             d.events.push("perfect");
             sfx.perfect(P.combo);
             store.pushToast(`PERFECT x${P.combo}`, "#FFD35C");
@@ -410,6 +446,8 @@ export function GameScene({ input }: { input: MutableRefObject<InputState> }) {
         } else if (P.stunTimer <= 0) {
           P.stunTimer = 0.95;
           P.combo = 0;
+          P.hitStop = 0.1;
+          P.shake = 1;
           P.vy = Math.min(P.vy, -2);
           P.vx = (ddx >= 0 ? 1 : -1) * 6;
           d.events.push("stun");
@@ -435,6 +473,13 @@ export function GameScene({ input }: { input: MutableRefObject<InputState> }) {
       }
       cd.look = clamp((P.x - p.x) * 0.5, -1, 1);
       cd.lookY = clamp(-dy * 0.15, -1, 1);
+      if (!p.hugged && dy < -2.5 && (p.companionMood !== "sleep" || mem.woke)) {
+        // missed the hug… the little one deflates as you fly past (still hoping you come back)
+        cd.state = "sitSad";
+        cd.expression = dy < -6 ? "sad" : "worried";
+        cd.emote = null;
+        continue;
+      }
       if (p.hugged) {
         p.cheerTimer -= dt;
         if (p.cheerTimer > 0) cd.state = p.cheerTimer > 1.6 ? "hug" : "celebrate";
@@ -496,13 +541,73 @@ export function GameScene({ input }: { input: MutableRefObject<InputState> }) {
     else if (P.superTimer > 0) d.state = "superJump";
     else if (P.vy > 5) d.state = "rise";
     else if (P.vy > -2.5) d.state = "apex";
+    else if (P.groundDist < 1.3 + Math.abs(P.vy) * 0.06) d.state = "brace"; // platform coming up: reach for it
     else if (P.vy > -16) d.state = "fall";
     else d.state = "plummet";
-    d.expression = P.dead ? "terrified" : P.combo >= 6 && d.state === "rise" ? "smug" : P.combo >= 3 && d.state === "rise" ? "determined" : null;
+    // danger awareness: the lower the cat sinks toward the screen edge, the more scared it looks
+    const dangerK = clamp((camY.current - H * 0.35 - P.y) / (H * 0.55), 0, 1);
+    const danger = !P.dead && P.vy < -4 && P.groundDist > 2.5 && dangerK > 0.2 ? (dangerK > 0.7 ? "terrified" : "scared") : null;
+    d.expression = P.dead ? "terrified" : danger ?? (P.combo >= 6 && d.state === "rise" ? "smug" : P.combo >= 3 && d.state === "rise" ? "determined" : null);
     d.vx = P.vx;
     d.vy = P.vy;
-    d.look = clamp(P.vx / 5, -1, 1);
-    d.lookY = clamp(P.vy / 22, -1, 1) * 0.6;
+    // smart gaze: glance at the closest goodie / friend / threat, otherwise follow the motion
+    let gx = P.vx / 5;
+    let gy = (P.vy / 22) * 0.6;
+    let gBest = 5.5;
+    for (const it of world.items) {
+      if (it.taken) continue;
+      const dx = it.x - P.x;
+      const dy = it.y - catCy;
+      const dd = Math.hypot(dx, dy);
+      if (dd < gBest) {
+        gBest = dd;
+        gx = dx / 3;
+        gy = dy / 3;
+      }
+    }
+    for (const p of world.platforms) {
+      if (!p.companion || p.hugged) continue;
+      const dx = p.x - P.x;
+      const dy = p.y + 0.6 - catCy;
+      const dd = Math.hypot(dx, dy);
+      if (dd < gBest) {
+        gBest = dd;
+        gx = dx / 3;
+        gy = dy / 3;
+      }
+    }
+    for (const e of world.enemies) {
+      if (!e.alive) continue;
+      const dx = e.x - P.x;
+      const dy = e.y - catCy;
+      const dd = Math.hypot(dx, dy);
+      if (dd < Math.min(gBest, 3.5)) {
+        gBest = dd;
+        gx = dx / 2;
+        gy = dy / 2;
+      }
+    }
+    if (P.vy < -2 && P.groundDist > 4) {
+      // nothing under the paws: scan for the most reachable platform below and lean toward it
+      let bestScore = 99;
+      for (const p of world.platforms) {
+        if (!p.alive || p.y > P.y - 0.2 || p.y < camY.current - H) continue;
+        const dx = p.x - P.x;
+        const score = Math.abs(dx) + (P.y - p.y) * 0.5;
+        if (score < bestScore) {
+          bestScore = score;
+          gx = dx / 2.5;
+          gy = -0.7;
+        }
+      }
+    }
+    if (d.state === "brace") {
+      gy = -0.8; // eyes on the landing
+      if (P.prevState !== "brace" && P.vy < -9) sfx.whoosh();
+    }
+    P.prevState = d.state;
+    d.look = clamp(gx, -1, 1);
+    d.lookY = clamp(gy, -1, 1);
     let acc: Accessory = "none";
     if (rocket) acc = "rocket";
     else if (balloon) acc = "balloon";
@@ -531,6 +636,7 @@ export function GameScene({ input }: { input: MutableRefObject<InputState> }) {
         if (top <= P.y + 0.05 && top > bestTop && Math.abs(P.x - p.x) < p.w / 2 + 0.25) bestTop = top;
       }
       const dist = P.y - bestTop;
+      P.groundDist = bestTop > -Infinity ? dist : 99;
       if (bestTop > -Infinity && dist < 7) {
         const k = 1 - dist / 7;
         shadowRef.current.visible = true;
@@ -541,10 +647,6 @@ export function GameScene({ input }: { input: MutableRefObject<InputState> }) {
     }
 
     /* ---------- camera ---------- */
-    const aspect = size.width / size.height;
-    const halfTan = Math.tan(THREE.MathUtils.degToRad(C.fov / 2));
-    const dist = clamp((C.halfW * 1.08) / (halfTan * aspect), 8, 40);
-    const H = dist * halfTan;
     const wanted = Math.max(camY.current, P.y + H * (rocket ? 0.15 : 0.3));
     camY.current = damp(camY.current, wanted, rocket ? 12 : 7, dt);
     camX.current = damp(camX.current, P.x, 3, dt);
@@ -569,6 +671,10 @@ export function GameScene({ input }: { input: MutableRefObject<InputState> }) {
       P.lastScore = score;
       store.updateRun({ score, altitude: Math.floor(P.maxY), hearts: P.hearts, hugs: P.hugs, combo: P.combo, bestCombo: P.bestCombo, stars: P.stars, fish: P.fish });
       const tier = P.maxY < 45 ? 0 : P.maxY < 110 ? 1 : P.maxY < 190 ? 2 : P.maxY < 300 ? 3 : 4;
+      if (tier !== store.skyTier && tier > 0) {
+        store.pushToast(["", "BLUE SKIES ☁️", "GOLDEN DUSK 🌇", "STARRY NIGHT ✨", "OUTER SPACE 🪐"][tier], "#FFFFFF");
+        d.events.push("milestone");
+      }
       store.setSkyTier(tier);
       const best = store.best[character];
       if (!P.recordShown && best > 0 && score > best) {
@@ -597,7 +703,7 @@ export function GameScene({ input }: { input: MutableRefObject<InputState> }) {
 
   return (
     <>
-      <CameraRig camY={camY} camX={camX} />
+      <CameraRig camY={camY} camX={camX} shake={shakeRef} />
       <Backdrop camYRef={camY} />
       {world.platforms.map((p) => (
         <Platform key={p.id} p={p} companionId={companionId} />

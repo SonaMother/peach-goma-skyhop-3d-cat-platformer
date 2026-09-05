@@ -158,6 +158,14 @@ export function HUD() {
     if (hurtFlash > 0) setFlashKey((k) => k + 1);
   }, [hurtFlash]);
 
+  // generative music box while the run is live
+  useEffect(() => {
+    if (paused) return;
+    sfx.musicReset();
+    const id = setInterval(() => sfx.musicTick(useGame.getState().skyTier), 250);
+    return () => clearInterval(id);
+  }, [paused]);
+
   useEffect(() => {
     const kd = (e: KeyboardEvent) => {
       if (e.code === "KeyP" || e.code === "Escape") togglePause();
@@ -203,6 +211,13 @@ export function HUD() {
         <div key={combo} className="pop-in absolute right-4 top-[24%] rotate-6 text-right">
           <div className="sticker-text text-3xl font-black text-[#FFD35C]">x{combo}</div>
           <div className="sticker-text-sm text-[11px] font-black tracking-widest text-white">COMBO</div>
+        </div>
+      )}
+      {altitude < 6 && !paused && (
+        <div className="pointer-events-none absolute left-0 right-0 top-[60%] flex justify-center">
+          <div className="pop-in floaty rounded-full border-2 border-white/70 bg-black/15 px-4 py-1.5 text-[12px] font-black tracking-wide text-white backdrop-blur-[2px]">
+            {matchMedia("(pointer: coarse)").matches ? "Tap or tilt left / right to steer" : "← → to steer · land dead-center for PERFECT ✨"}
+          </div>
         </div>
       )}
       <div className="absolute left-0 right-0 top-[30%] flex flex-col items-center gap-1">
