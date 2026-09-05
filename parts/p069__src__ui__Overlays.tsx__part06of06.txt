@@ -1,0 +1,12 @@
+[PART 6 of 6 | src/ui/Overlays.tsx]
+                <button key={n} data-ui className={chip(lab.emote === n)} style={lab.emote === n ? { background: "#FFB380" } : {}} onClick={() => setLab({ emote: n })}>
+                  {n}
+                </button>
+              ))}
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

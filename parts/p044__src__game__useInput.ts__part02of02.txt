@@ -1,0 +1,15 @@
+[PART 2 of 2 | src/game/useInput.ts]
+  return ref;
+}
+
+/** iOS needs an explicit permission request for motion sensors. */
+export async function requestTilt() {
+  const DOE = DeviceOrientationEvent as unknown as { requestPermission?: () => Promise<string> };
+  if (typeof DOE.requestPermission === "function") {
+    try {
+      await DOE.requestPermission();
+    } catch {
+      /* denied */
+    }
+  }
+}

@@ -1,4 +1,10 @@
 [PART 4 of 17 | src/character/Cat.tsx]
+  scale?: number;
+  groupRef?: MutableRefObject\u003cTHREE.Group | null\u003e;
+  /** Enable poke / pet hit zones */
+  interactive?: boolean;
+  onPoke?: (zone: PokeZone) =\u003e void;
+  onEvent?: (e: CatEvent) =\u003e void;
   children?: React.ReactNode;
 }
 
@@ -80,9 +86,3 @@ function CatRig({ palette, driver, position, rotation, scale = 1, groupRef, inte
       earL: new Spring(0, 220 * soft, 9 * soft),
       earR: new Spring(0, 220 * soft, 9 * soft),
       earTipL: new Spring(0, 260 * soft, 8 * soft),
-      earTipR: new Spring(0, 260 * soft, 8 * soft),
-      whiskerL: new Spring(0, 300, 10),
-      whiskerR: new Spring(0, 300, 10),
-      tail: new Chain(TAIL_N, 120 * soft, 9),
-      tailRoot: new Spring(0, 70, 7),
-      head: new Spring2(170, 11),

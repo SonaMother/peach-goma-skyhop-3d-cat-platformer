@@ -1,0 +1,58 @@
+[PART 13 of 17 | src/character/Cat.tsx]
+                    {[-0.22, 0, 0.22].map((a, i) => (
+                      <mesh key={i} geometry={G.whisker} material={M.ink} position={[sgn * 0.17, a * 0.55, 0]} rotation={[0, 0, sgn * (Math.PI / 2 - a * 0.9)]} scale={[0.8, 0.9 - Math.abs(a) * 0.5, 0.8]} />
+                    ))}
+                  </group>
+                );
+              })}
+
+              {/* ---- FACE ---- */}
+              {(["L", "R"] as const).map((side) => {
+                const sgn = side === "L" ? -1 : 1;
+                const ex = sgn * 0.4;
+                const ey = -0.04;
+                const dir = -sgn;
+                return (
+                  <group key={side}>
+                    <group ref={r("eye" + side)} position={[ex, ey, faceZ(ex, ey) + 0.02]} rotation={[0, sgn * 0.36, 0]}>
+                      <mesh ref={r("ring" + side)} geometry={G.eyeRing} material={M.white} position={[0, 0, -0.002]} />
+                      <mesh ref={r("dot" + side)} geometry={G.eyeDot} material={M.ink} />
+                      <mesh ref={r("hl" + side)} geometry={G.highlight} material={M.white} position={[-0.035, 0.04, 0.004]} />
+                      <mesh ref={r("hl2" + side)} geometry={G.highlight} material={M.white} position={[0.042, -0.045, 0.004]} scale={0.5} />
+                      <mesh ref={r("happy" + side)} geometry={G.happyArc} material={M.ink} position={[0, -0.03, 0]} />
+                      <group ref={r("cry" + side)}>
+                        <mesh geometry={G.chevron} material={M.ink} position={[dir * 0.06 - dir * 0.065, 0.05, 0]} rotation={[0, 0, -dir * 0.7]} />
+                        <mesh geometry={G.chevron} material={M.ink} position={[dir * 0.06 - dir * 0.065, -0.05, 0]} rotation={[0, 0, dir * 0.7]} />
+                      </group>
+                      <mesh ref={r("heart" + side)} geometry={HEART_FLAT} material={M.heart} scale={0.0001} position={[0, 0.02, 0.003]} />
+                      <mesh ref={r("star" + side)} geometry={STAR_FLAT} material={M.emoteGold} scale={0.0001} position={[0, 0, 0.003]} />
+                      <mesh ref={r("spiral" + side)} geometry={G.spiral} material={M.ink} scale={0.0001} position={[0, 0, 0.003]} />
+                      <mesh ref={r("lid" + side)} geometry={G.line} material={M.ink} position={[0, 0.1, 0.006]} scale={0.0001} />
+                    </group>
+                    <group position={[ex, 0.3, faceZ(ex, 0.3) + 0.02]} rotation={[0, sgn * 0.36, 0]}>
+                      <group ref={r("brow" + side)}>
+                        <mesh geometry={G.brow} material={M.ink} rotation={[0, 0, Math.PI / 2]} />
+                      </group>
+                    </group>
+                    <mesh
+                      ref={r("blush" + side)}
+                      geometry={G.blush}
+                      material={blushMat}
+                      position={[sgn * 0.66, -0.27, faceZ(sgn * 0.66, -0.27) + 0.015]}
+                      rotation={[0, sgn * 0.68, 0]}
+                    />
+                    {[0, 1].map((i) => (
+                      <Part key={i} ref={r(`tear${side}${i}`)} geometry={G.drop} material={M.tear} outlineWidth={0.03} position={[sgn * (0.5 + i * 0.06), -0.2, faceZ(sgn * 0.52, -0.25) + 0.03]} />
+                    ))}
+                  </group>
+                );
+              })}
+              {/* mouth cluster */}
+              <group ref={r("mouth")} position={[0, -0.3, faceZ(0, -0.3) + 0.02]}>
+                <group ref={r("mouthCat")}>
+                  <mesh geometry={G.smallArc} material={M.ink} position={[-0.058, 0.02, 0]} rotation={[0, 0, Math.PI]} />
+                  <mesh geometry={G.smallArc} material={M.ink} position={[0.058, 0.02, 0]} rotation={[0, 0, Math.PI]} />
+                </group>
+                <group ref={r("mouthSmile")}>
+                  <mesh geometry={G.smileArc} material={M.ink} position={[0, 0.03, 0]} rotation={[0, 0, Math.PI]} />
+                </group>

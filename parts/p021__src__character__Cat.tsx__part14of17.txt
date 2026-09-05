@@ -1,0 +1,55 @@
+[PART 14 of 17 | src/character/Cat.tsx]
+                <group ref={r("mouthFrown")}>
+                  <mesh geometry={G.smallArc} material={M.ink} position={[0, -0.05, 0]} />
+                </group>
+                <group ref={r("mouthWobble")}>
+                  <mesh geometry={G.tinyArc} material={M.ink} position={[-0.034, -0.01, 0]} />
+                  <mesh geometry={G.tinyArc} material={M.ink} position={[0.034, -0.01, 0]} rotation={[0, 0, Math.PI]} />
+                </group>
+                <group ref={r("mouthLine")}>
+                  <mesh geometry={G.line} material={M.ink} position={[0, -0.01, 0]} />
+                </group>
+                <group ref={r("mouthPout")}>
+                  <mesh geometry={G.tinyArc} material={M.ink} position={[0.005, 0.03, 0]} rotation={[0, 0, -Math.PI / 2]} />
+                  <mesh geometry={G.tinyArc} material={M.ink} position={[0.005, -0.04, 0]} rotation={[0, 0, -Math.PI / 2]} />
+                </group>
+                <group ref={r("mouthO")}>
+                  <mesh geometry={G.oMouth} material={M.ink} />
+                  <mesh geometry={G.oMouth} material={M.mouthIn} position={[0, 0, 0.002]} scale={0.62} />
+                </group>
+                <group ref={r("mouthOpen")} position={[0, -0.04, 0]}>
+                  <mesh geometry={G.mouthOpenRim} material={M.ink} scale={[0.95, 1.1, 1]} />
+                  <mesh geometry={G.mouthOpen} material={M.mouthIn} position={[0, 0, 0.002]} scale={[0.95, 1.1, 1]} />
+                  <mesh geometry={G.tongue} material={M.tongue} position={[0, -0.05, 0.004]} />
+                </group>
+                <group ref={r("mouthScream")} position={[0, -0.1, 0]}>
+                  <mesh geometry={G.screamRim} material={M.ink} scale={[0.9, 1.15, 1]} />
+                  <mesh geometry={G.scream} material={M.mouthIn} position={[0, 0, 0.002]} scale={[0.9, 1.15, 1]} />
+                  <mesh geometry={G.tongue} material={M.tongue} position={[0, -0.1, 0.004]} scale={1.2} />
+                </group>
+                <group ref={r("mouthGrin")} position={[0, -0.02, 0]}>
+                  <mesh geometry={G.mouthOpenRim} material={M.ink} scale={[1.7, 0.95, 1]} />
+                  <mesh geometry={G.mouthOpen} material={M.mouthIn} position={[0, 0, 0.002]} scale={[1.7, 0.95, 1]} />
+                  <mesh geometry={G.teeth} material={M.white} position={[0, 0.06, 0.004]} />
+                  <mesh geometry={G.tongue} material={M.tongue} position={[0, -0.06, 0.004]} scale={[1.3, 0.9, 1]} />
+                </group>
+                <group ref={r("mouthTongue")} position={[0, -0.06, 0]}>
+                  <mesh geometry={G.tongue} material={M.ink} position={[0, 0, 0]} scale={[0.85, 1.25, 1]} />
+                  <mesh geometry={G.tongue} material={M.tongue} position={[0, -0.005, 0.003]} scale={[0.68, 1.1, 1]} />
+                </group>
+              </group>
+              {/* sweat drop + anger mark */}
+              <Part ref={r("sweat")} geometry={G.drop} material={M.tear} outlineWidth={0.03} position={[0.82, 0.55, 0.45]} />
+              <group ref={r("anger")} position={[0.6, 0.62, faceZ(0.6, 0.62) + 0.02]} rotation={[0, 0.5, 0]}>
+                {[0, 1, 2, 3].map((i) => (
+                  <mesh key={i} geometry={G.angerBar} material={M.anger} rotation={[0, 0, (i * Math.PI) / 4 + 0.4]} position={[Math.cos(i * 1.57) * 0.03, Math.sin(i * 1.57) * 0.03, 0]} />
+                ))}
+              </group>
+
+              {/* ---- emote bubbles ---- */}
+              <group ref={r("emotes")} position={[0.7, 1.25, 0.1]}>
+                <group ref={r("emote_exclaim")}>
+                  <Part geometry={G.exclaimBar} material={M.emoteRed} position={[0, 0.25, 0]} outlineWidth={0.035} />
+                  <Part geometry={G.exclaimDot} material={M.emoteRed} position={[0, -0.05, 0]} outlineWidth={0.035} />
+                </group>
+                <group ref={r("emote_question")}>

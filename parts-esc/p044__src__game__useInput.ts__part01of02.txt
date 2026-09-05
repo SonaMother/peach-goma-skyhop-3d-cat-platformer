@@ -1,0 +1,101 @@
+[PART 1 of 2 | src/game/useInput.ts]
+import { useEffect, useRef, type MutableRefObject } from "react";
+import { clamp } from "../character/springs";
+
+export interface InputState {
+  axis: number;
+  keys: Set\u003cstring\u003e;
+  pointers: Map\u003cnumber, number\u003e; // pointerId → -1|1
+  tilt: number;
+  tiltEnabled: boolean;
+  /** pointer x in -1..1 across the game viewport (used for analog steering) */
+  pointerX: number;
+}
+
+export function useInput(active: boolean): MutableRefObject\u003cInputState\u003e {
+  const ref = useRef\u003cInputState\u003e({ axis: 0, keys: new Set(), pointers: new Map(), tilt: 0, tiltEnabled: false, pointerX: 0 });
+
+  useEffect(() =\u003e {
+    const s = ref.current;
+    const compute = () =\u003e {
+      let k = 0;
+      if (s.keys.has("ArrowLeft") || s.keys.has("KeyA")) k -= 1;
+      if (s.keys.has("ArrowRight") || s.keys.has("KeyD")) k += 1;
+      let p = 0;
+      s.pointers.forEach((v) =\u003e (p += v));
+      p = clamp(p, -1, 1);
+      // pointer steering is analog: the further from the centre you hold, the harder the cat leans
+      const analog = Math.abs(s.pointerX) \u003e 0.1 ? clamp(s.pointerX * 1.7, -1, 1) : p * 0.3;
+      s.axis = k !== 0 ? k : p !== 0 ? analog : s.tiltEnabled ? clamp(s.tilt / 22, -1, 1) : 0;
+    };
+    const side = (e: PointerEvent) =\u003e {
+      // steer relative to the game viewport (centered column on desktop)
+      const el = document.getElementById("game-viewport");
+      const rect = el?.getBoundingClientRect();
+      const cx = rect ? rect.left + rect.width / 2 : window.innerWidth / 2;
+      const half = rect ? rect.width / 2 : window.innerWidth / 2;
+      s.pointerX = clamp((e.clientX - cx) / half, -1, 1);
+      return e.clientX \u003c cx ? -1 : 1;
+    };
+    const kd = (e: KeyboardEvent) =\u003e {
+      if (["ArrowLeft", "ArrowRight", "KeyA", "KeyD"].includes(e.code)) {
+        e.preventDefault();
+        s.keys.add(e.code);
+        compute();
+      }
+    };
+    const ku = (e: KeyboardEvent) =\u003e {
+      s.keys.delete(e.code);
+      compute();
+    };
+    const pd = (e: PointerEvent) =\u003e {
+      if (!active) return;
+      const target = e.target as HTMLElement | null;
+      if (target \u0026\u0026 target.closest("[data-ui]")) return;
+      s.pointers.set(e.pointerId, side(e));
+      compute();
+    };
+    const pm = (e: PointerEvent) =\u003e {
+      if (!s.pointers.has(e.pointerId)) return;
+      s.pointers.set(e.pointerId, side(e));
+      compute();
+    };
+    const pu = (e: PointerEvent) =\u003e {
+      s.pointers.delete(e.pointerId);
+      compute();
+    };
+    const orient = (e: DeviceOrientationEvent) =\u003e {
+      if (e.gamma == null) return;
+      s.tiltEnabled = true;
+      const angle = (screen.orientation?.angle ?? 0) as number;
+      let g = e.gamma;
+      if (angle === 90) g = -(e.beta ?? 0);
+      else if (angle === -90 || angle === 270) g = e.beta ?? 0;
+      s.tilt = g;
+      compute();
+    };
+    const blur = () =\u003e {
+      s.keys.clear();
+      s.pointers.clear();
+      compute();
+    };
+    window.addEventListener("keydown", kd);
+    window.addEventListener("keyup", ku);
+    window.addEventListener("pointerdown", pd);
+    window.addEventListener("pointermove", pm);
+    window.addEventListener("pointerup", pu);
+    window.addEventListener("pointercancel", pu);
+    window.addEventListener("deviceorientation", orient);
+    window.addEventListener("blur", blur);
+    return () =\u003e {
+      window.removeEventListener("keydown", kd);
+      window.removeEventListener("keyup", ku);
+      window.removeEventListener("pointerdown", pd);
+      window.removeEventListener("pointermove", pm);
+      window.removeEventListener("pointerup", pu);
+      window.removeEventListener("pointercancel", pu);
+      window.removeEventListener("deviceorientation", orient);
+      window.removeEventListener("blur", blur);
+    };
+  }, [active]);
+

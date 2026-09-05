@@ -1,0 +1,74 @@
+[PART 4 of 4 | src/character/poses.ts]
+  // anticipation just before touchdown: paws reach for the platform, legs drop, tail up for balance
+  brace: p({ stretch: 0.95, crouch: 0.03, armRaiseL: 1.9, armRaiseR: 1.9, armForwardL: 0.45, armForwardR: 0.45, pawUpL: 0.7, pawUpR: 0.7, legL: 0.95, legR: 0.95, legSpread: 0.35, earFold: 0.45, earTipFlop: 0.35, tailLift: 0.75, tailWag: 0.45, tailWagSpeed: 9, headPitch: 0.28, whiskerFlare: 0.6 }),
+};
+
+/** Expression that plays by default with a motion state (can be overridden). */
+export const POSE_EXPRESSION: Record<MotionState, ExpressionName> = {
+  idle: "content",
+  walk: "content",
+  run: "determined",
+  rise: "excited",
+  apex: "happy",
+  fall: "worried",
+  plummet: "terrified",
+  land: "squint",
+  superJump: "joy",
+  spin: "wow",
+  rocket: "starEyes",
+  float: "happy",
+  glide: "focus",
+  stunned: "dizzy",
+  hurt: "ouch",
+  slip: "shocked",
+  balance: "worried",
+  sit: "content",
+  sitSad: "cry",
+  hug: "love",
+  wave: "happy",
+  celebrate: "joy",
+  dance: "sing",
+  dizzy: "dizzy",
+  lieDown: "sleepy",
+  sleep: "asleep",
+  yawn: "sleepy",
+  stretchUp: "relieved",
+  groom: "focus",
+  peek: "confused",
+  shiver: "cold",
+  pounce: "determined",
+  think: "confused",
+  bow: "content",
+  yum: "yum",
+  laugh: "laugh",
+  scaredBack: "scared",
+  proud: "proud",
+  brace: "focus",
+};
+
+/** Per-parameter spring tuning (stiffness, damping). Anything missing uses the default. */
+export const POSE_SPRING_TUNING: Partial<Record<keyof PoseParams, [number, number]>> = {
+  stretch: [260, 12],
+  crouch: [140, 14],
+  bodyPitch: [110, 12],
+  armRaiseL: [110, 11],
+  armRaiseR: [110, 11],
+  armForwardL: [110, 11],
+  armForwardR: [110, 11],
+  pawUpL: [140, 12],
+  pawUpR: [140, 12],
+  legL: [140, 12],
+  legR: [140, 12],
+  legSpread: [140, 12],
+  earFold: [180, 9],
+  earTipFlop: [160, 8],
+  tailLift: [90, 8],
+  tailCurl: [80, 9],
+  headTilt: [120, 12],
+  headPitch: [120, 12],
+  headYaw: [120, 12],
+  whiskerFlare: [160, 10],
+};
+
+export const POSE_KEYS = Object.keys(BASE) as (keyof PoseParams)[];
+export const POSE_NAMES = Object.keys(POSES) as MotionState[];

@@ -1,4 +1,5 @@
 [PART 2 of 4 | src/character/poses.ts]
+  armForwardR: 0.25,
   armWiggle: 0,
   armWiggleSpeed: 15,
   wave: 0,

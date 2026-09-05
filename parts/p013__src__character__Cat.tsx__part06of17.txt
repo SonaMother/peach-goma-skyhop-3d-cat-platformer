@@ -1,0 +1,101 @@
+[PART 6 of 17 | src/character/Cat.tsx]
+            S.cheek.impulse(3);
+            break;
+          case "star":
+          case "record":
+          case "milestone":
+            S.springs.stretch.impulse(4);
+            S.earL.impulse(10);
+            S.earR.impulse(10);
+            S.sparkle = 1;
+            S.tail.impulse(5);
+            break;
+          case "hurt":
+            S.springs.stretch.impulse(-5);
+            S.tailRoot.impulse(6);
+            S.head.impulse(4, 2);
+            S.jiggle.impulse(4);
+            break;
+          case "hugged":
+          case "pet":
+            S.springs.stretch.impulse(-3);
+            S.earL.impulse(-6);
+            S.earR.impulse(-6);
+            S.cheek.impulse(3);
+            S.tail.impulse(4);
+            break;
+          case "bump":
+          case "wrap":
+            S.springs.headTilt.impulse(-4);
+            S.earL.impulse(8);
+            S.head.impulse(-6, 0);
+            // whip-twist the whole body around the vertical axis as the cat wraps the screen edge
+            S.twist.impulse(d.vx >= 0 ? -14 : 14);
+            S.tail.impulse(d.vx >= 0 ? 8 : -8, 0.9);
+            break;
+          case "cheer":
+          case "perfect":
+            S.springs.stretch.impulse(6);
+            S.tail.impulse(6);
+            break;
+          case "slip":
+            S.springs.lean.impulse(6);
+            S.armLag.impulse(8);
+            S.head.impulse(-5, 2);
+            break;
+          case "stun":
+            S.head.impulse(rand(-8, 8), 4);
+            S.earL.impulse(-12);
+            S.earR.impulse(12);
+            S.jiggle.impulse(5);
+            S.puff.impulse(7);
+            break;
+          case "shieldOn":
+            S.shieldPulse = 1;
+            S.springs.stretch.impulse(3);
+            break;
+          case "shieldPop":
+          case "balloonPop":
+            S.springs.stretch.impulse(-4);
+            S.earL.impulse(-10);
+            S.earR.impulse(-10);
+            S.head.impulse(0, 3);
+            break;
+          case "balloonOn":
+            S.springs.stretch.impulse(3);
+            S.balloon.impulse(0, 6);
+            break;
+          case "magnet":
+            S.earL.impulse(9);
+            S.earR.impulse(9);
+            break;
+          case "poke":
+            S.head.impulse(0, 6);
+            S.earL.impulse(-12);
+            S.earR.impulse(-12);
+            S.springs.stretch.impulse(-3);
+            break;
+          case "pokeBelly":
+            S.jiggle.impulse(10);
+            S.springs.stretch.impulse(-4);
+            S.cheek.impulse(6);
+            break;
+          case "pokeTail":
+            S.tail.impulse(18, 0.9);
+            S.tailRoot.impulse(10);
+            S.puff.impulse(9);
+            S.head.impulse(6, 0);
+            S.earL.impulse(-12);
+            S.earR.impulse(-12);
+            break;
+          case "nearMiss":
+            S.head.impulse(0, -3);
+            S.whiskerL.impulse(6);
+            S.whiskerR.impulse(6);
+            break;
+          case "startle":
+            S.springs.stretch.impulse(8);
+            S.earL.impulse(14);
+            S.earR.impulse(14);
+            S.tail.impulse(-12, 0.9);
+            S.puff.impulse(10);

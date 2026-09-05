@@ -1,8 +1,16 @@
 [PART 5 of 17 | src/character/Cat.tsx]
+      earTipR: new Spring(0, 260 * soft, 8 * soft),
+      whiskerL: new Spring(0, 300, 10),
+      whiskerR: new Spring(0, 300, 10),
+      tail: new Chain(TAIL_N, 120 * soft, 9),
+      tailRoot: new Spring(0, 70, 7),
+      head: new Spring2(170, 11),
       jiggle: new Spring(0, 240, 9),
       cheek: new Spring(0, 260, 9),
       armLag: new Spring(0, 140, 12),
       balloon: new Spring2(40, 5),
+      twist: new Spring(0, 45, 6),
+      puff: new Spring(0, 60, 6),
       roll: 0,
       lean: 0,
       turn: 0,
@@ -63,17 +71,20 @@
         S.fidget = null;
         S.idleFor = 0;
         switch (e) {
-          case "land":
-            S.springs.stretch.impulse(-7);
-            S.earL.impulse(-9);
-            S.earR.impulse(-9);
+          case "land": {
+            // squash scales with how hard we hit (prevVy still holds the impact velocity)
+            const impact = Math.min(1.6, 0.6 + Math.abs(Math.min(0, S.prevVy)) * 0.045);
+            S.springs.stretch.impulse(-7 * impact);
+            S.earL.impulse(-9 * impact);
+            S.earR.impulse(-9 * impact);
             S.earTipL.impulse(-6);
             S.earTipR.impulse(-6);
-            S.head.impulse(0, 5);
-            S.jiggle.impulse(6);
-            S.cheek.impulse(5);
-            S.tail.impulse(3);
+            S.head.impulse(0, 5 * impact);
+            S.jiggle.impulse(6 * impact);
+            S.cheek.impulse(5 * impact);
+            S.tail.impulse(3 * impact);
             break;
+          }
           case "jump":
             S.springs.stretch.impulse(4.5);
             S.head.impulse(0, -3);
@@ -87,15 +98,4 @@
             S.head.impulse(0, -6);
             S.tail.impulse(-6);
             S.jiggle.impulse(-3);
-            break;
-          case "spring":
-            S.springs.stretch.impulse(8);
-            S.head.impulse(0, -5);
-            S.roll = 0.0001;
-            break;
-          case "collect":
-          case "yum":
-            S.springs.headTilt.impulse(3);
-            S.springs.stretch.impulse(2.5);
-            S.cheek.impulse(3);
             break;

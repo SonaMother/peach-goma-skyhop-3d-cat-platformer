@@ -1,0 +1,94 @@
+[PART 11 of 17 | src/character/Cat.tsx]
+    o.mouthTongue.scale.set(Math.max(0.0001, E.mouthTongue), Math.max(0.0001, E.mouthTongue * (1 + Math.sin(t * 7) * 0.1)), 1);
+    const sw = E.sweat;
+    o.sweat.scale.set(0.75 * sw, 1.15 * sw, 0.75 * sw);
+    o.sweat.position.y = 0.55 - ((t * 0.7) % 1) * 0.12 * sw;
+    const ang = E.angerMark;
+    o.anger.scale.setScalar(Math.max(0.0001, ang * (1 + Math.sin(t * 12) * 0.12)));
+
+    /* ---- emotes ---- */
+    if (S.emote && S.emote.until < t) S.emote = null;
+    const wantEmote: EmoteName | null = S.emote ? S.emote.name : S.fidget?.emote ?? d.emote;
+    if (wantEmote !== S.emoteCur) {
+      if (S.emoteCur === null && wantEmote !== null) {
+        S.emoteS.set(0);
+        S.emoteS.impulse(14);
+      }
+      S.emoteCur = wantEmote;
+    }
+    S.emoteS.target = wantEmote ? 1 : 0;
+    const es = Math.max(0, S.emoteS.update(dt));
+    for (const name of EMOTE_NAMES) {
+      const g = o["emote_" + name];
+      const on = wantEmote === name;
+      g.scale.setScalar(on ? Math.max(0.0001, es) : 0.0001);
+      g.visible = on;
+    }
+    o.emotes.position.y = 1.25 + Math.sin(t * 3) * 0.05;
+    o.emotes.rotation.z = Math.sin(t * 2.2) * 0.08 - S.lean;
+    if (wantEmote === "zzz") {
+      for (let i = 0; i < 3; i++) {
+        const z = o["zzz" + i];
+        const ph = (t * 0.45 + i * 0.33) % 1;
+        z.position.set(0.1 + ph * 0.5, ph * 0.9, 0);
+        const sz = (0.5 + ph * 0.8) * (ph > 0.8 ? (1 - ph) / 0.2 : 1) * (ph < 0.1 ? ph / 0.1 : 1);
+        z.scale.setScalar(Math.max(0.0001, sz));
+        z.rotation.z = Math.sin(t * 2 + i) * 0.2;
+      }
+    }
+    if (wantEmote === "hearts3") {
+      for (let i = 0; i < 3; i++) {
+        const h = o["h3_" + i];
+        const ph = (t * 0.7 + i * 0.33) % 1;
+        h.position.set(Math.sin(ph * 6 + i) * 0.35, ph * 1.1 - 0.1, 0);
+        h.scale.setScalar(Math.max(0.0001, 0.8 * Math.sin(ph * Math.PI)));
+      }
+    }
+    if (wantEmote === "sparkles" || S.sparkle > 0) {
+      for (let i = 0; i < 4; i++) {
+        const sp = o["spark" + i];
+        const tw = Math.max(0, Math.sin(t * 9 + i * 1.7));
+        sp.scale.setScalar(Math.max(0.0001, tw * (wantEmote === "sparkles" ? 1 : S.sparkle)));
+        sp.rotation.z = t * 3 + i;
+      }
+    }
+    S.sparkle = Math.max(0, S.sparkle - dt * 0.9);
+    o.sparkles.visible = S.sparkle > 0 && wantEmote !== "sparkles";
+    // dizzy stars orbit
+    const dizzyOn = E.eyeSpiral > 0.4 || state === "stunned" || state === "dizzy";
+    S.dizzy = damp(S.dizzy, dizzyOn ? 1 : 0, 8, dt);
+    o.dizzy.visible = S.dizzy > 0.02;
+    o.dizzy.scale.setScalar(Math.max(0.0001, S.dizzy));
+    for (let i = 0; i < 3; i++) {
+      const st = o["dz" + i];
+      const a = t * 4 + (i * Math.PI * 2) / 3;
+      st.position.set(Math.cos(a) * 0.75, Math.sin(a * 2) * 0.08, Math.sin(a) * 0.45);
+      st.rotation.z = t * 6;
+    }
+
+    /* ---- accessories ---- */
+    const acc = d.accessory;
+    o.shield.visible = acc === "shield";
+    if (acc === "shield") {
+      S.shieldPulse = Math.max(0, S.shieldPulse - dt * 2);
+      const ps = 1 + Math.sin(t * 3) * 0.02 + S.shieldPulse * 0.15;
+      o.shield.scale.setScalar(ps);
+      o.shield.rotation.y = t * 0.4;
+    }
+    o.rocket.visible = acc === "rocket";
+    if (acc === "rocket") {
+      S.flameFlicker = rand(0.8, 1.25);
+      o.flame.scale.set(S.flameFlicker, 1 + rand(0, 0.6) + clamp(vy, 0, 30) * 0.03, S.flameFlicker);
+      o.rocket.rotation.z = Math.sin(t * 40) * 0.01;
+    }
+    o.balloon.visible = acc === "balloon";
+    if (acc === "balloon") {
+      S.balloon.setTarget(-vx * 0.06, 0);
+      S.balloon.x.impulse(noise1(t * 0.5, 3) * 0.05);
+      S.balloon.update(dt);
+      o.balloon.rotation.z = clamp(S.balloon.x.value, -0.8, 0.8) + Math.sin(t * 1.5) * 0.05;
+      o.balloon.rotation.x = Math.sin(t * 1.1) * 0.06;
+    }
+    o.umbrella.visible = acc === "umbrella";
+    if (acc === "umbrella") {
+      o.umbrella.rotation.z = -vx * 0.05 + Math.sin(t * 2) * 0.04;

@@ -1,7 +1,31 @@
 [PART 10 of 17 | src/character/Cat.tsx]
+    for (const side of ["L", "R"] as const) {
+      const isR = side === "R";
+      const wink = isR ? E.winkR : 0;
+      const open = E.eyeOpen * S.blink * (1 - wink);
+      const eye = o["eye" + side];
+      eye.position.x = (isR ? 0.4 : -0.4) + lookX;
+      eye.position.y = -0.04 + E.eyeOffsetY + lookYo;
+      const shock = E.eyeShock;
+      const lidK = E.eyeLid * open;
+      const sx = Math.max(0.0001, E.eyeScale * dot * (1 - shock * 0.5) * (1 + E.eyeSquash * 0.5));
+      const sy = Math.max(0.0001, Math.max(0.09, open) * E.eyeScale * dot * (1 - shock * 0.5) * (1 - E.eyeSquash * 0.6 * (1 - open)) * (1 - lidK * 0.5));
+      const dotY = lookYo * 0.3 - lidK * 0.045;
+      o["dot" + side].scale.set(sx * 0.95, sy * 1.05, 1);
+      o["dot" + side].position.set(lookX * 0.4 * shock, dotY, 0.002 + shock * 0.003);
+      // half-lidded look: an ink line along the flattened top edge of the eye
+      const lid = o["lid" + side];
+      const lidOn = lidK \u003e 0.03 \u0026\u0026 dot \u003e 0.5;
+      lid.scale.set(lidOn ? 1.35 * sx : 0.0001, lidOn ? 1 : 0.0001, 1);
+      lid.position.set(lookX * 0.4 * shock, dotY + sy * 1.05 * 0.105 - 0.012, 0.006);
+      const ring = shock * dot * Math.max(0.2, open);
+      o["ring" + side].scale.set(Math.max(0.0001, ring * E.eyeScale), Math.max(0.0001, ring * E.eyeScale * Math.max(0.3, open)), 1);
       const hl = E.eyeSparkle * clamp((open - 0.35) / 0.3, 0, 1) * dot * (1 - shock * 0.6);
       o["hl" + side].scale.setScalar(Math.max(0.0001, hl));
       o["hl" + side].position.set(-0.035 + lookX * 0.3, 0.04 + lookYo * 0.2, 0.004);
+      // secondary glossy catch-light (smaller, opposite corner) — gives the eye depth
+      o["hl2" + side].scale.setScalar(Math.max(0.0001, hl * 0.5));
+      o["hl2" + side].position.set(0.042 + lookX * 0.3, -0.045 + lookYo * 0.2, 0.004);
       // happy arcs also serve as the closed eye for a wink
       o["happy" + side].scale.setScalar(Math.max(0.0001, Math.max(E.eyeHappy, wink * (1 - E.eyeSquash)) * E.eyeScale));
       o["cry" + side].scale.setScalar(Math.max(0.0001, E.eyeCry));
@@ -35,33 +59,3 @@
     o.mouthSmile.scale.setScalar(Math.max(0.0001, E.mouthSmile));
     o.mouthFrown.scale.setScalar(Math.max(0.0001, E.mouthFrown));
     o.mouthWobble.scale.setScalar(Math.max(0.0001, E.mouthWobble));
-    o.mouthWobble.rotation.z = shiver * Math.sin(t * 40) * 0.2;
-    o.mouthO.scale.setScalar(Math.max(0.0001, E.mouthO * (1 + Math.sin(t * 6) * 0.06)));
-    o.mouthLine.scale.setScalar(Math.max(0.0001, E.mouthLine));
-    o.mouthPout.scale.setScalar(Math.max(0.0001, E.mouthPout));
-    const mo = E.mouthOpen;
-    o.mouthOpen.scale.set(Math.max(0.0001, 0.55 + 0.45 * mo), Math.max(0.0001, mo * (1 + Math.sin(t * 9) * 0.06)), 1);
-    const sc = E.mouthScream;
-    o.mouthScream.scale.set(Math.max(0.0001, 0.6 + 0.4 * sc), Math.max(0.0001, sc * (1 + Math.sin(t * 14) * 0.08)), 1);
-    const gr = E.mouthGrin;
-    o.mouthGrin.scale.set(Math.max(0.0001, gr), Math.max(0.0001, gr * (0.85 + Math.abs(Math.sin(t * 12)) * 0.25)), 1);
-    o.mouthTongue.scale.set(Math.max(0.0001, E.mouthTongue), Math.max(0.0001, E.mouthTongue * (1 + Math.sin(t * 7) * 0.1)), 1);
-    const sw = E.sweat;
-    o.sweat.scale.set(0.75 * sw, 1.15 * sw, 0.75 * sw);
-    o.sweat.position.y = 0.55 - ((t * 0.7) % 1) * 0.12 * sw;
-    const ang = E.angerMark;
-    o.anger.scale.setScalar(Math.max(0.0001, ang * (1 + Math.sin(t * 12) * 0.12)));
-
-    /* ---- emotes ---- */
-    if (S.emote \u0026\u0026 S.emote.until \u003c t) S.emote = null;
-    const wantEmote: EmoteName | null = S.emote ? S.emote.name : S.fidget?.emote ?? d.emote;
-    if (wantEmote !== S.emoteCur) {
-      if (S.emoteCur === null \u0026\u0026 wantEmote !== null) {
-        S.emoteS.set(0);
-        S.emoteS.impulse(14);
-      }
-      S.emoteCur = wantEmote;
-    }
-    S.emoteS.target = wantEmote ? 1 : 0;
-    const es = Math.max(0, S.emoteS.update(dt));
-    for (const name of EMOTE_NAMES) {

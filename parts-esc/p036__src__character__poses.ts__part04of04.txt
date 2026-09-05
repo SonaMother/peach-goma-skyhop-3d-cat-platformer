@@ -1,4 +1,8 @@
 [PART 4 of 4 | src/character/poses.ts]
+  // anticipation just before touchdown: paws reach for the platform, legs drop, tail up for balance
+  brace: p({ stretch: 0.95, crouch: 0.03, armRaiseL: 1.9, armRaiseR: 1.9, armForwardL: 0.45, armForwardR: 0.45, pawUpL: 0.7, pawUpR: 0.7, legL: 0.95, legR: 0.95, legSpread: 0.35, earFold: 0.45, earTipFlop: 0.35, tailLift: 0.75, tailWag: 0.45, tailWagSpeed: 9, headPitch: 0.28, whiskerFlare: 0.6 }),
+};
+
 /** Expression that plays by default with a motion state (can be overridden). */
 export const POSE_EXPRESSION: Record\u003cMotionState, ExpressionName\u003e = {
   idle: "content",
@@ -39,6 +43,7 @@ export const POSE_EXPRESSION: Record\u003cMotionState, ExpressionName\u003e = {
   laugh: "laugh",
   scaredBack: "scared",
   proud: "proud",
+  brace: "focus",
 };
 
 /** Per-parameter spring tuning (stiffness, damping). Anything missing uses the default. */

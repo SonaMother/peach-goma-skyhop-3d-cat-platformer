@@ -72,6 +72,9 @@ const FIDGETS: Fidget[] = [
   { state: "dance", expression: "sing", emote: "note", dur: [2, 3], weight: 0.5 },
   { state: "sit", expression: "content", dur: [2.5, 4], weight: 0.8 },
   { state: "proud", expression: "proud", dur: [1.5, 2.2], weight: 0.5 },
+  { state: "pounce", expression: "focus", dur: [1.1, 1.6], weight: 0.45 },
+  { state: "lieDown", expression: "sleepy", dur: [2.6, 4], weight: 0.45 },
+  { state: "bow", expression: "content", emote: "heart", dur: [1.2, 1.6], weight: 0.35 },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -82,9 +85,3 @@ export interface CatProps {
   driver: MutableRefObject\u003cCatDriver\u003e;
   position?: [number, number, number];
   rotation?: [number, number, number];
-  scale?: number;
-  groupRef?: MutableRefObject\u003cTHREE.Group | null\u003e;
-  /** Enable poke / pet hit zones */
-  interactive?: boolean;
-  onPoke?: (zone: PokeZone) =\u003e void;
-  onEvent?: (e: CatEvent) =\u003e void;

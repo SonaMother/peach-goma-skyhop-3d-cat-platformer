@@ -1,4 +1,15 @@
 [PART 6 of 17 | src/character/Cat.tsx]
+          case "spring":
+            S.springs.stretch.impulse(8);
+            S.head.impulse(0, -5);
+            S.roll = 0.0001;
+            break;
+          case "collect":
+          case "yum":
+            S.springs.headTilt.impulse(3);
+            S.springs.stretch.impulse(2.5);
+            S.cheek.impulse(3);
+            break;
           case "star":
           case "record":
           case "milestone":
@@ -27,6 +38,9 @@
             S.springs.headTilt.impulse(-4);
             S.earL.impulse(8);
             S.head.impulse(-6, 0);
+            // whip-twist the whole body around the vertical axis as the cat wraps the screen edge
+            S.twist.impulse(d.vx \u003e= 0 ? -14 : 14);
+            S.tail.impulse(d.vx \u003e= 0 ? 8 : -8, 0.9);
             break;
           case "cheer":
           case "perfect":
@@ -43,6 +57,7 @@
             S.earL.impulse(-12);
             S.earR.impulse(12);
             S.jiggle.impulse(5);
+            S.puff.impulse(7);
             break;
           case "shieldOn":
             S.shieldPulse = 1;
@@ -77,25 +92,10 @@
           case "pokeTail":
             S.tail.impulse(18, 0.9);
             S.tailRoot.impulse(10);
+            S.puff.impulse(9);
             S.head.impulse(6, 0);
             S.earL.impulse(-12);
             S.earR.impulse(-12);
             break;
           case "nearMiss":
             S.head.impulse(0, -3);
-            S.whiskerL.impulse(6);
-            S.whiskerR.impulse(6);
-            break;
-          case "startle":
-            S.springs.stretch.impulse(8);
-            S.earL.impulse(14);
-            S.earR.impulse(14);
-            S.tail.impulse(-12, 0.9);
-            S.whiskerL.impulse(10);
-            S.whiskerR.impulse(10);
-            break;
-          case "wakeUp":
-            S.asleep = false;
-            S.springs.stretch.impulse(3);
-            S.earL.impulse(8);
-            S.earR.impulse(8);

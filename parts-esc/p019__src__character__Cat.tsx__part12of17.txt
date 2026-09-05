@@ -1,4 +1,50 @@
 [PART 12 of 17 | src/character/Cat.tsx]
+      o.shield.rotation.y = t * 0.4;
+    }
+    o.rocket.visible = acc === "rocket";
+    if (acc === "rocket") {
+      S.flameFlicker = rand(0.8, 1.25);
+      o.flame.scale.set(S.flameFlicker, 1 + rand(0, 0.6) + clamp(vy, 0, 30) * 0.03, S.flameFlicker);
+      o.rocket.rotation.z = Math.sin(t * 40) * 0.01;
+    }
+    o.balloon.visible = acc === "balloon";
+    if (acc === "balloon") {
+      S.balloon.setTarget(-vx * 0.06, 0);
+      S.balloon.x.impulse(noise1(t * 0.5, 3) * 0.05);
+      S.balloon.update(dt);
+      o.balloon.rotation.z = clamp(S.balloon.x.value, -0.8, 0.8) + Math.sin(t * 1.5) * 0.05;
+      o.balloon.rotation.x = Math.sin(t * 1.1) * 0.06;
+    }
+    o.umbrella.visible = acc === "umbrella";
+    if (acc === "umbrella") {
+      o.umbrella.rotation.z = -vx * 0.05 + Math.sin(t * 2) * 0.04;
+      o.umbrella.rotation.x = clamp(vy * 0.01, -0.2, 0.1);
+    }
+    o.fish.visible = acc === "fish";
+    if (acc === "fish") o.fish.rotation.z = Math.sin(t * 6) * 0.15;
+
+    /* ---- petting ---- */
+    S.petCooldown = Math.max(0, S.petCooldown - dt);
+    S.petAmount = Math.max(0, S.petAmount - dt * 1.5);
+  });
+
+  const fur = palette.fur;
+  const stripe = palette.stripe;
+  const faceZ = (x: number, y: number) =\u003e 0.98 * Math.sqrt(Math.max(0.05, 1 - (x / 1.08) ** 2 - (y / 0.95) ** 2));
+  const stripeMat = toon(stripe);
+  const pawMat = flat(palette.paw);
+  const shadeMat = toon(palette.furShade);
+
+  return (
+    \u003cgroup
+      ref={(g) =\u003e {
+        if (g) {
+          R.current.root = g;
+          if (groupRef) groupRef.current = g;
+        }
+      }}
+      position={position}
+      rotation={rotation}
       scale={scale}
     \u003e
       \u003cgroup ref={r("crouch")}\u003e
@@ -36,28 +82,3 @@
               \u003cmesh geometry={G.stripe} material={stripeMat} position={[0.25, 0.845, 0.34]} rotation={[Math.PI / 2 + 0.42, 0, -0.22]} /\u003e
               {/* ears: base + floppy tip */}
               {(["L", "R"] as const).map((side) =\u003e {
-                const sgn = side === "L" ? -1 : 1;
-                return (
-                  \u003cgroup key={side} ref={r("ear" + side)} position={[sgn * 0.62, 0.5, -0.04]} rotation={[0, 0, sgn * 0.38]}\u003e
-                    {/* fur root ball (outline-less) buried at the pivot — keeps the ear visually fused to the skull when it flops */}
-                    \u003cmesh geometry={G.head} material={toon(fur)} scale={[0.34, 0.26, 0.26]} position={[0, -0.03, -0.05]} /\u003e
-                    \u003cPart geometry={G.ear} color={fur} scale={[1, 1, 0.62]} outlineWidth={OUTLINE_W * 1.05} /\u003e
-                    \u003cmesh geometry={G.ear} material={toon(palette.innerEar)} position={[0, 0.07, 0.11]} scale={[0.55, 0.6, 0.55]} /\u003e
-                  \u003c/group\u003e
-                );
-              })}
-              {/* whiskers */}
-              {(["L", "R"] as const).map((side) =\u003e {
-                const sgn = side === "L" ? -1 : 1;
-                return (
-                  \u003cgroup key={side} ref={r("whisker" + side)} position={[sgn * 0.95, -0.2, 0.5]}\u003e
-                    {[-0.22, 0, 0.22].map((a, i) =\u003e (
-                      \u003cmesh key={i} geometry={G.whisker} material={M.ink} position={[sgn * 0.17, a * 0.55, 0]} rotation={[0, 0, sgn * (Math.PI / 2 - a * 0.9)]} scale={[0.8, 0.9 - Math.abs(a) * 0.5, 0.8]} /\u003e
-                    ))}
-                  \u003c/group\u003e
-                );
-              })}
-
-              {/* ---- FACE ---- */}
-              {(["L", "R"] as const).map((side) =\u003e {
-                const sgn = side === "L" ? -1 : 1;

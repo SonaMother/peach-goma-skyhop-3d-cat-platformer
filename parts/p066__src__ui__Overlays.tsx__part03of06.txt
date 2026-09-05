@@ -1,0 +1,74 @@
+[PART 3 of 6 | src/ui/Overlays.tsx]
+          <div className={`sticker-text text-4xl font-black text-white transition-transform ${pop ? "scale-110" : ""}`}>{score.toLocaleString()}</div>
+          <div className="flex flex-wrap gap-1.5 text-[12px] font-black text-white">
+            <span className="rounded-full bg-black/15 px-2 py-0.5">⬆ {altitude}m</span>
+            <span className="rounded-full bg-black/15 px-2 py-0.5">♥ {hearts}</span>
+            {stars > 0 && <span className="rounded-full bg-black/15 px-2 py-0.5">★ {stars}</span>}
+            {fish > 0 && <span className="rounded-full bg-black/15 px-2 py-0.5">🐟 {fish}</span>}
+            {hugs > 0 && <span className="rounded-full bg-black/15 px-2 py-0.5">🤗 {hugs}</span>}
+          </div>
+          {shield && <div className="mt-1 w-fit rounded-full border-2 border-white/80 bg-[#9FD8FF]/80 px-2 py-0.5 text-[11px] font-black text-white">🛡️ SHIELD</div>}
+        </div>
+        <div className="pointer-events-auto flex gap-2">
+          <Btn small color="#8FB8FF" onClick={toggleMute}>
+            {muted ? "🔇" : "🔊"}
+          </Btn>
+          <Btn small color="#FFB380" onClick={togglePause}>
+            {paused ? "▶" : "❚❚"}
+          </Btn>
+        </div>
+      </div>
+      {power && (
+        <div className="absolute left-1/2 top-[17%] w-44 -translate-x-1/2">
+          <div className="sticker-text-sm mb-1 text-center text-sm font-black text-white">{POWER_INFO[power].label}</div>
+          <div className="h-3 w-full overflow-hidden rounded-full border-2 border-[#3B3231] bg-white/60">
+            <div className="h-full rounded-full transition-[width] duration-100" style={{ width: `${Math.max(0, powerLeft * 100)}%`, background: POWER_INFO[power].color }} />
+          </div>
+        </div>
+      )}
+      {combo >= 2 && (
+        <div key={combo} className="pop-in absolute right-4 top-[24%] rotate-6 text-right">
+          <div className="sticker-text text-3xl font-black text-[#FFD35C]">x{combo}</div>
+          <div className="sticker-text-sm text-[11px] font-black tracking-widest text-white">COMBO</div>
+        </div>
+      )}
+      {altitude < 6 && !paused && (
+        <div className="pointer-events-none absolute left-0 right-0 top-[60%] flex justify-center">
+          <div className="pop-in floaty rounded-full border-2 border-white/70 bg-black/15 px-4 py-1.5 text-[12px] font-black tracking-wide text-white backdrop-blur-[2px]">
+            {matchMedia("(pointer: coarse)").matches ? "Tap or tilt left / right to steer" : "← → to steer · land dead-center for PERFECT ✨"}
+          </div>
+        </div>
+      )}
+      <div className="absolute left-0 right-0 top-[30%] flex flex-col items-center gap-1">
+        {toasts.map((t) => (
+          <div key={t.id} className="toast sticker-text text-3xl font-black" style={{ color: t.color }}>
+            {t.text}
+          </div>
+        ))}
+      </div>
+      {paused && (
+        <div className="pointer-events-auto absolute inset-0 flex flex-col items-center justify-center gap-4 bg-white/30 backdrop-blur-[2px]">
+          <div className="sticker-text text-5xl font-black text-white">Paused</div>
+          <Btn onClick={togglePause}>Resume</Btn>
+          <Btn small color="#B9A7A4" onClick={backToMenu}>
+            Quit to menu
+          </Btn>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+export function GameOverOverlay() {
+  const score = useGame((s) => s.score);
+  const altitude = useGame((s) => s.altitude);
+  const hearts = useGame((s) => s.hearts);
+  const hugs = useGame((s) => s.hugs);
+  const stars = useGame((s) => s.stars);
+  const fish = useGame((s) => s.fish);
+  const bestCombo = useGame((s) => s.bestCombo);
+  const best = useGame((s) => s.best);
+  const character = useGame((s) => s.character);
+  const start = useGame((s) => s.start);
+  const backToMenu = useGame((s) => s.backToMenu);

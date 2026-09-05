@@ -1,4 +1,31 @@
 [PART 16 of 17 | src/character/Cat.tsx]
+                \u003cgroup ref={r("emote_anger")} position={[-0.15, -0.3, 0]}\u003e
+                  {[0, 1, 2, 3].map((i) =\u003e (
+                    \u003cmesh key={i} geometry={G.angerBar} material={M.anger} rotation={[0, 0, (i * Math.PI) / 4 + 0.4]} position={[Math.cos(i * 1.57) * 0.03, Math.sin(i * 1.57) * 0.03, 0]} scale={1.6} /\u003e
+                  ))}
+                \u003c/group\u003e
+                \u003cgroup ref={r("emote_sparkles")}\u003e
+                  {[0, 1, 2, 3].map((i) =\u003e (
+                    \u003cmesh key={i} ref={r("spark" + i)} geometry={G.sparkle} material={M.spark} position={[Math.cos(i * 1.6) * 0.4 - 0.5, Math.sin(i * 1.6) * 0.35, 0]} scale={[1, 1.6, 1]} /\u003e
+                  ))}
+                \u003c/group\u003e
+              \u003c/group\u003e
+              {/* ambient sparkles (record / star) shares the spark refs */}
+              \u003cgroup ref={r("sparkles")} visible={false} /\u003e
+              {/* dizzy stars orbiting */}
+              \u003cgroup ref={r("dizzy")} position={[0, 0.95, 0]}\u003e
+                {[0, 1, 2].map((i) =\u003e (
+                  \u003cPart key={i} ref={r("dz" + i)} geometry={STAR_GEO} material={M.emoteGold} scale={0.9} outlineWidth={0.025} /\u003e
+                ))}
+              \u003c/group\u003e
+            \u003c/group\u003e
+
+            {/* ---- accessories ---- */}
+            \u003cgroup ref={r("shield")} position={[0, 1.35, 0]} visible={false}\u003e
+              \u003cmesh geometry={G.shield} material={M.shield} /\u003e
+              \u003cmesh geometry={G.shieldGloss} material={M.shieldGloss} position={[-0.9, 1.05, 1.0]} scale={[1, 0.5, 0.3]} rotation={[0, 0, 0.6]} /\u003e
+            \u003c/group\u003e
+            \u003cgroup ref={r("rocket")} position={[0, 1.0, -0.72]} visible={false}\u003e
               \u003cPart geometry={G.rocketBody} material={M.rocketRed} outlineWidth={0.05} /\u003e
               \u003cPart geometry={G.rocketTip} material={M.rocketWhite} position={[0, 0.58, 0]} outlineWidth={0.04} /\u003e
               \u003cmesh geometry={G.rocketBody} material={M.rocketWhite} scale={[1.02, 0.3, 1.02]} position={[0, -0.05, 0]} /\u003e
@@ -19,34 +46,3 @@
             \u003cgroup ref={r("umbrella")} position={[0.6, 2.2, 0.2]} visible={false}\u003e
               \u003cmesh geometry={G.umbrellaStick} material={M.stick} position={[0, 0.75, 0]} /\u003e
               \u003cmesh geometry={G.umbrellaHandle} material={M.stick} position={[0.12, 0.02, 0]} rotation={[0, 0, Math.PI]} /\u003e
-              \u003cPart geometry={G.umbrellaTop} material={M.umbrella} position={[0, 1.4, 0]} scale={[1, 0.55, 1]} outlineWidth={0.05} /\u003e
-              \u003cmesh geometry={G.umbrellaTop} material={M.umbrellaAlt} position={[0, 1.41, 0]} scale={[0.35, 0.56, 1.01]} /\u003e
-              \u003cPart geometry={G.exclaimDot} material={M.emoteGold} position={[0, 2.02, 0]} outlineWidth={0.03} /\u003e
-            \u003c/group\u003e
-            \u003cgroup ref={r("fish")} position={[0, 1.15, 0.6]} rotation={[0, 0, 0.3]} visible={false}\u003e
-              \u003cPart geometry={G.fishBody} material={M.fish} scale={[1.5, 0.9, 0.7]} outlineWidth={0.04} /\u003e
-              \u003cPart geometry={G.fishTail} material={M.fishDark} position={[-0.38, 0, 0]} rotation={[0, 0, Math.PI / 2]} scale={[1, 1, 0.5]} outlineWidth={0.035} /\u003e
-              \u003cmesh geometry={G.highlight} material={M.ink} position={[0.18, 0.05, 0.16]} scale={1.3} /\u003e
-            \u003c/group\u003e
-
-            {/* ---- interactive hit zones ---- */}
-            {interactive \u0026\u0026 (
-              \u003c\u003e
-                \u003cmesh
-                  position={[0, 1.9, 0]}
-                  onPointerDown={(e) =\u003e {
-                    e.stopPropagation();
-                    fire("poke");
-                    onPoke?.("head");
-                  }}
-                  onPointerMove={(e) =\u003e {
-                    if (e.buttons === 0 \u0026\u0026 e.pointerType !== "touch") return;
-                    S.petAmount += 0.12;
-                    if (S.petAmount \u003e 2.2 \u0026\u0026 S.petCooldown \u003c= 0) {
-                      S.petAmount = 0;
-                      S.petCooldown = 2.5;
-                      fire("pet");
-                    }
-                  }}
-                \u003e
-                  \u003csphereGeometry args={[1.15, 12, 8]} /\u003e

@@ -1,0 +1,101 @@
+[PART 5 of 8 | src/scenes/GameScene.tsx]
+          sfx.pop();
+        } else if (P.power === "rocket") {
+          P.vy = Math.min(P.vy, C.jumpV * 0.9);
+          fx.burst("smoke", P.x, P.y, 0.2, 6);
+        }
+        P.power = null;
+      }
+    }
+    store.setPower(P.power, P.power ? P.powerT / P.powerTotal : 0);
+    if (P.shield) {
+      P.shieldT -= dt;
+      if (P.shieldT < 2.5 && !P.shieldWarned) {
+        P.shieldWarned = true;
+        sfx.tick();
+      }
+      if (P.shieldT <= 0) {
+        P.shield = false;
+        fx.burst("bubbles", P.x, P.y + 0.6, 0.4, 8);
+        sfx.pop();
+      }
+    }
+    store.setShield(P.shield);
+    P.fishTimer -= dt;
+
+    /* ---------- enemies ---------- */
+    for (const e of world.enemies) {
+      if (!e.alive) continue;
+      const ddx = P.x - e.x;
+      const ddy = catCy - e.y;
+      const dist = Math.hypot(ddx, ddy);
+      e.angry = damp(e.angry, dist < 3.2 ? 1 : 0, 4, dt);
+      if (Math.abs(ddx) < 0.95 && Math.abs(ddy) < 0.8) {
+        if (rocket || P.shield) {
+          e.alive = false;
+          e.popT = 0;
+          fx.burst("zap", e.x, e.y, 0.4, 10);
+          fx.burst("smoke", e.x, e.y, 0.4, 8);
+          sfx.pop();
+          P.bonus += 150;
+          if (!rocket) {
+            P.shield = false;
+            d.events.push("shieldPop");
+            fx.burst("bubbles", P.x, P.y + 0.6, 0.4, 12);
+            store.pushToast("POOF! +150", "#9FD8FF");
+          } else store.pushToast("ZAP! +150", "#FFE45C");
+        } else if (P.stunTimer <= 0) {
+          P.stunTimer = 0.95;
+          P.combo = 0;
+          P.hitStop = 0.1;
+          P.shake = 1;
+          P.vy = Math.min(P.vy, -2);
+          P.vx = (ddx >= 0 ? 1 : -1) * 6;
+          d.events.push("stun");
+          fx.burst("stars", P.x, P.y + 1.2, 0.5, 5);
+          sfx.stun();
+          sfx.grumble();
+          store.flashHurt();
+          store.pushToast("BONK!", "#8E8AA6");
+        }
+      }
+    }
+
+    /* ---------- companions ---------- */
+    for (const p of world.platforms) {
+      if (!p.companion || !p.companionDriver) continue;
+      const cd = p.companionDriver;
+      const dy = p.y - P.y;
+      const near = dy > -1 && dy < 9;
+      let mem = compMem.get(p.id);
+      if (!mem) {
+        mem = { woke: false, wakeT: 0 };
+        compMem.set(p.id, mem);
+      }
+      cd.look = clamp((P.x - p.x) * 0.5, -1, 1);
+      cd.lookY = clamp(-dy * 0.15, -1, 1);
+      if (!p.hugged && dy < -2.5 && (p.companionMood !== "sleep" || mem.woke)) {
+        // missed the hug… the little one deflates as you fly past (still hoping you come back)
+        cd.state = "sitSad";
+        cd.expression = dy < -6 ? "sad" : "worried";
+        cd.emote = null;
+        continue;
+      }
+      if (p.hugged) {
+        p.cheerTimer -= dt;
+        if (p.cheerTimer > 0) cd.state = p.cheerTimer > 1.6 ? "hug" : "celebrate";
+        else {
+          cd.state = "sit";
+          cd.expression = "love";
+        }
+        continue;
+      }
+      if (p.companionMood === "sleep") {
+        if (near && !mem.woke) {
+          mem.woke = true;
+          mem.wakeT = 1.1;
+          cd.events.push("wakeUp");
+          cd.emote = null;
+          cd.state = "sit";
+          cd.expression = "confused";
+        }

@@ -1,0 +1,101 @@
+[PART 1 of 2 | src/game/sfx.ts]
+/**
+ * Procedural kawaii sound effects (no assets needed).
+ */
+import { useGame } from "./store";
+
+let ctx: AudioContext | null = null;
+let master: GainNode | null = null;
+
+function ac() {
+  if (!ctx) {
+    ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+    master = ctx.createGain();
+    master.gain.value = 0.5;
+    master.connect(ctx.destination);
+  }
+  if (ctx.state === "suspended") ctx.resume();
+  return ctx;
+}
+
+function tone(freq: number, dur: number, opts: { type?: OscillatorType; to?: number; vol?: number; delay?: number; attack?: number; vib?: number } = {}) {
+  if (useGame.getState().muted) return;
+  try {
+    const c = ac();
+    const t0 = c.currentTime + (opts.delay ?? 0);
+    const o = c.createOscillator();
+    const g = c.createGain();
+    o.type = opts.type ?? "sine";
+    o.frequency.setValueAtTime(freq, t0);
+    if (opts.to) o.frequency.exponentialRampToValueAtTime(opts.to, t0 + dur);
+    if (opts.vib) {
+      const lfo = c.createOscillator();
+      const lg = c.createGain();
+      lfo.frequency.value = 6;
+      lg.gain.value = opts.vib;
+      lfo.connect(lg).connect(o.frequency);
+      lfo.start(t0);
+      lfo.stop(t0 + dur + 0.05);
+    }
+    const v = opts.vol ?? 0.25;
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(v, t0 + (opts.attack ?? 0.01));
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    o.connect(g).connect(master!);
+    o.start(t0);
+    o.stop(t0 + dur + 0.05);
+  } catch {
+    /* audio not available */
+  }
+}
+
+function noise(dur: number, opts: { vol?: number; delay?: number; freq?: number; q?: number; to?: number } = {}) {
+  if (useGame.getState().muted) return;
+  try {
+    const c = ac();
+    const t0 = c.currentTime + (opts.delay ?? 0);
+    const len = Math.floor(c.sampleRate * dur);
+    const buf = c.createBuffer(1, len, c.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / len);
+    const src = c.createBufferSource();
+    src.buffer = buf;
+    const f = c.createBiquadFilter();
+    f.type = "bandpass";
+    f.frequency.setValueAtTime(opts.freq ?? 1200, t0);
+    if (opts.to) f.frequency.exponentialRampToValueAtTime(opts.to, t0 + dur);
+    f.Q.value = opts.q ?? 0.8;
+    const g = c.createGain();
+    g.gain.setValueAtTime(opts.vol ?? 0.2, t0);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    src.connect(f).connect(g).connect(master!);
+    src.start(t0);
+  } catch {
+    /* ignore */
+  }
+}
+
+/* ---- tiny generative music box: pentatonic arpeggio + soft bass, brightens with sky tier ---- */
+const MELODY = [0, 4, 7, 9, 7, 4, 2, 4, 0, 4, 7, 12, 9, 7, 4, 2, 0, 2, 4, 7, 9, 12, 9, 7, 4, 2, 0, -3, 0, 2, 4, 2];
+const BASS = [0, -5, -3, -7];
+let musicStep = 0;
+const semi = (base: number, n: number) => base * Math.pow(2, n / 12);
+
+export const sfx = {
+  musicTick: (tier = 0) => {
+    const base = 523.25 * (tier >= 3 ? 0.5 : 1); // C5, drops an octave into the starry night
+    const m = MELODY[musicStep % MELODY.length];
+    const lift = tier === 2 ? 2 : 0; // dusk lifts the tune a whole step
+    tone(semi(base, m + lift), 0.75, { type: "sine", vol: 0.045, attack: 0.005 });
+    tone(semi(base * 2, m + lift), 0.35, { type: "sine", vol: 0.012, attack: 0.005 });
+    if (musicStep % 8 === 0) tone(semi(base / 4, BASS[(musicStep / 8) % BASS.length] + lift), 1.4, { type: "triangle", vol: 0.035, attack: 0.02 });
+    musicStep++;
+  },
+  musicReset: () => {
+    musicStep = 0;
+  },
+  unlock: () => {
+    try {
+      ac();
+    } catch {
+      /* ignore */

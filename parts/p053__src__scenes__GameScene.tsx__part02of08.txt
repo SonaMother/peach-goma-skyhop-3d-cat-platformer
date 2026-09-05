@@ -1,0 +1,101 @@
+[PART 2 of 8 | src/scenes/GameScene.tsx]
+      prevState: "idle" as string,
+    }),
+    [],
+  );
+
+  // (re)initialise on new run
+  useEffect(() => {
+    initWorld(world);
+    spawnUpTo(world, 30);
+    compMem.clear();
+    Object.assign(P, {
+      x: 0, y: 0.2, vx: 0, vy: C.jumpV, maxY: 0, hearts: 0, hugs: 0, stars: 0, fish: 0, bonus: 0, combo: 0, bestCombo: 0,
+      landTimer: 0, superTimer: 0, springTimer: 0, slipTimer: 0, stunTimer: 0, hurtTimer: 0, fishTimer: 0,
+      power: null, powerT: 0, powerTotal: 1, shield: false, shieldT: 0, dead: false, deadTimer: 0, lastScore: -1,
+      nextMilestone: 100, recordShown: false, wrapCd: 0, nearMissCd: 0, shieldWarned: false, t: 0,
+      hitStop: 0, shake: 0, groundDist: 99, prevState: "idle",
+    });
+    camY.current = 5;
+    driver.current = createDriver({ state: "rise", fidgets: false });
+    driver.current.events.push("jump");
+    setVersion((v) => v + 1);
+  }, [runId, world, P, compMem]);
+
+  useFrame(({ size }, rawDt) => {
+    let dt = Math.min(rawDt, 1 / 30);
+    const d = driver.current;
+    const store = useGame.getState();
+    if (store.phase !== "playing" || store.paused) return;
+    // hit-stop: a few frames of slow-motion on big impacts sells weight
+    if (P.hitStop > 0) {
+      P.hitStop -= rawDt;
+      dt *= 0.22;
+    }
+    P.shake = Math.max(0, P.shake - rawDt * 3.2);
+    shakeRef.current = P.shake * P.shake;
+    P.t += dt;
+    const aspect = size.width / size.height;
+    const halfTan = Math.tan(THREE.MathUtils.degToRad(C.fov / 2));
+    const dist = clamp((C.halfW * 1.08) / (halfTan * aspect), 8, 40);
+    const H = dist * halfTan;
+
+    const controllable = !P.dead && P.stunTimer <= 0;
+    const rocket = P.power === "rocket";
+    const balloon = P.power === "balloon";
+
+    /* ---------- horizontal control ---------- */
+    const axis = controllable ? input.current.axis : 0;
+    const accel = balloon ? C.moveAccel * 0.6 : C.moveAccel;
+    if (axis !== 0) P.vx += axis * accel * dt;
+    else P.vx *= Math.exp(-(P.slipTimer > 0 ? 1.2 : C.drag) * dt);
+    P.vx = clamp(P.vx, -C.maxVx, C.maxVx);
+    P.x += P.vx * dt;
+    P.wrapCd -= dt;
+    if (P.x > C.halfW + 0.6 || P.x < -C.halfW - 0.6) {
+      P.x = P.x > 0 ? -C.halfW - 0.6 : C.halfW + 0.6;
+      if (P.wrapCd <= 0) {
+        P.wrapCd = 0.5;
+        d.events.push("wrap");
+        sfx.wrap();
+      }
+    }
+
+    /* ---------- vertical physics ---------- */
+    const prevY = P.y;
+    if (rocket) {
+      P.vy = damp(P.vy, C.rocketV, 6, dt);
+      if (Math.random() < 0.9) fx.burst("flame", P.x + rand(-0.08, 0.08), P.y + 0.25, -0.35, 1, 0.6);
+      if (Math.random() < 0.15) fx.burst("sparkle", P.x, P.y + 0.2, -0.3, 1, 0.5);
+    } else if (balloon) {
+      P.vy = damp(P.vy, C.balloonV + Math.sin(P.t * 2) * 0.6, 3, dt);
+    } else {
+      // softer gravity around the apex = readable hang-time (classic platformer feel)
+      const hang = Math.abs(P.vy) < 3.5 ? 0.78 : 1;
+      P.vy -= C.gravity * hang * dt;
+    }
+    P.y += P.vy * dt;
+    // speed streaks past the camera when climbing very fast
+    if (P.vy > 18 && Math.random() < (P.vy - 16) * 0.06) fx.burst("streak", camX.current + rand(-C.halfW, C.halfW), camY.current + H + 1, rand(-3, 1.5), 1, 1);
+
+    let landed: PlatformData | null = null;
+    if (P.vy < 0 && !P.dead && !rocket) {
+      for (const p of world.platforms) {
+        if (!p.alive) continue;
+        const top = p.y + topOffset(p);
+        const dx = Math.abs(P.x - p.x);
+        if (prevY >= top - 0.02 && P.y <= top) {
+          if (dx < p.w / 2 + C.catHalfW * 0.8) {
+            landed = p;
+            P.y = top;
+            break;
+          } else if (P.vy < -6 && dx < p.w / 2 + 1.1 && P.nearMissCd <= 0) {
+            P.nearMissCd = 1.5;
+            d.events.push("nearMiss");
+          }
+        }
+      }
+    }
+    P.nearMissCd -= dt;
+
+    if (landed) {

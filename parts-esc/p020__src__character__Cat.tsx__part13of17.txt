@@ -1,4 +1,29 @@
 [PART 13 of 17 | src/character/Cat.tsx]
+                const sgn = side === "L" ? -1 : 1;
+                return (
+                  \u003cgroup key={side} ref={r("ear" + side)} position={[sgn * 0.62, 0.5, -0.04]} rotation={[0, 0, sgn * 0.38]}\u003e
+                    {/* fur root ball (outline-less) buried at the pivot — keeps the ear visually fused to the skull when it flops */}
+                    \u003cmesh geometry={G.head} material={toon(fur)} scale={[0.34, 0.26, 0.26]} position={[0, -0.03, -0.05]} /\u003e
+                    \u003cPart geometry={G.ear} color={fur} scale={[1, 1, 0.62]} outlineWidth={OUTLINE_W * 1.05} /\u003e
+                    \u003cmesh geometry={G.ear} material={toon(palette.innerEar)} position={[0, 0.07, 0.11]} scale={[0.55, 0.6, 0.55]} /\u003e
+                  \u003c/group\u003e
+                );
+              })}
+              {/* whiskers */}
+              {(["L", "R"] as const).map((side) =\u003e {
+                const sgn = side === "L" ? -1 : 1;
+                return (
+                  \u003cgroup key={side} ref={r("whisker" + side)} position={[sgn * 0.95, -0.2, 0.5]}\u003e
+                    {[-0.22, 0, 0.22].map((a, i) =\u003e (
+                      \u003cmesh key={i} geometry={G.whisker} material={M.ink} position={[sgn * 0.17, a * 0.55, 0]} rotation={[0, 0, sgn * (Math.PI / 2 - a * 0.9)]} scale={[0.8, 0.9 - Math.abs(a) * 0.5, 0.8]} /\u003e
+                    ))}
+                  \u003c/group\u003e
+                );
+              })}
+
+              {/* ---- FACE ---- */}
+              {(["L", "R"] as const).map((side) =\u003e {
+                const sgn = side === "L" ? -1 : 1;
                 const ex = sgn * 0.4;
                 const ey = -0.04;
                 const dir = -sgn;
@@ -8,6 +33,7 @@
                       \u003cmesh ref={r("ring" + side)} geometry={G.eyeRing} material={M.white} position={[0, 0, -0.002]} /\u003e
                       \u003cmesh ref={r("dot" + side)} geometry={G.eyeDot} material={M.ink} /\u003e
                       \u003cmesh ref={r("hl" + side)} geometry={G.highlight} material={M.white} position={[-0.035, 0.04, 0.004]} /\u003e
+                      \u003cmesh ref={r("hl2" + side)} geometry={G.highlight} material={M.white} position={[0.042, -0.045, 0.004]} scale={0.5} /\u003e
                       \u003cmesh ref={r("happy" + side)} geometry={G.happyArc} material={M.ink} position={[0, -0.03, 0]} /\u003e
                       \u003cgroup ref={r("cry" + side)}\u003e
                         \u003cmesh geometry={G.chevron} material={M.ink} position={[dir * 0.06 - dir * 0.065, 0.05, 0]} rotation={[0, 0, -dir * 0.7]} /\u003e
@@ -22,31 +48,3 @@
                       \u003cgroup ref={r("brow" + side)}\u003e
                         \u003cmesh geometry={G.brow} material={M.ink} rotation={[0, 0, Math.PI / 2]} /\u003e
                       \u003c/group\u003e
-                    \u003c/group\u003e
-                    \u003cmesh
-                      ref={r("blush" + side)}
-                      geometry={G.blush}
-                      material={blushMat}
-                      position={[sgn * 0.66, -0.27, faceZ(sgn * 0.66, -0.27) + 0.015]}
-                      rotation={[0, sgn * 0.68, 0]}
-                    /\u003e
-                    {[0, 1].map((i) =\u003e (
-                      \u003cPart key={i} ref={r(`tear${side}${i}`)} geometry={G.drop} material={M.tear} outlineWidth={0.03} position={[sgn * (0.5 + i * 0.06), -0.2, faceZ(sgn * 0.52, -0.25) + 0.03]} /\u003e
-                    ))}
-                  \u003c/group\u003e
-                );
-              })}
-              {/* mouth cluster */}
-              \u003cgroup ref={r("mouth")} position={[0, -0.3, faceZ(0, -0.3) + 0.02]}\u003e
-                \u003cgroup ref={r("mouthCat")}\u003e
-                  \u003cmesh geometry={G.smallArc} material={M.ink} position={[-0.058, 0.02, 0]} rotation={[0, 0, Math.PI]} /\u003e
-                  \u003cmesh geometry={G.smallArc} material={M.ink} position={[0.058, 0.02, 0]} rotation={[0, 0, Math.PI]} /\u003e
-                \u003c/group\u003e
-                \u003cgroup ref={r("mouthSmile")}\u003e
-                  \u003cmesh geometry={G.smileArc} material={M.ink} position={[0, 0.03, 0]} rotation={[0, 0, Math.PI]} /\u003e
-                \u003c/group\u003e
-                \u003cgroup ref={r("mouthFrown")}\u003e
-                  \u003cmesh geometry={G.smallArc} material={M.ink} position={[0, -0.05, 0]} /\u003e
-                \u003c/group\u003e
-                \u003cgroup ref={r("mouthWobble")}\u003e
-                  \u003cmesh geometry={G.tinyArc} material={M.ink} position={[-0.034, -0.01, 0]} /\u003e

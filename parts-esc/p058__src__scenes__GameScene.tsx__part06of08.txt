@@ -1,0 +1,101 @@
+[PART 6 of 8 | src/scenes/GameScene.tsx]
+          cd.events.push("wakeUp");
+          cd.emote = null;
+          cd.state = "sit";
+          cd.expression = "confused";
+        }
+        if (mem.woke) {
+          mem.wakeT -= dt;
+          if (mem.wakeT \u003c= 0) {
+            cd.state = near ? "wave" : "sit";
+            cd.expression = near ? null : "content";
+          }
+        }
+      } else if (p.companionMood === "read") {
+        if (near \u0026\u0026 dy \u003c 5) {
+          cd.state = "wave";
+          cd.expression = null;
+        } else {
+          cd.state = "sit";
+          cd.expression = near ? "surprised" : "focus";
+          cd.lookY = near ? cd.lookY : -0.8;
+        }
+      } else if (p.companionMood === "wave") {
+        cd.state = near ? "wave" : "sit";
+        cd.expression = near ? "excited" : "content";
+      } else {
+        cd.state = near ? "wave" : "sit";
+        cd.expression = near ? null : "content";
+      }
+    }
+
+    /* ---------- state machine for the rig ---------- */
+    P.landTimer -= dt;
+    P.superTimer -= dt;
+    P.springTimer -= dt;
+    P.slipTimer -= dt;
+    P.stunTimer -= dt;
+    P.hurtTimer -= dt;
+    if (P.dead) d.state = "plummet";
+    else if (P.stunTimer \u003e 0) d.state = "stunned";
+    else if (P.hurtTimer \u003e 0) d.state = "hurt";
+    else if (rocket) d.state = "rocket";
+    else if (balloon) d.state = "float";
+    else if (P.slipTimer \u003e 0) d.state = "slip";
+    else if (P.springTimer \u003e 0) d.state = "spin";
+    else if (P.landTimer \u003e 0) d.state = "land";
+    else if (P.superTimer \u003e 0) d.state = "superJump";
+    else if (P.vy \u003e 5) d.state = "rise";
+    else if (P.vy \u003e -2.5) d.state = "apex";
+    else if (P.groundDist \u003c 1.3 + Math.abs(P.vy) * 0.06) d.state = "brace"; // platform coming up: reach for it
+    else if (P.vy \u003e -16) d.state = "fall";
+    else d.state = "plummet";
+    // danger awareness: the lower the cat sinks toward the screen edge, the more scared it looks
+    const dangerK = clamp((camY.current - H * 0.35 - P.y) / (H * 0.55), 0, 1);
+    const danger = !P.dead \u0026\u0026 P.vy \u003c -4 \u0026\u0026 P.groundDist \u003e 2.5 \u0026\u0026 dangerK \u003e 0.2 ? (dangerK \u003e 0.7 ? "terrified" : "scared") : null;
+    d.expression = P.dead ? "terrified" : danger ?? (P.combo \u003e= 6 \u0026\u0026 d.state === "rise" ? "smug" : P.combo \u003e= 3 \u0026\u0026 d.state === "rise" ? "determined" : null);
+    d.vx = P.vx;
+    d.vy = P.vy;
+    // smart gaze: glance at the closest goodie / friend / threat, otherwise follow the motion
+    let gx = P.vx / 5;
+    let gy = (P.vy / 22) * 0.6;
+    let gBest = 5.5;
+    for (const it of world.items) {
+      if (it.taken) continue;
+      const dx = it.x - P.x;
+      const dy = it.y - catCy;
+      const dd = Math.hypot(dx, dy);
+      if (dd \u003c gBest) {
+        gBest = dd;
+        gx = dx / 3;
+        gy = dy / 3;
+      }
+    }
+    for (const p of world.platforms) {
+      if (!p.companion || p.hugged) continue;
+      const dx = p.x - P.x;
+      const dy = p.y + 0.6 - catCy;
+      const dd = Math.hypot(dx, dy);
+      if (dd \u003c gBest) {
+        gBest = dd;
+        gx = dx / 3;
+        gy = dy / 3;
+      }
+    }
+    for (const e of world.enemies) {
+      if (!e.alive) continue;
+      const dx = e.x - P.x;
+      const dy = e.y - catCy;
+      const dd = Math.hypot(dx, dy);
+      if (dd \u003c Math.min(gBest, 3.5)) {
+        gBest = dd;
+        gx = dx / 2;
+        gy = dy / 2;
+      }
+    }
+    if (P.vy \u003c -2 \u0026\u0026 P.groundDist \u003e 4) {
+      // nothing under the paws: scan for the most reachable platform below and lean toward it
+      let bestScore = 99;
+      for (const p of world.platforms) {
+        if (!p.alive || p.y \u003e P.y - 0.2 || p.y \u003c camY.current - H) continue;
+        const dx = p.x - P.x;

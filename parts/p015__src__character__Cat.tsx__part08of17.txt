@@ -1,0 +1,84 @@
+[PART 8 of 17 | src/character/Cat.tsx]
+        const s = Math.random() < 0.5 ? [S.earL, S.earTipL] : [S.earR, S.earTipR];
+        s[0].impulse(rand(6, 10));
+        s[1].impulse(rand(8, 14));
+      }
+      S.tailFlickTimer -= dt;
+      if (S.tailFlickTimer <= 0) {
+        S.tailFlickTimer = rand(3, 9);
+        S.tail.impulse(rand(6, 12) * (Math.random() < 0.5 ? -1 : 1), 0.85);
+      }
+      S.whiskerTimer -= dt;
+      if (S.whiskerTimer <= 0) {
+        S.whiskerTimer = rand(2, 6);
+        (Math.random() < 0.5 ? S.whiskerL : S.whiskerR).impulse(rand(4, 8));
+      }
+    } else {
+      S.blink = 1;
+    }
+
+    /* ---- velocity & acceleration ---- */
+    const vx = d.vx;
+    const vy = d.vy;
+    const ax = dt > 0 ? (vx - S.prevVx) / dt : 0;
+    const ay = dt > 0 ? (vy - S.prevVy) / dt : 0;
+    S.prevVx = vx;
+    S.prevVy = vy;
+    if (Math.abs(ax) > 30) S.head.x.impulse(clamp(-ax * 0.015, -3, 3));
+    if (Math.abs(ay) > 60) S.head.y.impulse(clamp(-ay * 0.006, -3, 3));
+    S.armLag.target = clamp(-ax * 0.004, -0.4, 0.4);
+    const armLag = S.armLag.update(dt);
+
+    const wantLook = clamp(d.look + S.autoLook, -1, 1);
+    const wantLookY = clamp(d.lookY + S.autoLookY, -1, 1);
+    S.look = damp(S.look, wantLook, 8, dt);
+    S.lookY = damp(S.lookY, wantLookY, 8, dt);
+    S.lean = damp(S.lean, -vx * 0.045 + P.lean, 9, dt);
+    S.turn = damp(S.turn, S.look * 0.42 + P.headYaw * 0.5, 6, dt);
+
+    /* ---- whole-body ---- */
+    const jig = S.jiggle.update(dt);
+    const cheek = S.cheek.update(dt);
+    const velStretch = 1 + clamp(vy * 0.011, -0.03, 0.14) + Math.abs(vx) * 0.004;
+    const breath = Math.sin(t * 2.1) * 0.012;
+    const s = Math.max(0.45, P.stretch * velStretch + breath - jig * 0.02);
+    o.squash.scale.set((1 / Math.sqrt(s)) * (1 + jig * 0.03), s, (1 / Math.sqrt(s)) * (1 + jig * 0.03));
+    const shiver = Math.max(P.shiver, E.shiver);
+    const shakeX = shiver * 0.02 * Math.sin(t * 58) + shiver * 0.012 * Math.sin(t * 91 + 1);
+    o.crouch.position.set(shakeX, -P.crouch + Math.sin(t * P.bobSpeed) * P.bob * (0.6 + per.energy * 0.6), 0);
+    o.lean.rotation.z = S.lean;
+    o.lean.rotation.y = S.turn + S.twist.update(dt);
+    // spin (trampoline flips): accumulate roll, then settle back to upright
+    if (P.bodyRoll > 0.5) S.roll += P.bodyRoll * dt;
+    else {
+      S.roll = S.roll % (Math.PI * 2);
+      if (S.roll > Math.PI) S.roll -= Math.PI * 2;
+      S.roll = damp(S.roll, 0, 10, dt);
+    }
+    o.lean.rotation.x = P.bodyPitch + S.roll;
+
+    /* ---- head follow-through ---- */
+    S.head.setTarget(0, 0);
+    S.head.update(dt);
+    const hx = S.head.x.value;
+    const hy = S.head.y.value;
+    o.head.rotation.z = P.headTilt + E.headTilt - S.lean * 0.45 + Math.sin(t * 1.3) * 0.02 + hx * 0.06;
+    o.head.rotation.x = P.headPitch + clamp(-vy * 0.012, -0.22, 0.25) + hy * 0.05 - S.lookY * 0.18;
+    o.head.rotation.y = S.look * 0.28 + P.headYaw;
+    o.head.position.x = hx * 0.02 + shakeX * 0.5;
+    o.head.position.y = 1.88 + hy * 0.012;
+
+    /* ---- belly jiggle (cheek puff is expressed via the blush, not geometry) ---- */
+    // chest breathing: quicker & deeper after exertion (speed), slow & gentle when calm / asleep
+    const effort = Math.min(1, (Math.abs(vx) + Math.abs(vy) * 0.6) / 14);
+    const breathRate = S.asleep ? 1.1 : 2.1 + effort * 3 + per.energy * 0.6;
+    const br = Math.sin(t * breathRate) * (0.012 + effort * 0.014);
+    o.bodyJiggle.scale.set(1 + jig * 0.05 + br * 0.8, 1 - jig * 0.04 + br * 0.5, 1 + jig * 0.05 + br * 1.4);
+
+    /* ---- ears: pose + mood + vertical velocity + wind flap + spring twitch ---- */
+    const earVel = clamp(-vy * 0.035, -0.45, 0.6);
+    const wind = Math.min(1, Math.abs(vy) / 20);
+    const flap = Math.sin(t * (10 + wind * 20)) * wind * 0.18 * per.floppiness;
+    const mood = E.earMood;
+    S.earL.target = -(P.earFold * 0.55 + earVel) - mood * 0.35 + (mood < 0 ? mood * 0.4 : 0);
+    S.earR.target = P.earFold * 0.55 + earVel + mood * 0.35 - (mood < 0 ? mood * 0.4 : 0);

@@ -1,0 +1,60 @@
+[PART 10 of 17 | src/character/Cat.tsx]
+      const dotY = lookYo * 0.3 - lidK * 0.045;
+      o["dot" + side].scale.set(sx * 0.95, sy * 1.05, 1);
+      o["dot" + side].position.set(lookX * 0.4 * shock, dotY, 0.002 + shock * 0.003);
+      // half-lidded look: an ink line along the flattened top edge of the eye
+      const lid = o["lid" + side];
+      const lidOn = lidK > 0.03 && dot > 0.5;
+      lid.scale.set(lidOn ? 1.35 * sx : 0.0001, lidOn ? 1 : 0.0001, 1);
+      lid.position.set(lookX * 0.4 * shock, dotY + sy * 1.05 * 0.105 - 0.012, 0.006);
+      const ring = shock * dot * Math.max(0.2, open);
+      o["ring" + side].scale.set(Math.max(0.0001, ring * E.eyeScale), Math.max(0.0001, ring * E.eyeScale * Math.max(0.3, open)), 1);
+      const hl = E.eyeSparkle * clamp((open - 0.35) / 0.3, 0, 1) * dot * (1 - shock * 0.6);
+      o["hl" + side].scale.setScalar(Math.max(0.0001, hl));
+      o["hl" + side].position.set(-0.035 + lookX * 0.3, 0.04 + lookYo * 0.2, 0.004);
+      // secondary glossy catch-light (smaller, opposite corner) — gives the eye depth
+      o["hl2" + side].scale.setScalar(Math.max(0.0001, hl * 0.5));
+      o["hl2" + side].position.set(0.042 + lookX * 0.3, -0.045 + lookYo * 0.2, 0.004);
+      // happy arcs also serve as the closed eye for a wink
+      o["happy" + side].scale.setScalar(Math.max(0.0001, Math.max(E.eyeHappy, wink * (1 - E.eyeSquash)) * E.eyeScale));
+      o["cry" + side].scale.setScalar(Math.max(0.0001, E.eyeCry));
+      const beat = 1 + Math.sin(t * 8) * 0.08;
+      o["heart" + side].scale.setScalar(Math.max(0.0001, E.eyeHeart * beat));
+      o["heart" + side].rotation.z = Math.sin(t * 4 + (isR ? 1 : 0)) * 0.1;
+      o["star" + side].scale.setScalar(Math.max(0.0001, E.eyeStar * (1 + Math.sin(t * 10 + (isR ? 2 : 0)) * 0.1)));
+      o["star" + side].rotation.z = t * 1.5 * (isR ? -1 : 1);
+      o["spiral" + side].scale.setScalar(Math.max(0.0001, E.eyeSpiral));
+      o["spiral" + side].rotation.z = t * 5 * (isR ? -1 : 1);
+      const brow = o["brow" + side];
+      brow.scale.setScalar(Math.max(0.0001, E.browLift));
+      brow.rotation.z = (isR ? -1 : 1) * E.browAngle;
+      brow.position.y = 0.3 + E.browLift * 0.03 + E.eyeOffsetY + E.browHeight * 0.06 + (isR && E.winkR > 0.5 ? -0.03 : 0);
+      const bl = clamp(E.blush * (0.85 + per.shyness * 0.3), 0, 1.6);
+      // puffed / jiggle-reactive cheeks read as a wider, plumper blush
+      const puff = 1 + E.cheekPuff * 0.35 + cheek * 0.06;
+      o["blush" + side].scale.set((0.35 + 0.65 * bl) * puff, (0.35 + 0.65 * bl) * 0.75 * puff, 1);
+      for (let i = 0; i < 2; i++) {
+        const tear = o[`tear${side}${i}`];
+        const ph = (t * 1.3 + i * 0.5 + (isR ? 0.25 : 0)) % 1;
+        tear.position.y = -0.18 - ph * 0.4;
+        const sc = Math.min(1.4, E.tears) * (1 - ph * 0.6) * (ph < 0.08 ? ph / 0.08 : 1);
+        tear.scale.set(0.75 * sc, 1.1 * sc, 0.75 * sc);
+      }
+    }
+    const m = o.mouth;
+    m.position.x = lookX * 0.5;
+    m.position.y = -0.3 + lookYo * 0.4;
+    o.mouthCat.scale.setScalar(Math.max(0.0001, E.mouthCat));
+    o.mouthSmile.scale.setScalar(Math.max(0.0001, E.mouthSmile));
+    o.mouthFrown.scale.setScalar(Math.max(0.0001, E.mouthFrown));
+    o.mouthWobble.scale.setScalar(Math.max(0.0001, E.mouthWobble));
+    o.mouthWobble.rotation.z = shiver * Math.sin(t * 40) * 0.2;
+    o.mouthO.scale.setScalar(Math.max(0.0001, E.mouthO * (1 + Math.sin(t * 6) * 0.06)));
+    o.mouthLine.scale.setScalar(Math.max(0.0001, E.mouthLine));
+    o.mouthPout.scale.setScalar(Math.max(0.0001, E.mouthPout));
+    const mo = E.mouthOpen;
+    o.mouthOpen.scale.set(Math.max(0.0001, 0.55 + 0.45 * mo), Math.max(0.0001, mo * (1 + Math.sin(t * 9) * 0.06)), 1);
+    const sc = E.mouthScream;
+    o.mouthScream.scale.set(Math.max(0.0001, 0.6 + 0.4 * sc), Math.max(0.0001, sc * (1 + Math.sin(t * 14) * 0.08)), 1);
+    const gr = E.mouthGrin;
+    o.mouthGrin.scale.set(Math.max(0.0001, gr), Math.max(0.0001, gr * (0.85 + Math.abs(Math.sin(t * 12)) * 0.25)), 1);

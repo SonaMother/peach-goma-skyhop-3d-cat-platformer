@@ -4,9 +4,9 @@ This single file contains **every source file** of **Peach & Goma: SkyHop** with
 exact repository path and byte-exact contents, so the complete directory tree can be
 recreated 1:1 from one URL - no shell, no zip tool, nothing but the ability to read text.
 
-- Source commit: `682e94045bbcad76193a33f2cc05437ca4390935`
-- Generated (UTC): 2026-09-05 01:17:42
-- Files: 35 | Total: 335,133 bytes
+- Source commit: `887ca31bbc16968792694ed7a0e7660820d1a439`
+- Generated (UTC): 2026-09-05 02:53:21
+- Files: 35 | Total: 345,650 bytes
 - `gameproject.zip` (binary, byte-exact archive of these sources) is NOT inlined here; it sits in the repo root if you prefer `unzip` / `git clone`.
 
 ## How to reconstruct the directory exactly
@@ -36,36 +36,36 @@ recreated 1:1 from one URL - no shell, no zip tool, nothing but the ability to r
 | `.gitignore` | 334 | 36 | `5199f895d96b` |
 | `README.md` | 8,363 | 128 | `825be844a3e5` |
 | `index.html` | 783 | 17 | `4e453943df7b` |
-| `package-lock.json` | 111,680 | 3,274 | `1817046d8b0e` |
+| `package-lock.json` | 111,680 | 3,274 | `670442853626` |
 | `package.json` | 784 | 33 | `ba25f973eae6` |
 | `src/App.tsx` | 3,143 | 71 | `72ae3816b30a` |
-| `src/character/Cat.tsx` | 58,242 | 1,296 | `64731241376a` |
+| `src/character/Cat.tsx` | 60,051 | 1,321 | `2bfe1a08bdd1` |
 | `src/character/Part.tsx` | 1,234 | 34 | `29a525c79134` |
 | `src/character/README.md` | 3,887 | 46 | `102214594962` |
 | `src/character/expressions.ts` | 8,337 | 178 | `90384071bd2c` |
 | `src/character/materials.ts` | 3,982 | 114 | `7c4558b649af` |
 | `src/character/palettes.ts` | 1,473 | 55 | `d51f1020300c` |
-| `src/character/poses.ts` | 11,818 | 233 | `68a27830f820` |
+| `src/character/poses.ts` | 12,248 | 237 | `ccd65764b957` |
 | `src/character/springs.ts` | 3,524 | 112 | `1a429aa83cae` |
-| `src/game/sfx.ts` | 6,504 | 162 | `e9b09493429f` |
+| `src/game/sfx.ts` | 7,544 | 181 | `d19b92142f94` |
 | `src/game/store.ts` | 3,826 | 128 | `6ad09ecf561c` |
-| `src/game/useInput.ts` | 3,901 | 112 | `39848333b85d` |
-| `src/game/world.ts` | 8,483 | 251 | `1da2fb750ecf` |
+| `src/game/useInput.ts` | 4,098 | 114 | `9a6904173bd1` |
+| `src/game/world.ts` | 8,615 | 254 | `180eb4cae783` |
 | `src/index.css` | 2,471 | 65 | `b534d9a12cc1` |
 | `src/main.tsx` | 230 | 10 | `f268dc44f712` |
 | `src/scenes/GameOverScene.tsx` | 4,821 | 125 | `5a875f4fb7f5` |
-| `src/scenes/GameScene.tsx` | 21,329 | 618 | `ed30daae48c4` |
-| `src/scenes/LabScene.tsx` | 3,505 | 88 | `6b12b5d5097c` |
-| `src/scenes/MenuScene.tsx` | 4,572 | 127 | `09ae000e9c02` |
+| `src/scenes/GameScene.tsx` | 25,806 | 724 | `0f176b749ec2` |
+| `src/scenes/LabScene.tsx` | 3,753 | 92 | `93caf03dcec8` |
+| `src/scenes/MenuScene.tsx` | 5,586 | 147 | `69e7bb9ff3b7` |
 | `src/three-jsx.d.ts` | 164 | 7 | `abe8c1fe656d` |
-| `src/ui/Overlays.tsx` | 19,065 | 406 | `f9479250be93` |
+| `src/ui/Overlays.tsx` | 19,812 | 421 | `7c1a48998295` |
 | `src/ui/Sky.tsx` | 1,066 | 22 | `d6c0dc0c1f05` |
 | `src/utils/cn.ts` | 169 | 6 | `d1f1e0d62cb8` |
 | `src/world/Backdrop.tsx` | 6,887 | 178 | `84f6cc762132` |
 | `src/world/Items.tsx` | 8,770 | 195 | `9f0791cf1311` |
-| `src/world/Particles.tsx` | 6,631 | 161 | `d982307e8255` |
-| `src/world/Platform.tsx` | 10,904 | 237 | `089983230a1e` |
-| `src/world/geometries.ts` | 3,032 | 89 | `c102ae818def` |
+| `src/world/Particles.tsx` | 6,903 | 163 | `3374890502a3` |
+| `src/world/Platform.tsx` | 10,985 | 241 | `b39a7ad85370` |
+| `src/world/geometries.ts` | 3,102 | 90 | `737f57d3892d` |
 | `tsconfig.json` | 681 | 31 | `2a760f56fa49` |
 | `vite.config.ts` | 538 | 19 | `18dd184b9091` |
 
@@ -2067,9 +2067,9 @@ Made with 🧶, springs, and a lot of ear twitches.
       }
     },
     "node_modules/browserslist": {
-      "version": "4.28.8",
-      "resolved": "https://registry.npmjs.org/browserslist/-/browserslist-4.28.8.tgz",
-      "integrity": "sha512-V2NpofLblG64mfOtSgDhOJESZEGogzDMBv/q+W6oc4LXWP/q75eOXoOaaOu1EOadB9U4Bwx/e0yzbvwKH8zalA==",
+      "version": "4.28.9",
+      "resolved": "https://registry.npmjs.org/browserslist/-/browserslist-4.28.9.tgz",
+      "integrity": "sha512-EWazOblFYUvlGZcfGhPUPmYh3nikUxBVb+y9MJun5f3hBi812X+8MSQTujLBtgK3cf51fJWbWfOjyeO954d+Eg==",
       "dev": true,
       "funding": [
         {
@@ -2087,11 +2087,11 @@ Made with 🧶, springs, and a lot of ear twitches.
       ],
       "license": "MIT",
       "dependencies": {
-        "baseline-browser-mapping": "^2.11.12",
-        "caniuse-lite": "^1.0.30001809",
-        "electron-to-chromium": "^1.5.402",
-        "node-releases": "^2.0.53",
-        "update-browserslist-db": "^1.3.0"
+        "baseline-browser-mapping": "^2.11.20",
+        "caniuse-lite": "^1.0.30001810",
+        "electron-to-chromium": "^1.5.420",
+        "node-releases": "^2.0.54",
+        "update-browserslist-db": "^1.3.2"
       },
       "bin": {
         "browserslist": "cli.js"
@@ -2256,9 +2256,9 @@ Made with 🧶, springs, and a lot of ear twitches.
       "license": "Apache-2.0"
     },
     "node_modules/electron-to-chromium": {
-      "version": "1.5.421",
-      "resolved": "https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.5.421.tgz",
-      "integrity": "sha512-cUhfpHQy+PGbt+X90DMcAVazDCziIZr73hpxD4LRs4BGQoJCifPzTfQWa7S6c+uhokTOBe8tot09GBSEO6c9LA==",
+      "version": "1.5.422",
+      "resolved": "https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.5.422.tgz",
+      "integrity": "sha512-UvA/32XqrLDdZSn7Jllo1AYNcWji/G0d5M0GTViE7KoGBiMunw3a34Sb2KO4ZZyrSEhqsxFoVhWWJshdyfKqJA==",
       "dev": true,
       "license": "ISC"
     },
@@ -3654,7 +3654,7 @@ export default function App() {
 
 <<<<< END FILE: src/App.tsx >>>>>
 
-<<<<< BEGIN FILE: src/character/Cat.tsx (58242 bytes) >>>>>
+<<<<< BEGIN FILE: src/character/Cat.tsx (60051 bytes) >>>>>
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 import { memo, useCallback, useMemo, useRef, type MutableRefObject } from "react";
@@ -3928,6 +3928,9 @@ const FIDGETS: Fidget[] = [
   { state: "dance", expression: "sing", emote: "note", dur: [2, 3], weight: 0.5 },
   { state: "sit", expression: "content", dur: [2.5, 4], weight: 0.8 },
   { state: "proud", expression: "proud", dur: [1.5, 2.2], weight: 0.5 },
+  { state: "pounce", expression: "focus", dur: [1.1, 1.6], weight: 0.45 },
+  { state: "lieDown", expression: "sleepy", dur: [2.6, 4], weight: 0.45 },
+  { state: "bow", expression: "content", emote: "heart", dur: [1.2, 1.6], weight: 0.35 },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -4035,6 +4038,8 @@ function CatRig({ palette, driver, position, rotation, scale = 1, groupRef, inte
       cheek: new Spring(0, 260, 9),
       armLag: new Spring(0, 140, 12),
       balloon: new Spring2(40, 5),
+      twist: new Spring(0, 45, 6),
+      puff: new Spring(0, 60, 6),
       roll: 0,
       lean: 0,
       turn: 0,
@@ -4095,17 +4100,20 @@ function CatRig({ palette, driver, position, rotation, scale = 1, groupRef, inte
         S.fidget = null;
         S.idleFor = 0;
         switch (e) {
-          case "land":
-            S.springs.stretch.impulse(-7);
-            S.earL.impulse(-9);
-            S.earR.impulse(-9);
+          case "land": {
+            // squash scales with how hard we hit (prevVy still holds the impact velocity)
+            const impact = Math.min(1.6, 0.6 + Math.abs(Math.min(0, S.prevVy)) * 0.045);
+            S.springs.stretch.impulse(-7 * impact);
+            S.earL.impulse(-9 * impact);
+            S.earR.impulse(-9 * impact);
             S.earTipL.impulse(-6);
             S.earTipR.impulse(-6);
-            S.head.impulse(0, 5);
-            S.jiggle.impulse(6);
-            S.cheek.impulse(5);
-            S.tail.impulse(3);
+            S.head.impulse(0, 5 * impact);
+            S.jiggle.impulse(6 * impact);
+            S.cheek.impulse(5 * impact);
+            S.tail.impulse(3 * impact);
             break;
+          }
           case "jump":
             S.springs.stretch.impulse(4.5);
             S.head.impulse(0, -3);
@@ -4159,6 +4167,9 @@ function CatRig({ palette, driver, position, rotation, scale = 1, groupRef, inte
             S.springs.headTilt.impulse(-4);
             S.earL.impulse(8);
             S.head.impulse(-6, 0);
+            // whip-twist the whole body around the vertical axis as the cat wraps the screen edge
+            S.twist.impulse(d.vx >= 0 ? -14 : 14);
+            S.tail.impulse(d.vx >= 0 ? 8 : -8, 0.9);
             break;
           case "cheer":
           case "perfect":
@@ -4175,6 +4186,7 @@ function CatRig({ palette, driver, position, rotation, scale = 1, groupRef, inte
             S.earL.impulse(-12);
             S.earR.impulse(12);
             S.jiggle.impulse(5);
+            S.puff.impulse(7);
             break;
           case "shieldOn":
             S.shieldPulse = 1;
@@ -4209,6 +4221,7 @@ function CatRig({ palette, driver, position, rotation, scale = 1, groupRef, inte
           case "pokeTail":
             S.tail.impulse(18, 0.9);
             S.tailRoot.impulse(10);
+            S.puff.impulse(9);
             S.head.impulse(6, 0);
             S.earL.impulse(-12);
             S.earR.impulse(-12);
@@ -4223,6 +4236,7 @@ function CatRig({ palette, driver, position, rotation, scale = 1, groupRef, inte
             S.earL.impulse(14);
             S.earR.impulse(14);
             S.tail.impulse(-12, 0.9);
+            S.puff.impulse(10);
             S.whiskerL.impulse(10);
             S.whiskerR.impulse(10);
             break;
@@ -4371,7 +4385,7 @@ function CatRig({ palette, driver, position, rotation, scale = 1, groupRef, inte
     const shakeX = shiver * 0.02 * Math.sin(t * 58) + shiver * 0.012 * Math.sin(t * 91 + 1);
     o.crouch.position.set(shakeX, -P.crouch + Math.sin(t * P.bobSpeed) * P.bob * (0.6 + per.energy * 0.6), 0);
     o.lean.rotation.z = S.lean;
-    o.lean.rotation.y = S.turn;
+    o.lean.rotation.y = S.turn + S.twist.update(dt);
     // spin (trampoline flips): accumulate roll, then settle back to upright
     if (P.bodyRoll > 0.5) S.roll += P.bodyRoll * dt;
     else {
@@ -4393,7 +4407,11 @@ function CatRig({ palette, driver, position, rotation, scale = 1, groupRef, inte
     o.head.position.y = 1.88 + hy * 0.012;
 
     /* ---- belly jiggle (cheek puff is expressed via the blush, not geometry) ---- */
-    o.bodyJiggle.scale.set(1 + jig * 0.05, 1 - jig * 0.04, 1 + jig * 0.05);
+    // chest breathing: quicker & deeper after exertion (speed), slow & gentle when calm / asleep
+    const effort = Math.min(1, (Math.abs(vx) + Math.abs(vy) * 0.6) / 14);
+    const breathRate = S.asleep ? 1.1 : 2.1 + effort * 3 + per.energy * 0.6;
+    const br = Math.sin(t * breathRate) * (0.012 + effort * 0.014);
+    o.bodyJiggle.scale.set(1 + jig * 0.05 + br * 0.8, 1 - jig * 0.04 + br * 0.5, 1 + jig * 0.05 + br * 1.4);
 
     /* ---- ears: pose + mood + vertical velocity + wind flap + spring twitch ---- */
     const earVel = clamp(-vy * 0.035, -0.45, 0.6);
@@ -4448,11 +4466,14 @@ function CatRig({ palette, driver, position, rotation, scale = 1, groupRef, inte
     const links = S.tail.update(rootAngle, dt);
     o.tail.rotation.z = rootAngle;
     o.tail.rotation.y = Math.sin(t * 3.1) * 0.25;
+    // fright puff: each link scales a little, compounding toward the tip → bottle-brush tail
+    const puffK = 1 + Math.max(0, S.puff.update(dt)) * 0.11;
     for (let i = 0; i < TAIL_N; i++) {
       const seg = o["tail" + i];
       const follow = links[i].value - (i === 0 ? rootAngle : links[i - 1].value);
       seg.rotation.z = follow * 1.6 + 0.28 + P.tailCurl * 0.34 + Math.sin(t * P.tailWagSpeed + i * 0.6) * P.tailWag * 0.25;
       seg.rotation.y = Math.sin(t * 2.3 + i * 0.5) * 0.08 * (i + 1);
+      seg.scale.setScalar(puffK);
     }
 
     /* ---- face ---- */
@@ -4483,6 +4504,9 @@ function CatRig({ palette, driver, position, rotation, scale = 1, groupRef, inte
       const hl = E.eyeSparkle * clamp((open - 0.35) / 0.3, 0, 1) * dot * (1 - shock * 0.6);
       o["hl" + side].scale.setScalar(Math.max(0.0001, hl));
       o["hl" + side].position.set(-0.035 + lookX * 0.3, 0.04 + lookYo * 0.2, 0.004);
+      // secondary glossy catch-light (smaller, opposite corner) — gives the eye depth
+      o["hl2" + side].scale.setScalar(Math.max(0.0001, hl * 0.5));
+      o["hl2" + side].position.set(0.042 + lookX * 0.3, -0.045 + lookYo * 0.2, 0.004);
       // happy arcs also serve as the closed eye for a wink
       o["happy" + side].scale.setScalar(Math.max(0.0001, Math.max(E.eyeHappy, wink * (1 - E.eyeSquash)) * E.eyeScale));
       o["cry" + side].scale.setScalar(Math.max(0.0001, E.eyeCry));
@@ -4717,6 +4741,7 @@ function CatRig({ palette, driver, position, rotation, scale = 1, groupRef, inte
                       <mesh ref={r("ring" + side)} geometry={G.eyeRing} material={M.white} position={[0, 0, -0.002]} />
                       <mesh ref={r("dot" + side)} geometry={G.eyeDot} material={M.ink} />
                       <mesh ref={r("hl" + side)} geometry={G.highlight} material={M.white} position={[-0.035, 0.04, 0.004]} />
+                      <mesh ref={r("hl2" + side)} geometry={G.highlight} material={M.white} position={[0.042, -0.045, 0.004]} scale={0.5} />
                       <mesh ref={r("happy" + side)} geometry={G.happyArc} material={M.ink} position={[0, -0.03, 0]} />
                       <group ref={r("cry" + side)}>
                         <mesh geometry={G.chevron} material={M.ink} position={[dir * 0.06 - dir * 0.065, 0.05, 0]} rotation={[0, 0, -dir * 0.7]} />
@@ -5401,7 +5426,7 @@ export const otherCat = (id: CatId): CatId => (id === "peach" ? "goma" : "peach"
 
 <<<<< END FILE: src/character/palettes.ts >>>>>
 
-<<<<< BEGIN FILE: src/character/poses.ts (11818 bytes) >>>>>
+<<<<< BEGIN FILE: src/character/poses.ts (12248 bytes) >>>>>
 /**
  * POSE / MOTION-STATE SYSTEM
  * --------------------------
@@ -5487,7 +5512,8 @@ export type MotionState =
   | "yum"
   | "laugh"
   | "scaredBack"
-  | "proud";
+  | "proud"
+  | "brace";
 
 const BASE: PoseParams = {
   stretch: 1,
@@ -5565,6 +5591,8 @@ export const POSES: Record<MotionState, PoseParams> = {
   laugh: p({ stretch: 1.03, headPitch: -0.2, armRaiseL: 0.6, armRaiseR: 0.6, armForwardL: 1.2, armForwardR: 1.2, pawUpL: 0.8, pawUpR: 0.8, bob: 0.06, bobSpeed: 11, earFold: 0.3, tailWag: 0.8, tailWagSpeed: 10 }),
   scaredBack: p({ crouch: 0.1, stretch: 0.92, bodyPitch: -0.2, lean: 0.05, armRaiseL: 1.6, armRaiseR: 1.6, armForwardL: 0.9, armForwardR: 0.9, pawUpL: 1, pawUpR: 1, earFold: -1, earTipFlop: 0.6, tailLift: 0.9, tailCurl: 0.2, tailWag: 0.2, shiver: 0.5 }),
   proud: p({ stretch: 1.04, bodyPitch: -0.1, armRaiseL: 0.15, armRaiseR: 0.15, armForwardL: 0.9, armForwardR: 0.9, headPitch: -0.15, earFold: 0.6, tailLift: 0.9, tailCurl: 0.4, tailWag: 0.3 }),
+  // anticipation just before touchdown: paws reach for the platform, legs drop, tail up for balance
+  brace: p({ stretch: 0.95, crouch: 0.03, armRaiseL: 1.9, armRaiseR: 1.9, armForwardL: 0.45, armForwardR: 0.45, pawUpL: 0.7, pawUpR: 0.7, legL: 0.95, legR: 0.95, legSpread: 0.35, earFold: 0.45, earTipFlop: 0.35, tailLift: 0.75, tailWag: 0.45, tailWagSpeed: 9, headPitch: 0.28, whiskerFlare: 0.6 }),
 };
 
 /** Expression that plays by default with a motion state (can be overridden). */
@@ -5607,6 +5635,7 @@ export const POSE_EXPRESSION: Record<MotionState, ExpressionName> = {
   laugh: "laugh",
   scaredBack: "scared",
   proud: "proud",
+  brace: "focus",
 };
 
 /** Per-parameter spring tuning (stiffness, damping). Anything missing uses the default. */
@@ -5754,7 +5783,7 @@ export const noise1 = (t: number, seed = 0) =>
 
 <<<<< END FILE: src/character/springs.ts >>>>>
 
-<<<<< BEGIN FILE: src/game/sfx.ts (6504 bytes) >>>>>
+<<<<< BEGIN FILE: src/game/sfx.ts (7544 bytes) >>>>>
 /**
  * Procedural kawaii sound effects (no assets needed).
  */
@@ -5831,7 +5860,25 @@ function noise(dur: number, opts: { vol?: number; delay?: number; freq?: number;
   }
 }
 
+/* ---- tiny generative music box: pentatonic arpeggio + soft bass, brightens with sky tier ---- */
+const MELODY = [0, 4, 7, 9, 7, 4, 2, 4, 0, 4, 7, 12, 9, 7, 4, 2, 0, 2, 4, 7, 9, 12, 9, 7, 4, 2, 0, -3, 0, 2, 4, 2];
+const BASS = [0, -5, -3, -7];
+let musicStep = 0;
+const semi = (base: number, n: number) => base * Math.pow(2, n / 12);
+
 export const sfx = {
+  musicTick: (tier = 0) => {
+    const base = 523.25 * (tier >= 3 ? 0.5 : 1); // C5, drops an octave into the starry night
+    const m = MELODY[musicStep % MELODY.length];
+    const lift = tier === 2 ? 2 : 0; // dusk lifts the tune a whole step
+    tone(semi(base, m + lift), 0.75, { type: "sine", vol: 0.045, attack: 0.005 });
+    tone(semi(base * 2, m + lift), 0.35, { type: "sine", vol: 0.012, attack: 0.005 });
+    if (musicStep % 8 === 0) tone(semi(base / 4, BASS[(musicStep / 8) % BASS.length] + lift), 1.4, { type: "triangle", vol: 0.035, attack: 0.02 });
+    musicStep++;
+  },
+  musicReset: () => {
+    musicStep = 0;
+  },
   unlock: () => {
     try {
       ac();
@@ -5915,6 +5962,7 @@ export const sfx = {
   grumble: () => tone(180, 0.3, { type: "sawtooth", to: 120, vol: 0.05, vib: 8 }),
   yawn: () => tone(400, 0.7, { type: "triangle", to: 250, vol: 0.08, attack: 0.15 }),
   wrap: () => tone(500, 0.1, { type: "sine", to: 900, vol: 0.06 }),
+  whoosh: () => noise(0.28, { vol: 0.07, freq: 500, to: 1900, q: 0.7 }),
   tick: () => tone(1200, 0.04, { type: "square", vol: 0.03 }),
 };
 
@@ -6052,7 +6100,7 @@ export const useGame = create<GameStore>((set, get) => ({
 
 <<<<< END FILE: src/game/store.ts >>>>>
 
-<<<<< BEGIN FILE: src/game/useInput.ts (3901 bytes) >>>>>
+<<<<< BEGIN FILE: src/game/useInput.ts (4098 bytes) >>>>>
 import { useEffect, useRef, type MutableRefObject } from "react";
 import { clamp } from "../character/springs";
 
@@ -6078,7 +6126,9 @@ export function useInput(active: boolean): MutableRefObject<InputState> {
       let p = 0;
       s.pointers.forEach((v) => (p += v));
       p = clamp(p, -1, 1);
-      s.axis = k !== 0 ? k : p !== 0 ? p : s.tiltEnabled ? clamp(s.tilt / 22, -1, 1) : 0;
+      // pointer steering is analog: the further from the centre you hold, the harder the cat leans
+      const analog = Math.abs(s.pointerX) > 0.1 ? clamp(s.pointerX * 1.7, -1, 1) : p * 0.3;
+      s.axis = k !== 0 ? k : p !== 0 ? analog : s.tiltEnabled ? clamp(s.tilt / 22, -1, 1) : 0;
     };
     const side = (e: PointerEvent) => {
       // steer relative to the game viewport (centered column on desktop)
@@ -6168,7 +6218,7 @@ export async function requestTilt() {
 
 <<<<< END FILE: src/game/useInput.ts >>>>>
 
-<<<<< BEGIN FILE: src/game/world.ts (8483 bytes) >>>>>
+<<<<< BEGIN FILE: src/game/world.ts (8615 bytes) >>>>>
 import { Spring, rand, clamp } from "../character/springs";
 import { createDriver, type CatDriver } from "../character/Cat";
 
@@ -6222,6 +6272,8 @@ export interface PlatformData {
   cheerTimer: number;
   wobble: Spring;
   landedCount: number;
+  /** measured horizontal velocity this frame (moving platforms hand it to whoever lands on them) */
+  vxNow: number;
 }
 
 export interface ItemData {
@@ -6288,6 +6340,7 @@ function makePlatform(w: World, type: PlatformType, x: number, y: number, width:
     cheerTimer: 0,
     wobble: new Spring(1, 320, 12),
     landedCount: 0,
+    vxNow: 0,
   };
 }
 
@@ -6635,7 +6688,7 @@ export function GameOverScene() {
 
 <<<<< END FILE: src/scenes/GameOverScene.tsx >>>>>
 
-<<<<< BEGIN FILE: src/scenes/GameScene.tsx (21329 bytes) >>>>>
+<<<<< BEGIN FILE: src/scenes/GameScene.tsx (25806 bytes) >>>>>
 import * as THREE from "three";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, useState, type MutableRefObject } from "react";
@@ -6655,15 +6708,21 @@ import { celebrate, fx } from "../world/Particles";
 const topOffset = (p: PlatformData) => (p.type === "pillow" ? 0.2 : p.type === "cloud" ? 0.28 : p.type === "ground" ? 0.2 : p.type === "spring" ? 0.15 : 0.02);
 const SHIELD_GEO = new THREE.SphereGeometry(1.05, 32, 20);
 
-export function CameraRig({ camY, camX, lookDown = 0, zoom = 1 }: { camY: MutableRefObject<number>; camX: MutableRefObject<number>; lookDown?: number; zoom?: number }) {
+export function CameraRig({ camY, camX, lookDown = 0, zoom = 1, shake }: { camY: MutableRefObject<number>; camX: MutableRefObject<number>; lookDown?: number; zoom?: number; shake?: MutableRefObject<number> }) {
   const { camera, size } = useThree();
-  useFrame(() => {
+  useFrame(({ clock }) => {
     const cam = camera as THREE.PerspectiveCamera;
     const aspect = size.width / size.height;
     const halfTan = Math.tan(THREE.MathUtils.degToRad(C.fov / 2));
     const dist = clamp((C.halfW * 1.08) / (halfTan * aspect), 8, 40) / zoom;
-    cam.position.set(camX.current * 0.1, camY.current + lookDown, dist);
-    cam.lookAt(camX.current * 0.1, camY.current, 0);
+    // impact shake: fast decaying noise, never random jitter (reads as weight, not glitch)
+    const sh = shake?.current ?? 0;
+    const tt = clock.elapsedTime;
+    const sx = sh * 0.22 * Math.sin(tt * 61) + sh * 0.1 * Math.sin(tt * 97 + 1.3);
+    const sy = sh * 0.18 * Math.sin(tt * 53 + 0.7) + sh * 0.08 * Math.sin(tt * 89);
+    cam.position.set(camX.current * 0.1 + sx, camY.current + lookDown + sy, dist);
+    cam.lookAt(camX.current * 0.1 + sx * 0.5, camY.current + sy * 0.5, 0);
+    cam.rotation.z += sh * 0.012 * Math.sin(tt * 47);
   });
   return null;
 }
@@ -6690,6 +6749,7 @@ export function GameScene({ input }: { input: MutableRefObject<InputState> }) {
   const shadowMat = useMemo(() => flat("#3B3231", { opacity: 0.16, depthWrite: false }), []);
   const shieldMat = useMemo(() => bubble("#9FD8FF", 0.3), []);
   const compMem = useMemo(() => new Map<number, CompanionMem>(), []);
+  const shakeRef = useRef(0);
 
   const P = useMemo(
     () => ({
@@ -6726,6 +6786,10 @@ export function GameScene({ input }: { input: MutableRefObject<InputState> }) {
       nearMissCd: 0,
       shieldWarned: false,
       t: 0,
+      hitStop: 0,
+      shake: 0,
+      groundDist: 99,
+      prevState: "idle" as string,
     }),
     [],
   );
@@ -6740,6 +6804,7 @@ export function GameScene({ input }: { input: MutableRefObject<InputState> }) {
       landTimer: 0, superTimer: 0, springTimer: 0, slipTimer: 0, stunTimer: 0, hurtTimer: 0, fishTimer: 0,
       power: null, powerT: 0, powerTotal: 1, shield: false, shieldT: 0, dead: false, deadTimer: 0, lastScore: -1,
       nextMilestone: 100, recordShown: false, wrapCd: 0, nearMissCd: 0, shieldWarned: false, t: 0,
+      hitStop: 0, shake: 0, groundDist: 99, prevState: "idle",
     });
     camY.current = 5;
     driver.current = createDriver({ state: "rise", fidgets: false });
@@ -6748,11 +6813,22 @@ export function GameScene({ input }: { input: MutableRefObject<InputState> }) {
   }, [runId, world, P, compMem]);
 
   useFrame(({ size }, rawDt) => {
-    const dt = Math.min(rawDt, 1 / 30);
+    let dt = Math.min(rawDt, 1 / 30);
     const d = driver.current;
     const store = useGame.getState();
     if (store.phase !== "playing" || store.paused) return;
+    // hit-stop: a few frames of slow-motion on big impacts sells weight
+    if (P.hitStop > 0) {
+      P.hitStop -= rawDt;
+      dt *= 0.22;
+    }
+    P.shake = Math.max(0, P.shake - rawDt * 3.2);
+    shakeRef.current = P.shake * P.shake;
     P.t += dt;
+    const aspect = size.width / size.height;
+    const halfTan = Math.tan(THREE.MathUtils.degToRad(C.fov / 2));
+    const dist = clamp((C.halfW * 1.08) / (halfTan * aspect), 8, 40);
+    const H = dist * halfTan;
 
     const controllable = !P.dead && P.stunTimer <= 0;
     const rocket = P.power === "rocket";
@@ -6784,9 +6860,13 @@ export function GameScene({ input }: { input: MutableRefObject<InputState> }) {
     } else if (balloon) {
       P.vy = damp(P.vy, C.balloonV + Math.sin(P.t * 2) * 0.6, 3, dt);
     } else {
-      P.vy -= C.gravity * dt;
+      // softer gravity around the apex = readable hang-time (classic platformer feel)
+      const hang = Math.abs(P.vy) < 3.5 ? 0.78 : 1;
+      P.vy -= C.gravity * hang * dt;
     }
     P.y += P.vy * dt;
+    // speed streaks past the camera when climbing very fast
+    if (P.vy > 18 && Math.random() < (P.vy - 16) * 0.06) fx.burst("streak", camX.current + rand(-C.halfW, C.halfW), camY.current + H + 1, rand(-3, 1.5), 1, 1);
 
     let landed: PlatformData | null = null;
     if (P.vy < 0 && !P.dead && !rocket) {
@@ -6812,6 +6892,7 @@ export function GameScene({ input }: { input: MutableRefObject<InputState> }) {
       const p = landed;
       p.landedCount++;
       const center = Math.abs(P.x - p.x);
+      const impact = Math.max(0, -P.vy);
       const onCactus = p.spiky !== 0 && (P.x - p.x) * p.spiky > p.w / 2 - 0.95;
       if (onCactus) {
         if (P.shield) {
@@ -6825,6 +6906,8 @@ export function GameScene({ input }: { input: MutableRefObject<InputState> }) {
           P.vy = C.hurtV;
           P.hurtTimer = 0.7;
           P.combo = 0;
+          P.hitStop = 0.08;
+          P.shake = 0.9;
           d.events.push("hurt");
           fx.burst("stars", P.x, P.y + 0.8, 0.4, 4);
           sfx.hurt();
@@ -6835,6 +6918,8 @@ export function GameScene({ input }: { input: MutableRefObject<InputState> }) {
       } else if (p.type === "pillow") {
         P.vy = C.pillowV;
         P.superTimer = 0.7;
+        P.hitStop = 0.05;
+        P.shake = 0.5;
         p.wobble.impulse(-9);
         d.events.push("superJump");
         fx.burst("stars", P.x, P.y + 0.3, 0.4);
@@ -6843,6 +6928,7 @@ export function GameScene({ input }: { input: MutableRefObject<InputState> }) {
       } else if (p.type === "spring") {
         P.vy = C.springV;
         P.springTimer = 0.62;
+        P.shake = 0.4;
         p.wobble.impulse(-12);
         d.events.push("spring");
         fx.burst("sparkle", P.x, P.y + 0.3, 0.4, 8);
@@ -6861,9 +6947,11 @@ export function GameScene({ input }: { input: MutableRefObject<InputState> }) {
       } else {
         P.vy = C.jumpV;
         P.landTimer = 0.09;
-        p.wobble.impulse(p.type === "cloud" ? -2 : -4);
+        if (p.type === "moving") P.vx += p.vxNow * 0.7; // carry the platform's momentum into the hop
+        p.wobble.impulse(p.type === "cloud" ? -2 : -(2.5 + Math.min(6, impact * 0.22)));
         d.events.push("land", "jump");
-        fx.burst("dust", P.x, P.y + 0.05, 0.5, 4);
+        fx.burst("dust", P.x, P.y + 0.05, 0.5, Math.round(3 + Math.min(8, impact * 0.3)), 0.8 + Math.min(1, impact * 0.04));
+        if (impact > 17) P.shake = Math.min(0.5, (impact - 17) * 0.05);
         if (p.type === "cloud") {
           p.alive = false;
           fx.burst("puff", p.x, p.y, 0.3);
@@ -6879,6 +6967,7 @@ export function GameScene({ input }: { input: MutableRefObject<InputState> }) {
           P.bestCombo = Math.max(P.bestCombo, P.combo);
           if (P.combo >= 2) {
             P.bonus += P.combo * 10;
+            if (P.combo >= 3) P.hitStop = 0.045;
             d.events.push("perfect");
             sfx.perfect(P.combo);
             store.pushToast(`PERFECT x${P.combo}`, "#FFD35C");
@@ -7048,6 +7137,8 @@ export function GameScene({ input }: { input: MutableRefObject<InputState> }) {
         } else if (P.stunTimer <= 0) {
           P.stunTimer = 0.95;
           P.combo = 0;
+          P.hitStop = 0.1;
+          P.shake = 1;
           P.vy = Math.min(P.vy, -2);
           P.vx = (ddx >= 0 ? 1 : -1) * 6;
           d.events.push("stun");
@@ -7073,6 +7164,13 @@ export function GameScene({ input }: { input: MutableRefObject<InputState> }) {
       }
       cd.look = clamp((P.x - p.x) * 0.5, -1, 1);
       cd.lookY = clamp(-dy * 0.15, -1, 1);
+      if (!p.hugged && dy < -2.5 && (p.companionMood !== "sleep" || mem.woke)) {
+        // missed the hug… the little one deflates as you fly past (still hoping you come back)
+        cd.state = "sitSad";
+        cd.expression = dy < -6 ? "sad" : "worried";
+        cd.emote = null;
+        continue;
+      }
       if (p.hugged) {
         p.cheerTimer -= dt;
         if (p.cheerTimer > 0) cd.state = p.cheerTimer > 1.6 ? "hug" : "celebrate";
@@ -7134,13 +7232,73 @@ export function GameScene({ input }: { input: MutableRefObject<InputState> }) {
     else if (P.superTimer > 0) d.state = "superJump";
     else if (P.vy > 5) d.state = "rise";
     else if (P.vy > -2.5) d.state = "apex";
+    else if (P.groundDist < 1.3 + Math.abs(P.vy) * 0.06) d.state = "brace"; // platform coming up: reach for it
     else if (P.vy > -16) d.state = "fall";
     else d.state = "plummet";
-    d.expression = P.dead ? "terrified" : P.combo >= 6 && d.state === "rise" ? "smug" : P.combo >= 3 && d.state === "rise" ? "determined" : null;
+    // danger awareness: the lower the cat sinks toward the screen edge, the more scared it looks
+    const dangerK = clamp((camY.current - H * 0.35 - P.y) / (H * 0.55), 0, 1);
+    const danger = !P.dead && P.vy < -4 && P.groundDist > 2.5 && dangerK > 0.2 ? (dangerK > 0.7 ? "terrified" : "scared") : null;
+    d.expression = P.dead ? "terrified" : danger ?? (P.combo >= 6 && d.state === "rise" ? "smug" : P.combo >= 3 && d.state === "rise" ? "determined" : null);
     d.vx = P.vx;
     d.vy = P.vy;
-    d.look = clamp(P.vx / 5, -1, 1);
-    d.lookY = clamp(P.vy / 22, -1, 1) * 0.6;
+    // smart gaze: glance at the closest goodie / friend / threat, otherwise follow the motion
+    let gx = P.vx / 5;
+    let gy = (P.vy / 22) * 0.6;
+    let gBest = 5.5;
+    for (const it of world.items) {
+      if (it.taken) continue;
+      const dx = it.x - P.x;
+      const dy = it.y - catCy;
+      const dd = Math.hypot(dx, dy);
+      if (dd < gBest) {
+        gBest = dd;
+        gx = dx / 3;
+        gy = dy / 3;
+      }
+    }
+    for (const p of world.platforms) {
+      if (!p.companion || p.hugged) continue;
+      const dx = p.x - P.x;
+      const dy = p.y + 0.6 - catCy;
+      const dd = Math.hypot(dx, dy);
+      if (dd < gBest) {
+        gBest = dd;
+        gx = dx / 3;
+        gy = dy / 3;
+      }
+    }
+    for (const e of world.enemies) {
+      if (!e.alive) continue;
+      const dx = e.x - P.x;
+      const dy = e.y - catCy;
+      const dd = Math.hypot(dx, dy);
+      if (dd < Math.min(gBest, 3.5)) {
+        gBest = dd;
+        gx = dx / 2;
+        gy = dy / 2;
+      }
+    }
+    if (P.vy < -2 && P.groundDist > 4) {
+      // nothing under the paws: scan for the most reachable platform below and lean toward it
+      let bestScore = 99;
+      for (const p of world.platforms) {
+        if (!p.alive || p.y > P.y - 0.2 || p.y < camY.current - H) continue;
+        const dx = p.x - P.x;
+        const score = Math.abs(dx) + (P.y - p.y) * 0.5;
+        if (score < bestScore) {
+          bestScore = score;
+          gx = dx / 2.5;
+          gy = -0.7;
+        }
+      }
+    }
+    if (d.state === "brace") {
+      gy = -0.8; // eyes on the landing
+      if (P.prevState !== "brace" && P.vy < -9) sfx.whoosh();
+    }
+    P.prevState = d.state;
+    d.look = clamp(gx, -1, 1);
+    d.lookY = clamp(gy, -1, 1);
     let acc: Accessory = "none";
     if (rocket) acc = "rocket";
     else if (balloon) acc = "balloon";
@@ -7169,6 +7327,7 @@ export function GameScene({ input }: { input: MutableRefObject<InputState> }) {
         if (top <= P.y + 0.05 && top > bestTop && Math.abs(P.x - p.x) < p.w / 2 + 0.25) bestTop = top;
       }
       const dist = P.y - bestTop;
+      P.groundDist = bestTop > -Infinity ? dist : 99;
       if (bestTop > -Infinity && dist < 7) {
         const k = 1 - dist / 7;
         shadowRef.current.visible = true;
@@ -7179,10 +7338,6 @@ export function GameScene({ input }: { input: MutableRefObject<InputState> }) {
     }
 
     /* ---------- camera ---------- */
-    const aspect = size.width / size.height;
-    const halfTan = Math.tan(THREE.MathUtils.degToRad(C.fov / 2));
-    const dist = clamp((C.halfW * 1.08) / (halfTan * aspect), 8, 40);
-    const H = dist * halfTan;
     const wanted = Math.max(camY.current, P.y + H * (rocket ? 0.15 : 0.3));
     camY.current = damp(camY.current, wanted, rocket ? 12 : 7, dt);
     camX.current = damp(camX.current, P.x, 3, dt);
@@ -7207,6 +7362,10 @@ export function GameScene({ input }: { input: MutableRefObject<InputState> }) {
       P.lastScore = score;
       store.updateRun({ score, altitude: Math.floor(P.maxY), hearts: P.hearts, hugs: P.hugs, combo: P.combo, bestCombo: P.bestCombo, stars: P.stars, fish: P.fish });
       const tier = P.maxY < 45 ? 0 : P.maxY < 110 ? 1 : P.maxY < 190 ? 2 : P.maxY < 300 ? 3 : 4;
+      if (tier !== store.skyTier && tier > 0) {
+        store.pushToast(["", "BLUE SKIES ☁️", "GOLDEN DUSK 🌇", "STARRY NIGHT ✨", "OUTER SPACE 🪐"][tier], "#FFFFFF");
+        d.events.push("milestone");
+      }
       store.setSkyTier(tier);
       const best = store.best[character];
       if (!P.recordShown && best > 0 && score > best) {
@@ -7235,7 +7394,7 @@ export function GameScene({ input }: { input: MutableRefObject<InputState> }) {
 
   return (
     <>
-      <CameraRig camY={camY} camX={camX} />
+      <CameraRig camY={camY} camX={camX} shake={shakeRef} />
       <Backdrop camYRef={camY} />
       {world.platforms.map((p) => (
         <Platform key={p.id} p={p} companionId={companionId} />
@@ -7257,7 +7416,7 @@ export function GameScene({ input }: { input: MutableRefObject<InputState> }) {
 
 <<<<< END FILE: src/scenes/GameScene.tsx >>>>>
 
-<<<<< BEGIN FILE: src/scenes/LabScene.tsx (3505 bytes) >>>>>
+<<<<< BEGIN FILE: src/scenes/LabScene.tsx (3753 bytes) >>>>>
 import * as THREE from "three";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
@@ -7265,6 +7424,7 @@ import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeom
 import { Cat, createDriver } from "../character/Cat";
 import { PALETTES } from "../character/palettes";
 import { Part } from "../character/Part";
+import { flat } from "../character/materials";
 import { EXPRESSION_NAMES } from "../character/expressions";
 import { POSE_NAMES } from "../character/poses";
 import { useGame } from "../game/store";
@@ -7340,6 +7500,9 @@ export function LabScene() {
         <Part geometry={STAGE_TOP} color="#FFF0F5" position={[0, 0.05, 0]} outlineWidth={0} />
       </group>
       <group ref={g}>
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.19, 0.1]} material={flat("#3B3231", { opacity: 0.13, depthWrite: false })}>
+          <circleGeometry args={[0.85, 28]} />
+        </mesh>
         <Cat palette={pal} driver={driver} scale={C.catScale * 1.35} interactive onEvent={catSound} />
       </group>
       <Backdrop camYRef={camY} count={7} spread={8} />
@@ -7349,7 +7512,7 @@ export function LabScene() {
 
 <<<<< END FILE: src/scenes/LabScene.tsx >>>>>
 
-<<<<< BEGIN FILE: src/scenes/MenuScene.tsx (4572 bytes) >>>>>
+<<<<< BEGIN FILE: src/scenes/MenuScene.tsx (5586 bytes) >>>>>
 import * as THREE from "three";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
@@ -7359,6 +7522,7 @@ import { damp, rand } from "../character/springs";
 import { useGame } from "../game/store";
 import { C } from "../game/world";
 import { Part } from "../character/Part";
+import { flat } from "../character/materials";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
 import { Backdrop } from "../world/Backdrop";
 import { fx } from "../world/Particles";
@@ -7394,11 +7558,23 @@ function MenuCat({ id, index }: { id: CatId; index: number }) {
   const driver = useRef(createDriver({ state: "idle" }));
   const g = useRef<THREE.Group | null>(null);
   const { pointer } = useThree();
-  const mem = useMemo(() => ({ x: index === 0 ? -1.3 : 1.3, hover: false, t: 0, greetT: 0 }), [index]);
+  const mem = useMemo(() => ({ x: index === 0 ? -1.3 : 1.3, hover: false, t: 0, greetT: 0, poutT: 0, wasSel: isSel }), [index]);
 
   useFrame((_, dt) => {
     const d = driver.current;
     mem.t += dt;
+    // react to being picked / un-picked: the chosen cat cheers, the other pouts for a moment
+    if (isSel !== mem.wasSel) {
+      mem.wasSel = isSel;
+      if (isSel) {
+        mem.greetT = Math.max(mem.greetT, 1.0);
+        d.events.push("cheer");
+      } else {
+        mem.poutT = 1.8;
+        d.events.push("bump");
+      }
+    }
+    mem.poutT -= dt;
     const targetX = isSel ? (index === 0 ? -0.7 : 0.7) : index === 0 ? -1.75 : 1.75;
     const targetZ = isSel ? 0.6 : -0.4;
     if (g.current) {
@@ -7414,13 +7590,20 @@ function MenuCat({ id, index }: { id: CatId; index: number }) {
     d.vx = 0;
     d.vy = 0;
     mem.greetT -= dt;
+    if (mem.hover && g.current && Math.random() < 0.06) fx.burst("sparkle", g.current.position.x + (Math.random() - 0.5) * 1.2, 1.9 + Math.random() * 0.6, 0.7, 1, 0.6);
     // the rig's own fidget system handles idle life; we only steer hover + selection
-    d.state = mem.greetT > 0 ? "celebrate" : mem.hover ? "wave" : "idle";
-    d.expression = mem.greetT > 0 ? null : mem.hover ? "excited" : isSel ? null : "content";
+    const pouting = mem.poutT > 0 && !mem.hover;
+    d.state = mem.greetT > 0 ? "celebrate" : mem.hover ? "wave" : pouting ? "sit" : "idle";
+    d.expression = mem.greetT > 0 ? null : mem.hover ? "excited" : pouting ? "pout" : isSel ? null : "content";
+    d.emote = pouting && mem.poutT < 1.2 ? "sweat" : null;
+    if (pouting) d.look = index === 0 ? 1 : -1; // side-eye the chosen one
   });
 
   return (
     <group ref={g} position={[mem.x, 0, 0]} scale={C.catScale}>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.34, 0.15]} material={flat("#3B3231", { opacity: 0.13, depthWrite: false })}>
+        <circleGeometry args={[1.15, 28]} />
+      </mesh>
       <Cat
         palette={PALETTES[id]}
         driver={driver}
@@ -7491,7 +7674,7 @@ declare module "react" {
 
 <<<<< END FILE: src/three-jsx.d.ts >>>>>
 
-<<<<< BEGIN FILE: src/ui/Overlays.tsx (19065 bytes) >>>>>
+<<<<< BEGIN FILE: src/ui/Overlays.tsx (19812 bytes) >>>>>
 import { useEffect, useState } from "react";
 import { useGame } from "../game/store";
 import { PALETTES, type CatId } from "../character/palettes";
@@ -7652,6 +7835,14 @@ export function HUD() {
     if (hurtFlash > 0) setFlashKey((k) => k + 1);
   }, [hurtFlash]);
 
+  // generative music box while the run is live
+  useEffect(() => {
+    if (paused) return;
+    sfx.musicReset();
+    const id = setInterval(() => sfx.musicTick(useGame.getState().skyTier), 250);
+    return () => clearInterval(id);
+  }, [paused]);
+
   useEffect(() => {
     const kd = (e: KeyboardEvent) => {
       if (e.code === "KeyP" || e.code === "Escape") togglePause();
@@ -7697,6 +7888,13 @@ export function HUD() {
         <div key={combo} className="pop-in absolute right-4 top-[24%] rotate-6 text-right">
           <div className="sticker-text text-3xl font-black text-[#FFD35C]">x{combo}</div>
           <div className="sticker-text-sm text-[11px] font-black tracking-widest text-white">COMBO</div>
+        </div>
+      )}
+      {altitude < 6 && !paused && (
+        <div className="pointer-events-none absolute left-0 right-0 top-[60%] flex justify-center">
+          <div className="pop-in floaty rounded-full border-2 border-white/70 bg-black/15 px-4 py-1.5 text-[12px] font-black tracking-wide text-white backdrop-blur-[2px]">
+            {matchMedia("(pointer: coarse)").matches ? "Tap or tilt left / right to steer" : "← → to steer · land dead-center for PERFECT ✨"}
+          </div>
         </div>
       )}
       <div className="absolute left-0 right-0 top-[30%] flex flex-col items-center gap-1">
@@ -8318,15 +8516,15 @@ export const Grump = memo(GrumpImpl);
 
 <<<<< END FILE: src/world/Items.tsx >>>>>
 
-<<<<< BEGIN FILE: src/world/Particles.tsx (6631 bytes) >>>>>
+<<<<< BEGIN FILE: src/world/Particles.tsx (6903 bytes) >>>>>
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
-import { BUBBLE_GEO, CONFETTI_GEO, HEART_GEO_SMALL, PUFF_GEO, SHARD_GEO, SPARK_GEO, STAR_GEO } from "./geometries";
+import { BUBBLE_GEO, CONFETTI_GEO, HEART_GEO_SMALL, PUFF_GEO, SHARD_GEO, SPARK_GEO, STAR_GEO, STREAK_GEO } from "./geometries";
 import { toon, outline } from "../character/materials";
 import { rand } from "../character/springs";
 
-export type FxKind = "hearts" | "puff" | "sparkle" | "dust" | "stars" | "flame" | "shards" | "bubbles" | "confetti" | "confetti2" | "smoke" | "zap";
+export type FxKind = "hearts" | "puff" | "sparkle" | "dust" | "stars" | "flame" | "shards" | "bubbles" | "confetti" | "confetti2" | "smoke" | "zap" | "streak";
 
 interface Particle {
   alive: boolean;
@@ -8374,6 +8572,8 @@ const KIND_CFG: Record<FxKind, KindCfg> = {
   confetti2: { geo: CONFETTI_GEO, color: "#7FB8FF", outline: 0.015, count: 10, life: [1.2, 1.8], speed: 4, gravity: 3, up: 6, size: [0.8, 1.3], drag: 1.6 },
   smoke: { geo: PUFF_GEO, color: "#B9AFA8", outline: 0.02, count: 8, life: [0.5, 0.9], speed: 2, gravity: -1, up: 1, size: [0.7, 1.4], drag: 3, grow: true },
   zap: { geo: SPARK_GEO, color: "#FFF4A3", emissive: "#FFE45C", outline: 0.02, count: 8, life: [0.25, 0.45], speed: 6, gravity: 0, up: 0, size: [0.5, 1], drag: 4 },
+  // wind streaks that rush downward past the camera during rocket / super-jump ascents
+  streak: { geo: STREAK_GEO, color: "#FFFFFF", outline: 0, count: 2, life: [0.35, 0.55], speed: 0.2, gravity: 0, up: -34, size: [0.6, 1.4], drag: 0, pool: 50 },
 };
 
 type BurstFn = (kind: FxKind, x: number, y: number, z?: number, count?: number, spread?: number) => void;
@@ -8483,7 +8683,7 @@ export function celebrate(x: number, y: number, z = 0.5) {
 
 <<<<< END FILE: src/world/Particles.tsx >>>>>
 
-<<<<< BEGIN FILE: src/world/Platform.tsx (10904 bytes) >>>>>
+<<<<< BEGIN FILE: src/world/Platform.tsx (10985 bytes) >>>>>
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 import { memo, useMemo, useRef } from "react";
@@ -8677,7 +8877,11 @@ function PlatformImpl({ p, companionId }: { p: PlatformData; companionId: CatId 
     const o = g.current;
     if (!o) return;
     const t = clock.elapsedTime;
-    if (p.type === "moving") p.x = p.baseX + Math.sin(t * p.speed + p.phase) * p.range;
+    if (p.type === "moving") {
+      const nx = p.baseX + Math.sin(t * p.speed + p.phase) * p.range;
+      p.vxNow = dt > 0 ? (nx - p.x) / dt : 0;
+      p.x = nx;
+    }
     o.position.set(p.x, p.y, 0);
     const wy = p.wobble.update(dt);
     o.scale.set(1 / Math.sqrt(Math.max(0.3, wy)), Math.max(0.3, wy), 1);
@@ -8724,7 +8928,7 @@ function PlatformImpl({ p, companionId }: { p: PlatformData; companionId: CatId 
 
 <<<<< END FILE: src/world/Platform.tsx >>>>>
 
-<<<<< BEGIN FILE: src/world/geometries.ts (3032 bytes) >>>>>
+<<<<< BEGIN FILE: src/world/geometries.ts (3102 bytes) >>>>>
 import * as THREE from "three";
 
 export function heartShape() {
@@ -8814,6 +9018,7 @@ export const SPARK_GEO = new THREE.OctahedronGeometry(0.1, 0);
 export const CONFETTI_GEO = new THREE.BoxGeometry(0.14, 0.09, 0.02);
 export const SHARD_GEO = new THREE.TetrahedronGeometry(0.1, 0);
 export const BUBBLE_GEO = new THREE.SphereGeometry(0.12, 10, 8);
+export const STREAK_GEO = new THREE.CapsuleGeometry(0.02, 0.7, 2, 5);
 
 <<<<< END FILE: src/world/geometries.ts >>>>>
 

@@ -1,0 +1,60 @@
+[PART 15 of 17 | src/character/Cat.tsx]
+                  <Part geometry={G.qArc} material={M.emoteBlue} position={[0, 0.28, 0]} rotation={[0, 0, -0.6]} outlineWidth={0.035} />
+                  <Part geometry={G.qStem} material={M.emoteBlue} position={[0.02, 0.06, 0]} outlineWidth={0.035} />
+                  <Part geometry={G.exclaimDot} material={M.emoteBlue} position={[0.02, -0.14, 0]} outlineWidth={0.035} />
+                </group>
+                <group ref={r("emote_heart")}>
+                  <Part geometry={HEART_FLAT} material={M.heart} scale={2.2} outlineWidth={0.03} />
+                </group>
+                <group ref={r("emote_hearts3")}>
+                  {[0, 1, 2].map((i) => (
+                    <group key={i} ref={r("h3_" + i)}>
+                      <Part geometry={HEART_FLAT} material={M.heart} scale={1.6} outlineWidth={0.03} />
+                    </group>
+                  ))}
+                </group>
+                <group ref={r("emote_zzz")}>
+                  {[0, 1, 2].map((i) => (
+                    <ZLetter key={i} idx={i} r={r} />
+                  ))}
+                </group>
+                <group ref={r("emote_note")}>
+                  <Part geometry={G.noteHead} material={M.emoteRed} position={[-0.06, -0.1, 0]} scale={[1.2, 0.85, 1]} rotation={[0, 0, -0.4]} outlineWidth={0.03} />
+                  <Part geometry={G.noteStem} material={M.emoteRed} position={[0.03, 0.05, 0]} outlineWidth={0.03} />
+                  <Part geometry={G.noteFlag} material={M.emoteRed} position={[0.085, 0.16, 0]} rotation={[0, 0, -0.5]} outlineWidth={0.03} />
+                </group>
+                <group ref={r("emote_sweat")}>
+                  <Part geometry={G.drop} material={M.tear} scale={1.8} outlineWidth={0.03} />
+                </group>
+                <group ref={r("emote_anger")} position={[-0.15, -0.3, 0]}>
+                  {[0, 1, 2, 3].map((i) => (
+                    <mesh key={i} geometry={G.angerBar} material={M.anger} rotation={[0, 0, (i * Math.PI) / 4 + 0.4]} position={[Math.cos(i * 1.57) * 0.03, Math.sin(i * 1.57) * 0.03, 0]} scale={1.6} />
+                  ))}
+                </group>
+                <group ref={r("emote_sparkles")}>
+                  {[0, 1, 2, 3].map((i) => (
+                    <mesh key={i} ref={r("spark" + i)} geometry={G.sparkle} material={M.spark} position={[Math.cos(i * 1.6) * 0.4 - 0.5, Math.sin(i * 1.6) * 0.35, 0]} scale={[1, 1.6, 1]} />
+                  ))}
+                </group>
+              </group>
+              {/* ambient sparkles (record / star) shares the spark refs */}
+              <group ref={r("sparkles")} visible={false} />
+              {/* dizzy stars orbiting */}
+              <group ref={r("dizzy")} position={[0, 0.95, 0]}>
+                {[0, 1, 2].map((i) => (
+                  <Part key={i} ref={r("dz" + i)} geometry={STAR_GEO} material={M.emoteGold} scale={0.9} outlineWidth={0.025} />
+                ))}
+              </group>
+            </group>
+
+            {/* ---- accessories ---- */}
+            <group ref={r("shield")} position={[0, 1.35, 0]} visible={false}>
+              <mesh geometry={G.shield} material={M.shield} />
+              <mesh geometry={G.shieldGloss} material={M.shieldGloss} position={[-0.9, 1.05, 1.0]} scale={[1, 0.5, 0.3]} rotation={[0, 0, 0.6]} />
+            </group>
+            <group ref={r("rocket")} position={[0, 1.0, -0.72]} visible={false}>
+              <Part geometry={G.rocketBody} material={M.rocketRed} outlineWidth={0.05} />
+              <Part geometry={G.rocketTip} material={M.rocketWhite} position={[0, 0.58, 0]} outlineWidth={0.04} />
+              <mesh geometry={G.rocketBody} material={M.rocketWhite} scale={[1.02, 0.3, 1.02]} position={[0, -0.05, 0]} />
+              <Part geometry={G.fin} material={M.rocketWhite} position={[-0.28, -0.35, 0]} outlineWidth={0.03} />
+              <Part geometry={G.fin} material={M.rocketWhite} position={[0.28, -0.35, 0]} outlineWidth={0.03} />

@@ -1,4 +1,34 @@
 [PART 11 of 17 | src/character/Cat.tsx]
+    o.mouthWobble.rotation.z = shiver * Math.sin(t * 40) * 0.2;
+    o.mouthO.scale.setScalar(Math.max(0.0001, E.mouthO * (1 + Math.sin(t * 6) * 0.06)));
+    o.mouthLine.scale.setScalar(Math.max(0.0001, E.mouthLine));
+    o.mouthPout.scale.setScalar(Math.max(0.0001, E.mouthPout));
+    const mo = E.mouthOpen;
+    o.mouthOpen.scale.set(Math.max(0.0001, 0.55 + 0.45 * mo), Math.max(0.0001, mo * (1 + Math.sin(t * 9) * 0.06)), 1);
+    const sc = E.mouthScream;
+    o.mouthScream.scale.set(Math.max(0.0001, 0.6 + 0.4 * sc), Math.max(0.0001, sc * (1 + Math.sin(t * 14) * 0.08)), 1);
+    const gr = E.mouthGrin;
+    o.mouthGrin.scale.set(Math.max(0.0001, gr), Math.max(0.0001, gr * (0.85 + Math.abs(Math.sin(t * 12)) * 0.25)), 1);
+    o.mouthTongue.scale.set(Math.max(0.0001, E.mouthTongue), Math.max(0.0001, E.mouthTongue * (1 + Math.sin(t * 7) * 0.1)), 1);
+    const sw = E.sweat;
+    o.sweat.scale.set(0.75 * sw, 1.15 * sw, 0.75 * sw);
+    o.sweat.position.y = 0.55 - ((t * 0.7) % 1) * 0.12 * sw;
+    const ang = E.angerMark;
+    o.anger.scale.setScalar(Math.max(0.0001, ang * (1 + Math.sin(t * 12) * 0.12)));
+
+    /* ---- emotes ---- */
+    if (S.emote \u0026\u0026 S.emote.until \u003c t) S.emote = null;
+    const wantEmote: EmoteName | null = S.emote ? S.emote.name : S.fidget?.emote ?? d.emote;
+    if (wantEmote !== S.emoteCur) {
+      if (S.emoteCur === null \u0026\u0026 wantEmote !== null) {
+        S.emoteS.set(0);
+        S.emoteS.impulse(14);
+      }
+      S.emoteCur = wantEmote;
+    }
+    S.emoteS.target = wantEmote ? 1 : 0;
+    const es = Math.max(0, S.emoteS.update(dt));
+    for (const name of EMOTE_NAMES) {
       const g = o["emote_" + name];
       const on = wantEmote === name;
       g.scale.setScalar(on ? Math.max(0.0001, es) : 0.0001);
@@ -53,49 +83,3 @@
       S.shieldPulse = Math.max(0, S.shieldPulse - dt * 2);
       const ps = 1 + Math.sin(t * 3) * 0.02 + S.shieldPulse * 0.15;
       o.shield.scale.setScalar(ps);
-      o.shield.rotation.y = t * 0.4;
-    }
-    o.rocket.visible = acc === "rocket";
-    if (acc === "rocket") {
-      S.flameFlicker = rand(0.8, 1.25);
-      o.flame.scale.set(S.flameFlicker, 1 + rand(0, 0.6) + clamp(vy, 0, 30) * 0.03, S.flameFlicker);
-      o.rocket.rotation.z = Math.sin(t * 40) * 0.01;
-    }
-    o.balloon.visible = acc === "balloon";
-    if (acc === "balloon") {
-      S.balloon.setTarget(-vx * 0.06, 0);
-      S.balloon.x.impulse(noise1(t * 0.5, 3) * 0.05);
-      S.balloon.update(dt);
-      o.balloon.rotation.z = clamp(S.balloon.x.value, -0.8, 0.8) + Math.sin(t * 1.5) * 0.05;
-      o.balloon.rotation.x = Math.sin(t * 1.1) * 0.06;
-    }
-    o.umbrella.visible = acc === "umbrella";
-    if (acc === "umbrella") {
-      o.umbrella.rotation.z = -vx * 0.05 + Math.sin(t * 2) * 0.04;
-      o.umbrella.rotation.x = clamp(vy * 0.01, -0.2, 0.1);
-    }
-    o.fish.visible = acc === "fish";
-    if (acc === "fish") o.fish.rotation.z = Math.sin(t * 6) * 0.15;
-
-    /* ---- petting ---- */
-    S.petCooldown = Math.max(0, S.petCooldown - dt);
-    S.petAmount = Math.max(0, S.petAmount - dt * 1.5);
-  });
-
-  const fur = palette.fur;
-  const stripe = palette.stripe;
-  const faceZ = (x: number, y: number) =\u003e 0.98 * Math.sqrt(Math.max(0.05, 1 - (x / 1.08) ** 2 - (y / 0.95) ** 2));
-  const stripeMat = toon(stripe);
-  const pawMat = flat(palette.paw);
-  const shadeMat = toon(palette.furShade);
-
-  return (
-    \u003cgroup
-      ref={(g) =\u003e {
-        if (g) {
-          R.current.root = g;
-          if (groupRef) groupRef.current = g;
-        }
-      }}
-      position={position}
-      rotation={rotation}

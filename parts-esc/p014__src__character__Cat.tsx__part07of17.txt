@@ -1,4 +1,21 @@
 [PART 7 of 17 | src/character/Cat.tsx]
+            S.whiskerL.impulse(6);
+            S.whiskerR.impulse(6);
+            break;
+          case "startle":
+            S.springs.stretch.impulse(8);
+            S.earL.impulse(14);
+            S.earR.impulse(14);
+            S.tail.impulse(-12, 0.9);
+            S.puff.impulse(10);
+            S.whiskerL.impulse(10);
+            S.whiskerR.impulse(10);
+            break;
+          case "wakeUp":
+            S.asleep = false;
+            S.springs.stretch.impulse(3);
+            S.earL.impulse(8);
+            S.earR.impulse(8);
             break;
         }
       }
@@ -82,19 +99,3 @@
       S.autoLookTimer -= dt;
       const calm = calmState || state === "wave" || state === "lieDown" || state === "float";
       if (S.autoLookTimer \u003c= 0) {
-        S.autoLookTimer = rand(1.2, 3.5);
-        const shy = per.shyness \u003e 0.5 \u0026\u0026 Math.random() \u003c per.shyness * 0.4;
-        S.autoLook = calm \u0026\u0026 Math.random() \u003c 0.65 ? rand(-0.7, 0.7) : 0;
-        S.autoLookY = calm \u0026\u0026 Math.random() \u003c 0.4 ? rand(-0.4, 0.5) : 0;
-        if (shy) S.autoLookY = -0.5;
-      }
-      S.earTwitchTimer -= dt;
-      if (S.earTwitchTimer \u003c= 0) {
-        S.earTwitchTimer = rand(2.5, 7);
-        const s = Math.random() \u003c 0.5 ? [S.earL, S.earTipL] : [S.earR, S.earTipR];
-        s[0].impulse(rand(6, 10));
-        s[1].impulse(rand(8, 14));
-      }
-      S.tailFlickTimer -= dt;
-      if (S.tailFlickTimer \u003c= 0) {
-        S.tailFlickTimer = rand(3, 9);

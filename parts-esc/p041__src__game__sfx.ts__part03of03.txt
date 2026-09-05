@@ -1,0 +1,5 @@
+[PART 3 of 3 | src/game/sfx.ts]
+  wrap: () =\u003e tone(500, 0.1, { type: "sine", to: 900, vol: 0.06 }),
+  whoosh: () =\u003e noise(0.28, { vol: 0.07, freq: 500, to: 1900, q: 0.7 }),
+  tick: () =\u003e tone(1200, 0.04, { type: "square", vol: 0.03 }),
+};

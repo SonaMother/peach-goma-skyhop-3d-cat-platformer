@@ -1,0 +1,12 @@
+[PART 17 of 17 | src/character/Cat.tsx]
+          </group>
+        </group>
+      </group>
+    </group>
+  );
+}
+
+const EMOTE_NAMES: EmoteName[] = ["exclaim", "question", "heart", "zzz", "note", "sweat", "sparkles", "anger", "hearts3"];
+export const ALL_EMOTES = EMOTE_NAMES;
+export const ALL_ACCESSORIES: Accessory[] = ["none", "balloon", "rocket", "shield", "umbrella", "fish"];
+export const ALL_EVENTS: CatEvent[] = Object.keys(EVENT_FLASH) as CatEvent[];

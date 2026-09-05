@@ -1,0 +1,32 @@
+[PART 8 of 8 | src/scenes/GameScene.tsx]
+    }
+    if (P.dead) {
+      P.deadTimer -= dt;
+      if (P.deadTimer \u003c= 0) {
+        store.endRun();
+        sfx.sad();
+      }
+    }
+  });
+
+  return (
+    \u003c\u003e
+      \u003cCameraRig camY={camY} camX={camX} shake={shakeRef} /\u003e
+      \u003cBackdrop camYRef={camY} /\u003e
+      {world.platforms.map((p) =\u003e (
+        \u003cPlatform key={p.id} p={p} companionId={companionId} /\u003e
+      ))}
+      {world.items.map((it) =\u003e (
+        \u003cItem key={it.id} it={it} /\u003e
+      ))}
+      {world.enemies.map((e) =\u003e (
+        \u003cGrump key={e.id} e={e} /\u003e
+      ))}
+      \u003cmesh ref={shadowRef} rotation={[-Math.PI / 2, 0, 0]} material={shadowMat}\u003e
+        \u003ccircleGeometry args={[0.6, 28]} /\u003e
+      \u003c/mesh\u003e
+      \u003cmesh ref={shieldRef} geometry={SHIELD_GEO} material={shieldMat} visible={false} /\u003e
+      \u003cCat palette={palette} driver={driver} groupRef={catRef} scale={C.catScale} position={[0, 0.2, 0]} /\u003e
+    \u003c/\u003e
+  );
+}

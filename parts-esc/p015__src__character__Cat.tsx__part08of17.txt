@@ -1,4 +1,20 @@
 [PART 8 of 17 | src/character/Cat.tsx]
+        S.autoLookTimer = rand(1.2, 3.5);
+        const shy = per.shyness \u003e 0.5 \u0026\u0026 Math.random() \u003c per.shyness * 0.4;
+        S.autoLook = calm \u0026\u0026 Math.random() \u003c 0.65 ? rand(-0.7, 0.7) : 0;
+        S.autoLookY = calm \u0026\u0026 Math.random() \u003c 0.4 ? rand(-0.4, 0.5) : 0;
+        if (shy) S.autoLookY = -0.5;
+      }
+      S.earTwitchTimer -= dt;
+      if (S.earTwitchTimer \u003c= 0) {
+        S.earTwitchTimer = rand(2.5, 7);
+        const s = Math.random() \u003c 0.5 ? [S.earL, S.earTipL] : [S.earR, S.earTipR];
+        s[0].impulse(rand(6, 10));
+        s[1].impulse(rand(8, 14));
+      }
+      S.tailFlickTimer -= dt;
+      if (S.tailFlickTimer \u003c= 0) {
+        S.tailFlickTimer = rand(3, 9);
         S.tail.impulse(rand(6, 12) * (Math.random() \u003c 0.5 ? -1 : 1), 0.85);
       }
       S.whiskerTimer -= dt;
@@ -40,7 +56,7 @@
     const shakeX = shiver * 0.02 * Math.sin(t * 58) + shiver * 0.012 * Math.sin(t * 91 + 1);
     o.crouch.position.set(shakeX, -P.crouch + Math.sin(t * P.bobSpeed) * P.bob * (0.6 + per.energy * 0.6), 0);
     o.lean.rotation.z = S.lean;
-    o.lean.rotation.y = S.turn;
+    o.lean.rotation.y = S.turn + S.twist.update(dt);
     // spin (trampoline flips): accumulate roll, then settle back to upright
     if (P.bodyRoll \u003e 0.5) S.roll += P.bodyRoll * dt;
     else {
@@ -62,22 +78,7 @@
     o.head.position.y = 1.88 + hy * 0.012;
 
     /* ---- belly jiggle (cheek puff is expressed via the blush, not geometry) ---- */
-    o.bodyJiggle.scale.set(1 + jig * 0.05, 1 - jig * 0.04, 1 + jig * 0.05);
-
-    /* ---- ears: pose + mood + vertical velocity + wind flap + spring twitch ---- */
-    const earVel = clamp(-vy * 0.035, -0.45, 0.6);
-    const wind = Math.min(1, Math.abs(vy) / 20);
-    const flap = Math.sin(t * (10 + wind * 20)) * wind * 0.18 * per.floppiness;
-    const mood = E.earMood;
-    S.earL.target = -(P.earFold * 0.55 + earVel) - mood * 0.35 + (mood \u003c 0 ? mood * 0.4 : 0);
-    S.earR.target = P.earFold * 0.55 + earVel + mood * 0.35 - (mood \u003c 0 ? mood * 0.4 : 0);
-    const eL = S.earL.update(dt);
-    const eR = S.earR.update(dt);
-    // soft "tip lag" springs fold into the single-piece ear (no separate tip mesh → no visible seam)
-    const tipTarget = -P.earTipFlop * 0.5 * (0.5 + per.floppiness) - wind * 0.5 + (mood \u003c 0 ? mood * 0.3 : 0);
-    S.earTipL.target = tipTarget;
-    S.earTipR.target = tipTarget;
-    const tL = S.earTipL.update(dt);
-    const tR = S.earTipR.update(dt);
-    o.earL.rotation.z = 0.38 + eL + flap + tL * 0.12;
-    o.earR.rotation.z = -0.38 + eR - flap + tR * 0.12;
+    // chest breathing: quicker \u0026 deeper after exertion (speed), slow \u0026 gentle when calm / asleep
+    const effort = Math.min(1, (Math.abs(vx) + Math.abs(vy) * 0.6) / 14);
+    const breathRate = S.asleep ? 1.1 : 2.1 + effort * 3 + per.energy * 0.6;
+    const br = Math.sin(t * breathRate) * (0.012 + effort * 0.014);
