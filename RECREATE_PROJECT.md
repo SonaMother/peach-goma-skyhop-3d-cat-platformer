@@ -1,33 +1,32 @@
-# RECREATE_PROJECT.md — exact one-file reconstruction bundle
+# RECREATE_PROJECT.md - exact one-file reconstruction bundle
 
 This single file contains **every source file** of **Peach & Goma: SkyHop** with its
 exact repository path and byte-exact contents, so the complete directory tree can be
-recreated 1:1 from one URL — no shell, no zip tool, nothing but the ability to read text.
+recreated 1:1 from one URL - no shell, no zip tool, nothing but the ability to read text.
 
-- Source commit: `ac6b21cf2ac530c6723789a10a35c2394f4e1106`
-- Generated (UTC): 2026-09-05 00:00:57
+- Source commit: `682e94045bbcad76193a33f2cc05437ca4390935`
+- Generated (UTC): 2026-09-05 01:17:42
 - Files: 35 | Total: 335,133 bytes
-- `gameproject.zip` (binary, byte-exact archive of these sources) is NOT inlined here;
-  it sits in the repo root if you prefer `unzip` / `git clone`.
+- `gameproject.zip` (binary, byte-exact archive of these sources) is NOT inlined here; it sits in the repo root if you prefer `unzip` / `git clone`.
 
 ## How to reconstruct the directory exactly
 
 1. Create the folder structure: for each block below, `mkdir -p` the directory part of
    the path (e.g. `src/character`), then write the text between that block's
-   `BEGIN FILE` and `END FILE` markers into the file named in the marker — verbatim,
+   `BEGIN FILE` and `END FILE` markers into the file named in the marker - verbatim,
    byte-for-byte (the byte count in the marker lets you verify).
-2. Root-level files (`index.html`, `package.json`, …) go directly in the project root.
+2. Root-level files (`index.html`, `package.json`, ...) go directly in the project root.
 3. Optional verification: the **Manifest** below lists each file's size and SHA-256;
    check with `sha256sum` or any equivalent.
-4. Then `npm install && npm run dev` as usual.
+4. Then install and run the project as usual.
 
 > Parsing note for AI agents: file boundaries are the lines starting with
 > `<<<<< BEGIN FILE:` / `<<<<< END FILE:`. Paths never contain newlines, and this
 > marker sequence never occurs inside file contents. Content is UTF-8.
 >
-> ⚠️ If your web fetcher strips HTML/JSX-like tags (symptom: fetched `.tsx` files
-> arrive missing `<Canvas>`, `<div>`, …), this file WILL be mutilated too. Use the
-> JSON shards instead — `bundle/INDEX.json` + `bundle/shard-*.json` — JSON bodies
+> If your web fetcher strips HTML/JSX-like tags (symptom: fetched source files
+> arrive missing `<div>`, `<Canvas>`, ...), this file WILL be mutilated too. Use the
+> JSON shards instead - `bundle/INDEX.json` + `bundle/shard-*.json` - JSON bodies
 > survive such converters. Verify every file against the SHA-256 manifest either way.
 
 ## Manifest
