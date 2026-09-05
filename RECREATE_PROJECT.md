@@ -4,8 +4,8 @@ This single file contains **every source file** of **Peach & Goma: SkyHop** with
 exact repository path and byte-exact contents, so the complete directory tree can be
 recreated 1:1 from one URL — no shell, no zip tool, nothing but the ability to read text.
 
-- Source commit: `cc2d2b091faad08e344a965ba676dfc50acd5b20`
-- Generated (UTC): 2026-09-04 08:26:04
+- Source commit: `ac6b21cf2ac530c6723789a10a35c2394f4e1106`
+- Generated (UTC): 2026-09-05 00:00:57
 - Files: 35 | Total: 335,133 bytes
 - `gameproject.zip` (binary, byte-exact archive of these sources) is NOT inlined here;
   it sits in the repo root if you prefer `unzip` / `git clone`.
